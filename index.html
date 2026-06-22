@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Tag Anti-Cache -->
     <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="0">
@@ -32,17 +31,21 @@
 
     <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 w-full max-w-xl my-4">
         
-        <!-- SWITCH MENU ELEGAN (SEGMENTED CONTROL) -->
         <div class="bg-gray-100 p-1 rounded-xl grid grid-cols-2 gap-1 mb-8 max-w-sm mx-auto text-center border border-gray-200/40 shadow-inner">
-            <button type="button" id="tabDaftar" onclick="switchMode('DAFTAR')" class="py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm">
-                📝 Daftar Baru
+            <button type="button" id="tabDaftar" onclick="switchMode('DAFTAR')" class="inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+                Daftar Baru
             </button>
-            <button type="button" id="tabUpdate" onclick="switchMode('UPDATE')" class="py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800">
-                🔄 Update Data
+            <button type="button" id="tabUpdate" onclick="switchMode('UPDATE')" class="inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+                Update Data
             </button>
         </div>
 
-        <!-- HEADER -->
         <div class="text-center mb-8">
             <div class="flex justify-center mb-4">
                 <img src="logo insan qurany.jpg" alt="Logo" class="h-20 w-auto object-contain drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
@@ -57,7 +60,6 @@
             <div class="w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto mt-4 rounded-full"></div>
         </div>
 
-        <!-- MENU PENCARIAN DATA (Hanya muncul di Mode Update) -->
         <div id="searchSection" class="hidden bg-gray-50 p-5 rounded-2xl border border-gray-100 mb-6 space-y-3.5">
             <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">🔍 Cari Data Lama</h3>
             <p class="text-xs text-gray-400">Ketik nama lengkap generus yang sudah terdaftar sebelumnya untuk diperbarui.</p>
@@ -70,7 +72,6 @@
             <div id="searchFeedback" class="hidden text-xs p-3 rounded-xl font-medium"></div>
         </div>
         
-        <!-- FORM UTAMA -->
         <form id="formGenerus" class="space-y-5">
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Nama Lengkap</label>
@@ -163,11 +164,9 @@
         </form>
     </div>
 
-    <!-- MODAL POPUP MULTIFUNGSI -->
     <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl transform scale-95 transition-transform duration-300">
             
-            <!-- Tahap 1: Cek Ulang Data -->
             <div id="modalReview" class="hidden text-left">
                 <h3 class="text-lg font-bold text-gray-800 mb-3 text-center border-b pb-2">🔍 Cek Ulang Data Anda</h3>
                 <p class="text-xs text-gray-500 mb-4 text-center">Pastikan semua data di bawah ini sudah benar sebelum disimpan.</p>
@@ -192,7 +191,6 @@
                 </div>
             </div>
 
-            <!-- Tahap 2: Sukses Terkirim -->
             <div id="modalSuccess" class="hidden text-center">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -206,7 +204,6 @@
                 </button>
             </div>
 
-            <!-- Tahap 3: Gagal Terkirim -->
             <div id="modalError" class="hidden text-center">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -285,7 +282,7 @@
 
         function toTitleCase(str) { return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }
 
-        // MANAJEMEN GANTI MODE BERGAYA TAB
+        // MANAJEMEN GANTI MODE BERGAYA TAB + PERUBAHAN WARNA IKON SVG SECARA OTOMATIS
         function switchMode(selectedMode) {
             currentMode = selectedMode;
 
@@ -303,9 +300,8 @@
             targetIdGenerus = null;
 
             if (currentMode === "UPDATE") {
-                // Atur Gaya Visual Tab Update Aktif
-                tabUpdate.className = "py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
-                tabDaftar.className = "py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
+                tabUpdate.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
+                tabDaftar.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
                 
                 mainTitle.textContent = "UPDATE DATA GENERUS";
                 mainSubtitle.textContent = "Cari nama anda terlebih dahulu untuk diperbarui";
@@ -313,9 +309,8 @@
                 formGenerus.classList.add('hidden');
                 submitBtn.textContent = "Perbarui Data Generus";
             } else {
-                // Atur Gaya Visual Tab Daftar Baru Aktif
-                tabDaftar.className = "py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
-                tabUpdate.className = "py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
+                tabDaftar.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
+                tabUpdate.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
                 
                 mainTitle.textContent = "PENDATAAN GENERUS";
                 mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
