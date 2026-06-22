@@ -7,46 +7,75 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f4f7f5 0%, #e8efe9 100%);
+        }
+
         .capitalize-input {
             text-transform: capitalize;
         }
+
+        /* Gaya custom untuk mempercantik input focus */
+        .glass-input {
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+        }
+        .glass-input:focus {
+            background-color: #ffffff;
+            border-color: #059669;
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
+            outline: none;
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 antialiased">
 
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-xl">
-        <h2 class="text-2xl font-bold mb-6 text-center text-emerald-600">Pendataan Generus</h2>
+    <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 w-full max-w-xl my-4">
         
-        <form id="formGenerus" class="space-y-4">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-800">Pendataan Generus</h2>
+            <p class="text-xs sm:text-sm text-gray-500 mt-1.5 font-medium">Silakan lengkapi data mandiri Anda dengan benar</p>
+            <div class="w-12 h-1 bg-gradient-to-r freom-emerald-500 to-teal-600 mx-auto mt-4 rounded-full"></div>
+        </div>
+        
+        <form id="formGenerus" class="space-y-5">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                <input type="text" id="nama" required class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Nama Lengkap</label>
+                <input type="text" id="nama" required placeholder="Masukkan nama sesuai KTP/KK" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700">Jenis Kelamin (L/P)</label>
-                <select id="jenis_kelamin" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
-                    <option value="">-- Pilih Jenis Kelamin --</option>
-                    <option value="L">L (Laki-laki)</option>
-                    <option value="P">P (Perempuan)</option>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Jenis Kelamin</label>
+                <select id="jenis_kelamin" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                    <option value="" class="text-gray-400">-- Pilih Jenis Kelamin --</option>
+                    <option value="L">Laki-laki</option>
+                    <option value="P">Perempuan</option>
                 </select>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
-                    <input type="text" id="tempat_lahir" required class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Tempat Lahir</label>
+                    <input type="text" id="tempat_lahir" required placeholder="Kota/Kabupaten" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                    <input type="date" id="tanggal_lahir" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Tanggal Lahir</label>
+                    <input type="date" id="tanggal_lahir" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Desa</label>
-                    <select id="desa" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Desa</label>
+                    <select id="desa" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                         <option value="">-- Pilih Desa --</option>
                         <option value="Desa Karanglo Selatan">Desa Karanglo Selatan</option>
                         <option value="Desa Karanglo Utara">Desa Karanglo Utara</option>
@@ -55,16 +84,16 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Kelompok</label>
-                    <select id="kelompok" required disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-gray-100 focus:ring-emerald-500 focus:border-emerald-500">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kelompok</label>
+                    <select id="kelompok" required disabled class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-gray-50/50 text-gray-400">
                         <option value="">-- Pilih Desa Terlebih Dahulu --</option>
                     </select>
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700">Kategori Usia</label>
-                <select id="kategori_usia" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kategori Usia</label>
+                <select id="kategori_usia" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                     <option value="">-- Pilih Kategori --</option>
                     <option value="PAUD">PAUD</option>
                     <option value="TK">TK</option>
@@ -76,11 +105,15 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700">Kelas Formal (Sekolah/Kuliah/Kerja)</label>
-                <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, atau Bekerja" class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kelas Formal / Status</label>
+                <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
             </div>
             
-            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 text-white p-3 rounded-md font-semibold hover:bg-emerald-700 transition">Kirim Data Mandiri</button>
+            <div class="pt-2">
+                <button type="submit" id="submitBtn" class="w-full relative inline-flex items-center justify-center p-3.5 text-sm font-semibold tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 shadow-[0_4px_12px_rgba(5,150,105,0.2)] hover:shadow-[0_6px_20px_rgba(5,150,105,0.3)] transition-all duration-300 transform active:scale-[0.98]">
+                    Kirim Data Mandiri
+                </button>
+            </div>
         </form>
     </div>
 
@@ -104,7 +137,8 @@
             
             if(desaTerpilih && dataWilayah[desaTerpilih]) {
                 kelompokSelect.disabled = false;
-                kelompokSelect.classList.remove('bg-gray-100');
+                kelompokSelect.classList.remove('bg-gray-50/50', 'text-gray-400');
+                kelompokSelect.classList.add('bg-white', 'text-gray-800');
                 
                 dataWilayah[desaTerpilih].forEach(kelompok => {
                     const opt = document.createElement('option');
@@ -114,7 +148,8 @@
                 });
             } else {
                 kelompokSelect.disabled = true;
-                kelompokSelect.classList.add('bg-gray-100');
+                kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
+                kelompokSelect.classList.remove('bg-white', 'text-gray-800');
                 kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
             }
         });
@@ -124,7 +159,7 @@
             return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
         }
 
-        // KONFIGURASI SUPABASE (Variabel diubah agar tidak bentrok dengan library)
+        // KONFIGURASI SUPABASE
         const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
         
@@ -134,7 +169,6 @@
         document.getElementById('formGenerus').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Efek loading tombol agar user tahu proses sedang berjalan
             submitBtn.disabled = true;
             submitBtn.textContent = "Sedang Mengirim Data...";
             
@@ -162,27 +196,23 @@
                             kelas_formal: kelas_formal
                         }
                     ])
-                    .select(); // Mengembalikan data hasil insert (membantu verifikasi sukses)
+                    .select();
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
-                // Jika Berhasil
                 alert('Data berhasil disimpan! Terima kasih sudah mengisi secara mandiri.');
                 document.getElementById('formGenerus').reset();
                 
-                // Kembalikan status default dropdown kelompok
+                // Reset Dropdown Kelompok ke default
                 kelompokSelect.disabled = true;
-                kelompokSelect.classList.add('bg-gray-100');
+                kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
+                kelompokSelect.classList.remove('bg-white', 'text-gray-800');
                 kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
 
             } catch (err) {
-                // Jika Gagal
                 console.error('Detail Error:', err);
                 alert('Gagal mengirim data! Alasan: ' + (err.message || 'Koneksi bermasalah atau RLS policy belum disetting'));
             } finally {
-                // Mengembalikan tombol ke sedia kala
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Kirim Data Mandiri";
             }
