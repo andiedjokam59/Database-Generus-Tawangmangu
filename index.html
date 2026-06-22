@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Mandiri Generus</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Memaksa visual input teks menjadi kapital di awal kata saat mengetik */
+        .capitalize-input {
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-xl">
+        <h2 class="text-2xl font-bold mb-6 text-center text-emerald-600">Pendataan Mandiri Generus</h2>
+        
+        <form id="formGenerus" class="space-y-4">
+            <!-- Nama -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                <input type="text" id="nama" required class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+            
+            <!-- Jenis Kelamin -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Jenis Kelamin (L/P)</label>
+                <select id="jenis_kelamin" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="">-- Pilih Jenis Kelamin --</option>
+                    <option value="L">L (Laki-laki)</option>
+                    <option value="P">P (Perempuan)</option>
+                </select>
+            </div>
+
+            <!-- Tempat & Tanggal Lahir -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
+                    <input type="text" id="tempat_lahir" required class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
+                    <input type="date" id="tanggal_lahir" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+            </div>
+
+            <!-- Desa & Kelompok (Dropdown Berjenjang) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Desa</label>
+                    <select id="desa" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="">-- Pilih Desa --</option>
+                        <option value="Desa Karanglo Selatan">Desa Karanglo Selatan</option>
+                        <option value="Desa Karanglo Utara">Desa Karanglo Utara</option>
+                        <option value="Desa Bandardawung">Desa Bandardawung</option>
+                        <option value="Desa Krangean">Desa Krangean</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Kelompok</label>
+                    <select id="kelompok" required disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-gray-100 focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="">-- Pilih Desa Terlebih Dahulu --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Usia (Kategori) -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Kategori Usia</label>
+                <select id="kategori_usia" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="">-- Pilih Kategori --</option>
+                    <option value="PAUD">PAUD</option>
+                    <option value="TK">TK</option>
+                    <option value="Caberawit">Caberawit</option>
+                    <option value="Pra Remaja">Pra Remaja</option>
+                    <option value="Remaja">Remaja</option>
+                    <option value="Usia Mandiri">Usia Mandiri</option>
+                </select>
+            </div>
+
+            <!-- Kelas Formal -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Kelas Formal (Sekolah/Kuliah/Kerja)</label>
+                <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, atau Bekerja" class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+            
+            <button type="submit" class="w-full bg-emerald-600 text-white p-3 rounded-md font-semibold hover:bg-emerald-700 transition">Kirim Data Mandiri</button>
+        </form>
+    </div>
+
+    <script>
+        // Data Dropdown Desa dan Kelompok
+        const dataWilayah = {
+            "Desa Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
+            "Desa Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
+            "Desa Bandardawung": ["Dawung Atas", "Dawung Tengah", "Dawung Bawah", "Bandardawung Timur", "Bandardawung Barat", "Gondan Timur", "Gongdang Tengah", "Gondang Barat", "Pelas Timur", "Pelas Barat", "Gamping", "Ngasem"],
+            "Desa Krangean": ["Gondosuli", "Tawang 1", "Tawang 2", "Watusambang", "Somokado", "Gondang Boma", "Krangean Selatan", "Krangean Utara", "Nglegok Atas", "Nglegok Bawah", "Ngreso"]
+        };
+
+        const desaSelect = document.getElementById('desa');
+        const kelompokSelect = document.getElementById('kelompok');
+
+        // Logika Dropdown Berjenjang Desa -> Kelompok
+        desaSelect.addEventListener('change', function() {
+            const desaTerpilih = this.value;
+            kelompokSelect.innerHTML = '<option value="">-- Pilih Kelompok --</option>';
+            
+            if(desaTerpilih && dataWilayah[desaTerpilih]) {
+                kelompokSelect.disabled = false;
+                kelompokSelect.classList.remove('bg-gray-100');
+                
+                dataWilayah[desaTerpilih].forEach(kelompok => {
+                    const opt = document.createElement('option');
+                    opt.value = kelompok;
+                    opt.textContent = kelompok;
+                    kelompokSelect.appendChild(opt);
+                });
+            } else {
+                kelompokSelect.disabled = true;
+                kelompokSelect.classList.add('bg-gray-100');
+                kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+            }
+        });
+
+        // Fungsi bantu untuk merubah teks menjadi Kapitalisasi Awal Kata (Title Case) sebelum dikirim ke database
+        function toTitleCase(str) {
+            return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+        }
+
+        // KONFIGURASI SUPABASE (Ganti dengan milik Anda)
+        const SUPABASE_URL = "URL_SUPABASE_ANDA";
+        const SUPABASE_ANON_KEY = "ANON_KEY_SUPABASE_ANDA";
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        document.getElementById('formGenerus').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Mengambil value dan otomatis merubah teks menjadi Kapital Di Awal Kata
+            const nama = toTitleCase(document.getElementById('nama').value.trim());
+            const jenis_kelamin = document.getElementById('jenis_kelamin').value;
+            const tempat_lahir = toTitleCase(document.getElementById('tempat_lahir').value.trim());
+            const tanggal_lahir = document.getElementById('tanggal_lahir').value;
+            const desa = document.getElementById('desa').value;
+            const kelompok = document.getElementById('kelompok').value;
+            const kategori_usia = document.getElementById('kategori_usia').value;
+            const kelas_formal = toTitleCase(document.getElementById('kelas_formal').value.trim());
+
+            // Kirim ke database Supabase
+            const { data, error } = await supabase
+                .from('data_generus')
+                .insert([
+                    { 
+                        nama: nama, 
+                        jenis_kelamin: jenis_kelamin, 
+                        tempat_lahir: tempat_lahir, 
+                        tanggal_lahir: tanggal_lahir,
+                        desa: desa,
+                        kelompok: kelompok,
+                        kategori_usia: kategori_usia,
+                        kelas_formal: kelas_formal
+                    }
+                ]);
+
+            if (error) {
+                alert('Gagal mengirim data: ' + error.message);
+            } else {
+                alert('Data berhasil disimpan! Terima kasih sudah mengisi secara mandiri.');
+                document.getElementById('formGenerus').reset();
+                kelompokSelect.disabled = true;
+                kelompokSelect.classList.add('bg-gray-100');
+                kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+            }
+        });
+    </script>
+</body>
+</html>
