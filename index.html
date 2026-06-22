@@ -109,10 +109,10 @@
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Desa</label>
                     <select id="desa" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                         <option value="">-- Pilih Desa --</option>
-                        <option value="Desa Karanglo Selatan">Karanglo Selatan</option>
-                        <option value="Desa Karanglo Utara">Karanglo Utara</option>
-                        <option value="Desa Bandardawung">Bandardawung</option>
-                        <option value="Desa Krangean">Krangean</option>
+                        <option value="Karanglo Selatan">Karanglo Selatan</option>
+                        <option value="Karanglo Utara">Karanglo Utara</option>
+                        <option value="Bandardawung">Bandardawung</option>
+                        <option value="Krangean">Krangean</option>
                     </select>
                 </div>
                 <div>
@@ -142,7 +142,7 @@
             </div>
             
             <div class="pt-2">
-                <button type="submit" id="submitBtn" class="w-full relative inline-flex items-center justify-center p-3.5 text-sm font-semibold tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 shadow-[0_4px_12px_rgba(5,150,105,0.2)] hover:shadow-[0_6px_20px_rgba(5,150,105,0.3)] transition-all duration-300 transform active:scale-[0.98]">
+                <button type="submit" id="submitBtn" class="w-full relative inline-flex items-center justify-center p-3.5 text-sm font-semibold tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 shadow-[0_4px_12px_rgba(5,150,105,0.2)] hover:shadow-[0_6px_20px_rgba(5,150,105,0.3)] transition-all duration-300 transform active:scale-[0.98] disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed">
                     Kirim Data Generus
                 </button>
             </div>
@@ -159,7 +159,7 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-1">Terima Kasih</h3>
-                <p class="text-sm text-gray-500">Data berhasil disimpan</p>
+                <p class="text-sm text-gray-500">Data sudah disimpan</p>
             </div>
 
             <div id="modalError" class="hidden">
@@ -179,7 +179,6 @@
     </div>
 
     <script>
-        // Generate Dropdown Tanggal Otomatis
         const dobTanggal = document.getElementById('dob_tanggal');
         const dobTahun = document.getElementById('dob_tahun');
 
@@ -193,12 +192,12 @@
             dobTahun.options[dobTahun.options.length] = new Option(i, i);
         }
 
-        // Data Wilayah (Sudah Diperbaiki)
+        // Data Wilayah (Kata "Desa" sudah dihapus total dari Key agar sinkron)
         const dataWilayah = {
-            "Desa Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
-            "Desa Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
-            "Desa Bandardawung": ["Dawung Atas", "Dawung Tengah", "Dawung Bawah", "Bandardawung Timur", "Bandardawung Barat", "Gondang Timur", "Gondang Tengah", "Gondang Barat", "Pelas Timur", "Pelas Barat", "Gamping", "Ngasem"],
-            "Desa Krangean": ["Gondosuli", "Tawang 1", "Tawang 2", "Watusambang", "Somokado", "Gondang Boma", "Krangean Selatan", "Krangean Utara", "Nglegok Atas", "Nglegok Bawah", "Ngreso"]
+            "Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
+            "Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
+            "Bandardawung": ["Dawung Atas", "Dawung Tengah", "Dawung Bawah", "Bandardawung Timur", "Bandardawung Barat", "Gondang Timur", "Gondang Tengah", "Gondang Barat", "Pelas Timur", "Pelas Barat", "Gamping", "Ngasem"],
+            "Krangean": ["Gondosuli", "Tawang 1", "Tawang 2", "Watusambang", "Somokado", "Gondang Boma", "Krangean Selatan", "Krangean Utara", "Nglegok Atas", "Nglegok Bawah", "Ngreso"]
         };
 
         const desaSelect = document.getElementById('desa');
@@ -233,7 +232,6 @@
             }
         });
 
-        // Logika Pengontrol Tampilan Modal Custom
         function showModal(isSuccess, messageText = "") {
             customModal.classList.remove('hidden');
             setTimeout(() => {
@@ -256,6 +254,8 @@
             customModal.querySelector('div').classList.add('scale-95');
             setTimeout(() => {
                 customModal.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Kirim Data Generus";
             }, 300);
         }
 
@@ -263,13 +263,11 @@
             return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
         }
 
-        // KREDENSIAL SUPABASE
         const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Menangkap Aksi Kirim Form Secara Aman
         document.getElementById('formGenerus').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -285,7 +283,7 @@
             const thn = document.getElementById('dob_tahun').value;
             const tanggal_lahir = `${thn}-${bln}-${tgl}`;
 
-            const desa = document.getElementById('desa').value;
+            const desa = document.getElementById('desa').value; // Mengambil data yang sudah tanpa kata "Desa"
             const kelompok = document.getElementById('kelompok').value;
             const kategori_usia = document.getElementById('kategori_usia').value;
             const kelas_formal = toTitleCase(document.getElementById('kelas_formal').value.trim());
@@ -299,7 +297,7 @@
                             jenis_kelamin: jenis_kelamin, 
                             tempat_lahir: tempat_lahir, 
                             tanggal_lahir: tanggal_lahir,
-                            desa: desa,
+                            desa: desa, // Terkirim ke Supabase tanpa kata "Desa"
                             kelompok: kelompok,
                             kategori_usia: kategori_usia,
                             kelas_formal: kelas_formal
@@ -309,7 +307,6 @@
 
                 if (error) throw error;
 
-                // Memanggil Modal Sukses Custom
                 showModal(true);
                 document.getElementById('formGenerus').reset();
                 
@@ -320,11 +317,7 @@
 
             } catch (err) {
                 console.error('Detail Masalah:', err);
-                // Memanggil Modal Gagal Custom
                 showModal(false, err.message || 'Koneksi bermasalah atau RLS policy belum disetting.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Kirim Data Generus";
             }
         });
     </script>
