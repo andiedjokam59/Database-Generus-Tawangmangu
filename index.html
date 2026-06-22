@@ -31,7 +31,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 antialiased">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 antialiased relative">
 
     <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 w-full max-w-xl my-4">
         
@@ -145,24 +145,51 @@
         </form>
     </div>
 
+    <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300">
+            
+            <div id="modalSuccess" class="hidden">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4 animate-bounce">
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-1">Terima Kasih</h3>
+                <p class="text-sm text-gray-500">Data berhasil disimpan secara mandiri.</p>
+            </div>
+
+            <div id="modalError" class="hidden">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4 animate-pulse">
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-1">Gagal Terkirim</h3>
+                <p id="errorMessage" class="text-xs text-gray-400 mt-2 bg-gray-50 p-2 rounded border border-dashed break-words text-left max-h-24 overflow-y-auto">Detail masalah sistem.</p>
+            </div>
+
+            <button onclick="closeModal()" class="mt-6 w-full py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition">
+                Tutup
+            </button>
+        </div>
+    </div>
+
     <script>
         // GENERATE DROPDOWN TANGGAL DAN TAHUN OTOMATIS
         const dobTanggal = document.getElementById('dob_tanggal');
         const dobTahun = document.getElementById('dob_tahun');
 
-        // Isi Tanggal 1 - 31
         for (let i = 1; i <= 31; i++) {
             const val = i < 10 ? '0' + i : i;
             dobTanggal.options[dobTanggal.options.length] = new Option(val, val);
         }
 
-        // Isi Tahun (Mundur 50 tahun dari tahun berjalan saat ini)
         const tahunSekarang = new Date().getFullYear();
         for (let i = tahunSekarang; i >= tahunSekarang - 50; i--) {
             dobTahun.options[dobTahun.options.length] = new Option(i, i);
         }
 
-        // DATA WILAYAH DROPDOWN (Sudah diperbaiki typo Gondang Bandardawung)
+        // DATA WILAYAH DROPDOWN (Sudah diperbaiki typo Gondang)
         const dataWilayah = {
             "Desa Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
             "Desa Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
@@ -173,6 +200,12 @@
         const desaSelect = document.getElementById('desa');
         const kelompokSelect = document.getElementById('kelompok');
         const submitBtn = document.getElementById('submitBtn');
+        
+        // Elemen Modal
+        const customModal = document.getElementById('customModal');
+        const modalSuccess = document.getElementById('modalSuccess');
+        const modalError = document.getElementById('modalError');
+        const errorMessage = document.getElementById('errorMessage');
 
         // LOGIKA DROPDOWN BERJENJANG
         desaSelect.addEventListener('change', function() {
@@ -198,7 +231,32 @@
             }
         });
 
-        // KONTROL TEKS KAPITAL
+        // FUNGSI LOGIKA MODAL CUSTOM
+        function showModal(isSuccess, messageText = "") {
+            customModal.classList.remove('hidden');
+            setTimeout(() => {
+                customModal.classList.remove('opacity-0');
+                customModal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+
+            if (isSuccess) {
+                modalSuccess.classList.remove('hidden');
+                modalError.classList.add('hidden');
+            } else {
+                modalError.classList.remove('hidden');
+                modalSuccess.classList.add('hidden');
+                errorMessage.textContent = messageText;
+            }
+        }
+
+        function closeModal() {
+            customModal.classList.add('opacity-0');
+            customModal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                customModal.classList.add('hidden');
+            }, 300);
+        }
+
         function toTitleCase(str) {
             return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
         }
@@ -220,7 +278,6 @@
             const jenis_kelamin = document.getElementById('jenis_kelamin').value;
             const tempat_lahir = toTitleCase(document.getElementById('tempat_lahir').value.trim());
             
-            // Menggabungkan dropdown tanggal menjadi string format YYYY-MM-DD
             const tgl = document.getElementById('dob_tanggal').value;
             const bln = document.getElementById('dob_bulan').value;
             const thn = document.getElementById('dob_tahun').value;
@@ -250,10 +307,10 @@
 
                 if (error) throw error;
 
-                alert('Data berhasil disimpan! Terima kasih sudah mengisi secara mandiri.');
+                // Tampilkan Modal Sukses
+                showModal(true);
                 document.getElementById('formGenerus').reset();
                 
-                // Reset Dropdown Kelompok ke default
                 kelompokSelect.disabled = true;
                 kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
                 kelompokSelect.classList.remove('bg-white', 'text-gray-800');
@@ -261,7 +318,8 @@
 
             } catch (err) {
                 console.error('Detail Error:', err);
-                alert('Gagal mengirim data! Alasan: ' + (err.message || 'Koneksi bermasalah atau RLS policy belum disetting'));
+                // Tampilkan Modal Gagal + Detail Pesan Error (Misal: masalah RLS Policy)
+                showModal(false, err.message || 'Koneksi bermasalah atau RLS policy belum disetting.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Kirim Data Generus";
