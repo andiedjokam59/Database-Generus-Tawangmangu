@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- Tag Anti-Cache agar browser selalu memuat kode paling baru -->
     <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="0">
@@ -149,9 +150,11 @@
         </form>
     </div>
 
+    <!-- MODAL CUSTOM POPUP -->
     <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300">
             
+            <!-- Elemen Sukses dengan Tombol Koreksi Masukan -->
             <div id="modalSuccess" class="hidden">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -159,9 +162,17 @@
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-1">Terima Kasih</h3>
-                <p class="text-sm text-gray-500">Data sudah disimpan</p>
+                <p class="text-sm text-gray-500 mb-4">Data sudah disimpan</p>
+                
+                <div class="border-t border-gray-100 pt-3 mt-2">
+                    <p class="text-xs text-gray-400">Ada data yang salah input?</p>
+                    <button type="button" onclick="closeModalAndKeepData()" class="mt-1 text-xs font-semibold text-emerald-600 hover:text-emerald-700 underline focus:outline-none">
+                        Klik di sini untuk edit kembali
+                    </button>
+                </div>
             </div>
 
+            <!-- Elemen Gagal -->
             <div id="modalError" class="hidden">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -172,7 +183,7 @@
                 <p id="errorMessage" class="text-xs text-gray-400 mt-2 bg-gray-50 p-2 rounded border border-dashed break-words text-left max-h-24 overflow-y-auto">Detail Error.</p>
             </div>
 
-            <button type="button" onclick="closeModal()" class="mt-6 w-full py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition">
+            <button type="button" id="mainCloseBtn" onclick="closeModalAndReset()" class="mt-6 w-full py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition">
                 Tutup
             </button>
         </div>
@@ -192,7 +203,6 @@
             dobTahun.options[dobTahun.options.length] = new Option(i, i);
         }
 
-        // Data Wilayah (Kata "Desa" sudah dihapus total dari Key agar sinkron)
         const dataWilayah = {
             "Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
             "Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
@@ -203,14 +213,21 @@
         const desaSelect = document.getElementById('desa');
         const kelompokSelect = document.getElementById('kelompok');
         const submitBtn = document.getElementById('submitBtn');
+        const mainCloseBtn = document.getElementById('mainCloseBtn');
         
         const customModal = document.getElementById('customModal');
         const modalSuccess = document.getElementById('modalSuccess');
         const modalError = document.getElementById('modalError');
         const errorMessage = document.getElementById('errorMessage');
 
+        // Menyimpan data input sementara untuk keperluan edit ulang jika salah ketik
+        let dataPendaftarSementara = null;
+
         desaSelect.addEventListener('change', function() {
-            const desaTerpilih = this.value;
+            updateKelompokDropdown(this.value, "");
+        });
+
+        function updateKelompokDropdown(desaTerpilih, kelompokTerpilih) {
             kelompokSelect.innerHTML = '<option value="">-- Pilih Kelompok --</option>';
             
             if(desaTerpilih && dataWilayah[desaTerpilih]) {
@@ -222,6 +239,7 @@
                     const opt = document.createElement('option');
                     opt.value = kelompok;
                     opt.textContent = kelompok;
+                    if(kelompok === kelompokTerpilih) opt.selected = true;
                     kelompokSelect.appendChild(opt);
                 });
             } else {
@@ -230,7 +248,7 @@
                 kelompokSelect.classList.remove('bg-white', 'text-gray-800');
                 kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
             }
-        });
+        }
 
         function showModal(isSuccess, messageText = "") {
             customModal.classList.remove('hidden');
@@ -242,18 +260,46 @@
             if (isSuccess) {
                 modalSuccess.classList.remove('hidden');
                 modalError.classList.add('hidden');
+                mainCloseBtn.classList.remove('hidden');
             } else {
                 modalError.classList.remove('hidden');
                 modalSuccess.classList.add('hidden');
+                mainCloseBtn.classList.remove('hidden');
                 errorMessage.textContent = messageText;
             }
         }
 
-        function closeModal() {
+        // Opsi A: Jika menekan tombol "Tutup" biasa, maka form dibersihkan total (Reset)
+        function closeModalAndReset() {
             customModal.classList.add('opacity-0');
             customModal.querySelector('div').classList.add('scale-95');
             setTimeout(() => {
                 customModal.classList.add('hidden');
+                
+                document.getElementById('formGenerus').reset();
+                kelompokSelect.disabled = true;
+                kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
+                kelompokSelect.classList.remove('bg-white', 'text-gray-800');
+                kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Kirim Data Generus";
+                dataPendaftarSementara = null; 
+            }, 300);
+        }
+
+        // Opsi B: Jalur Koreksi Data (Data tidak di-reset, pendaftar bisa langsung mengganti bagian yang salah)
+        function closeModalAndKeepData() {
+            customModal.classList.add('opacity-0');
+            customModal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                customModal.classList.add('hidden');
+                
+                // Kembalikan isi dropdown kelompok berdasarkan pilihan desa sebelumnya
+                if (dataPendaftarSementara) {
+                    updateKelompokDropdown(dataPendaftarSementara.desa, dataPendaftarSementara.kelompok);
+                }
+                
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Kirim Data Generus";
             }, 300);
@@ -283,10 +329,13 @@
             const thn = document.getElementById('dob_tahun').value;
             const tanggal_lahir = `${thn}-${bln}-${tgl}`;
 
-            const desa = document.getElementById('desa').value; // Mengambil data yang sudah tanpa kata "Desa"
+            const desa = document.getElementById('desa').value;
             const kelompok = document.getElementById('kelompok').value;
             const kategori_usia = document.getElementById('kategori_usia').value;
             const kelas_formal = toTitleCase(document.getElementById('kelas_formal').value.trim());
+
+            // Mengunci data pendaftar saat ini ke memori sementara sebelum dikirim
+            dataPendaftarSementara = { desa, kelompok };
 
             try {
                 const { data, error } = await supabaseClient
@@ -297,7 +346,7 @@
                             jenis_kelamin: jenis_kelamin, 
                             tempat_lahir: tempat_lahir, 
                             tanggal_lahir: tanggal_lahir,
-                            desa: desa, // Terkirim ke Supabase tanpa kata "Desa"
+                            desa: desa, 
                             kelompok: kelompok,
                             kategori_usia: kategori_usia,
                             kelas_formal: kelas_formal
@@ -307,17 +356,14 @@
 
                 if (error) throw error;
 
+                // Memunculkan popup sukses dengan opsi sunting ulang bawaan
                 showModal(true);
-                document.getElementById('formGenerus').reset();
-                
-                kelompokSelect.disabled = true;
-                kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
-                kelompokSelect.classList.remove('bg-white', 'text-gray-800');
-                kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
 
             } catch (err) {
                 console.error('Detail Masalah:', err);
                 showModal(false, err.message || 'Koneksi bermasalah atau RLS policy belum disetting.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Kirim Data Generus";
             }
         });
     </script>
