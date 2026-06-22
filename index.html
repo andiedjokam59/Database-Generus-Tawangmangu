@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulir Mandiri Generus</title>
-    <!-- Memuat Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Memaksa visual input teks menjadi kapital di awal kata saat mengetik */
+        .capitalize-input {
+            text-transform: capitalize;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
@@ -14,35 +19,39 @@
         <h2 class="text-2xl font-bold mb-6 text-center text-emerald-600">Pendataan Generus</h2>
         
         <form id="formGenerus" class="space-y-4">
+            <!-- Nama -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
-                <input type="text" id="nama" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                <input type="text" id="nama" required class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
             </div>
             
+            <!-- Jenis Kelamin -->
             <div>
-                <label class="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
-                <select id="jenis_kelamin" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                <label class="block text-sm font-medium text-gray-700">Jenis Kelamin (L/P)</label>
+                <select id="jenis_kelamin" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
                     <option value="">-- Pilih Jenis Kelamin --</option>
                     <option value="L">L (Laki-laki)</option>
                     <option value="P">P (Perempuan)</option>
                 </select>
             </div>
 
+            <!-- Tempat & Tanggal Lahir -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Tempat Lahir</label>
-                    <input type="text" id="tempat_lahir" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <input type="text" id="tempat_lahir" required class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Tanggal Lahir</label>
-                    <input type="date" id="tanggal_lahir" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <input type="date" id="tanggal_lahir" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
             </div>
 
+            <!-- Desa & Kelompok (Dropdown Berjenjang) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Desa</label>
-                    <select id="desa" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border">
+                    <select id="desa" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
                         <option value="">-- Pilih Desa --</option>
                         <option value="Desa Karanglo Selatan">Desa Karanglo Selatan</option>
                         <option value="Desa Karanglo Utara">Desa Karanglo Utara</option>
@@ -52,22 +61,38 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Kelompok</label>
-                    <select id="kelompok" required disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-gray-100">
-                        <option value="">-- Pilih Desa Dahulu --</option>
+                    <select id="kelompok" required disabled class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border bg-gray-100 focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="">-- Pilih Desa Terlebih Dahulu --</option>
                     </select>
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 text-white p-3 rounded-md font-semibold hover:bg-emerald-700 transition">Kirim Data Mandiri</button>
+            <!-- Usia (Kategori) -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Kategori Usia</label>
+                <select id="kategori_usia" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+                    <option value="">-- Pilih Kategori --</option>
+                    <option value="PAUD">PAUD</option>
+                    <option value="TK">TK</option>
+                    <option value="Caberawit">Caberawit</option>
+                    <option value="Pra Remaja">Pra Remaja</option>
+                    <option value="Remaja">Remaja</option>
+                    <option value="Usia Mandiri">Usia Mandiri</option>
+                </select>
+            </div>
+
+            <!-- Kelas Formal -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Kelas Formal (Sekolah/Kuliah/Kerja)</label>
+                <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, atau Bekerja" class="capitalize-input mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-emerald-500 focus:border-emerald-500">
+            </div>
+            
+            <button type="submit" class="w-full bg-emerald-600 text-white p-3 rounded-md font-semibold hover:bg-emerald-700 transition">Kirim Data Mandiri</button>
         </form>
     </div>
 
     <script>
-        // Inisialisasi Supabase
-        const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
-        const SUPABASE_ANON_KEY = "GANTI_DENGAN_KEY_BARU_ANDA";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        // Data Dropdown Desa dan Kelompok
         const dataWilayah = {
             "Desa Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
             "Desa Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
@@ -78,7 +103,7 @@
         const desaSelect = document.getElementById('desa');
         const kelompokSelect = document.getElementById('kelompok');
 
-        // Logika Dropdown Berjenjang
+        // Logika Dropdown Berjenjang Desa -> Kelompok
         desaSelect.addEventListener('change', function() {
             const desaTerpilih = this.value;
             kelompokSelect.innerHTML = '<option value="">-- Pilih Kelompok --</option>';
@@ -86,48 +111,68 @@
             if(desaTerpilih && dataWilayah[desaTerpilih]) {
                 kelompokSelect.disabled = false;
                 kelompokSelect.classList.remove('bg-gray-100');
-                dataWilayah[desaTerpilih].forEach(kel => {
+                
+                dataWilayah[desaTerpilih].forEach(kelompok => {
                     const opt = document.createElement('option');
-                    opt.value = kel;
-                    opt.textContent = kel;
+                    opt.value = kelompok;
+                    opt.textContent = kelompok;
                     kelompokSelect.appendChild(opt);
                 });
             } else {
                 kelompokSelect.disabled = true;
                 kelompokSelect.classList.add('bg-gray-100');
+                kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
             }
         });
 
-        // Proses Submit
+        // Fungsi bantu untuk merubah teks menjadi Kapitalisasi Awal Kata (Title Case) sebelum dikirim ke database
+        function toTitleCase(str) {
+            return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+        }
+
+        // KONFIGURASI SUPABASE (Ganti dengan milik Anda)
+        const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         document.getElementById('formGenerus').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            btn.disabled = true;
-            btn.textContent = "Mengirim...";
+            
+            // Mengambil value dan otomatis merubah teks menjadi Kapital Di Awal Kata
+            const nama = toTitleCase(document.getElementById('nama').value.trim());
+            const jenis_kelamin = document.getElementById('jenis_kelamin').value;
+            const tempat_lahir = toTitleCase(document.getElementById('tempat_lahir').value.trim());
+            const tanggal_lahir = document.getElementById('tanggal_lahir').value;
+            const desa = document.getElementById('desa').value;
+            const kelompok = document.getElementById('kelompok').value;
+            const kategori_usia = document.getElementById('kategori_usia').value;
+            const kelas_formal = toTitleCase(document.getElementById('kelas_formal').value.trim());
 
-            const formData = {
-                nama: document.getElementById('nama').value,
-                jenis_kelamin: document.getElementById('jenis_kelamin').value,
-                tempat_lahir: document.getElementById('tempat_lahir').value,
-                tanggal_lahir: document.getElementById('tanggal_lahir').value,
-                desa: document.getElementById('desa').value,
-                kelompok: document.getElementById('kelompok').value
-            };
-
-            const { data, error } = await supabase.from('data_generus').insert([formData]);
+            // Kirim ke database Supabase
+            const { data, error } = await supabase
+                .from('data_generus')
+                .insert([
+                    { 
+                        nama: nama, 
+                        jenis_kelamin: jenis_kelamin, 
+                        tempat_lahir: tempat_lahir, 
+                        tanggal_lahir: tanggal_lahir,
+                        desa: desa,
+                        kelompok: kelompok,
+                        kategori_usia: kategori_usia,
+                        kelas_formal: kelas_formal
+                    }
+                ]);
 
             if (error) {
-                console.error("Error:", error);
                 alert('Gagal mengirim data: ' + error.message);
-                btn.disabled = false;
-                btn.textContent = "Kirim Data Mandiri";
             } else {
-                alert('Data berhasil disimpan!');
+                alert('Data berhasil disimpan! Terima kasih sudah mengisi secara mandiri.');
                 document.getElementById('formGenerus').reset();
                 kelompokSelect.disabled = true;
                 kelompokSelect.classList.add('bg-gray-100');
-                btn.disabled = false;
-                btn.textContent = "Kirim Data Mandiri";
+                kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
             }
         });
     </script>
