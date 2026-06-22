@@ -16,7 +16,7 @@
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-xl">
-        <h2 class="text-2xl font-bold mb-6 text-center text-emerald-600">Pendataan Mandiri Generus</h2>
+        <h2 class="text-2xl font-bold mb-6 text-center text-emerald-600">Pendataan Generus</h2>
         
         <form id="formGenerus" class="space-y-4">
             <!-- Nama -->
@@ -131,8 +131,8 @@
         }
 
         // KONFIGURASI SUPABASE (Ganti dengan milik Anda)
-        const SUPABASE_URL = "URL_SUPABASE_ANDA";
-        const SUPABASE_ANON_KEY = "ANON_KEY_SUPABASE_ANDA";
+        const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co/rest/v1/";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
         
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
