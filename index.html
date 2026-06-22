@@ -66,14 +66,37 @@
                 </select>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Tempat Lahir</label>
-                    <input type="text" id="tempat_lahir" required placeholder="Kota/Kabupaten" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Tanggal Lahir</label>
-                    <input type="date" id="tanggal_lahir" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Tempat Lahir</label>
+                <input type="text" id="tempat_lahir" required placeholder="Kota/Kabupaten" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Tanggal Lahir</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="dob_tanggal" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                        <option value="">Tgl</option>
+                    </select>
+                    
+                    <select id="dob_bulan" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                        <option value="">Bulan</option>
+                        <option value="01">Januari</option>
+                        <option value="02">Februari</option>
+                        <option value="03">Maret</option>
+                        <option value="04">April</option>
+                        <option value="05">Mei</option>
+                        <option value="06">Juni</option>
+                        <option value="07">Juli</option>
+                        <option value="08">Agustus</option>
+                        <option value="09">September</option>
+                        <option value="10">Oktober</option>
+                        <option value="11">November</option>
+                        <option value="12">Desember</option>
+                    </select>
+
+                    <select id="dob_tahun" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                        <option value="">Tahun</option>
+                    </select>
                 </div>
             </div>
 
@@ -116,14 +139,30 @@
             
             <div class="pt-2">
                 <button type="submit" id="submitBtn" class="w-full relative inline-flex items-center justify-center p-3.5 text-sm font-semibold tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl hover:from-emerald-700 hover:to-teal-700 shadow-[0_4px_12px_rgba(5,150,105,0.2)] hover:shadow-[0_6px_20px_rgba(5,150,105,0.3)] transition-all duration-300 transform active:scale-[0.98]">
-                    Kirim Data Mandiri
+                    Kirim Data Generus
                 </button>
             </div>
         </form>
     </div>
 
     <script>
-        // DATA WILAYAH DROPDOWN
+        // GENERATE DROPDOWN TANGGAL DAN TAHUN OTOMATIS
+        const dobTanggal = document.getElementById('dob_tanggal');
+        const dobTahun = document.getElementById('dob_tahun');
+
+        // Isi Tanggal 1 - 31
+        for (let i = 1; i <= 31; i++) {
+            const val = i < 10 ? '0' + i : i;
+            dobTanggal.options[dobTanggal.options.length] = new Option(val, val);
+        }
+
+        // Isi Tahun (Mundur 50 tahun dari tahun berjalan saat ini)
+        const tahunSekarang = new Date().getFullYear();
+        for (let i = tahunSekarang; i >= tahunSekarang - 50; i--) {
+            dobTahun.options[dobTahun.options.length] = new Option(i, i);
+        }
+
+        // DATA WILAYAH DROPDOWN (Sudah diperbaiki typo Gondang Bandardawung)
         const dataWilayah = {
             "Desa Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
             "Desa Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
@@ -180,7 +219,13 @@
             const nama = toTitleCase(document.getElementById('nama').value.trim());
             const jenis_kelamin = document.getElementById('jenis_kelamin').value;
             const tempat_lahir = toTitleCase(document.getElementById('tempat_lahir').value.trim());
-            const tanggal_lahir = document.getElementById('tanggal_lahir').value;
+            
+            // Menggabungkan dropdown tanggal menjadi string format YYYY-MM-DD
+            const tgl = document.getElementById('dob_tanggal').value;
+            const bln = document.getElementById('dob_bulan').value;
+            const thn = document.getElementById('dob_tahun').value;
+            const tanggal_lahir = `${thn}-${bln}-${tgl}`;
+
             const desa = document.getElementById('desa').value;
             const kelompok = document.getElementById('kelompok').value;
             const kategori_usia = document.getElementById('kategori_usia').value;
@@ -219,7 +264,7 @@
                 alert('Gagal mengirim data! Alasan: ' + (err.message || 'Koneksi bermasalah atau RLS policy belum disetting'));
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = "Kirim Data Mandiri";
+                submitBtn.textContent = "Kirim Data Generus";
             }
         });
     </script>
