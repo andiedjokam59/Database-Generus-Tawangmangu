@@ -29,7 +29,13 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 antialiased relative">
 
-    <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 w-full max-w-xl my-4">
+    <div class="absolute top-4 left-4 z-40">
+        <button type="button" id="toggleModeBtn" onclick="switchMode()" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200/60 shadow-sm transition-all duration-200">
+            <span id="modeIcon">🔄</span> <span id="modeText">Switch ke Mode Update</span>
+        </button>
+    </div>
+
+    <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 w-full max-w-xl my-8 relative">
         
         <div class="text-center mb-8">
             <div class="flex justify-center mb-4">
@@ -40,9 +46,21 @@
                     </svg>
                 </div>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-green-700">PENDATAAN GENERUS</h2>
-            <p class="text-xs sm:text-sm text-gray-500 mt-1.5 font-medium">Silakan lengkapi data generus anda dengan benar</p>
+            <h2 id="mainTitle" class="text-2xl sm:text-3xl font-bold tracking-tight text-green-700">PENDATAAN GENERUS</h2>
+            <p id="mainSubtitle" class="text-xs sm:text-sm text-gray-500 mt-1.5 font-medium">Silakan lengkapi data generus anda dengan benar</p>
             <div class="w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto mt-4 rounded-full"></div>
+        </div>
+
+        <div id="searchSection" class="hidden bg-gray-50 p-5 rounded-2xl border border-gray-100 mb-6 space-y-3.5">
+            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">🔍 Cari Data Lama</h3>
+            <p class="text-xs text-gray-400">Ketik nama lengkap generus yang sudah terdaftar sebelumnya untuk diperbarui.</p>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <input type="text" id="searchNama" placeholder="Ketik nama lengkap..." class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400 flex-1">
+                <button type="button" onclick="searchGenerusFromSupabase()" class="px-5 py-3 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition active:scale-[0.98]">
+                    Cari Data
+                </button>
+            </div>
+            <div id="searchFeedback" class="hidden text-xs p-3 rounded-xl font-medium"></div>
         </div>
         
         <form id="formGenerus" class="space-y-5">
@@ -137,11 +155,9 @@
         </form>
     </div>
 
-    <!-- MODAL POPUP MULTIFUNGSI (KONFIRMASI & STATUS) -->
     <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl transform scale-95 transition-transform duration-300">
             
-            <!-- Tahap 1: Cek Ulang Data (Sebelum Masuk Supabase) -->
             <div id="modalReview" class="hidden text-left">
                 <h3 class="text-lg font-bold text-gray-800 mb-3 text-center border-b pb-2">🔍 Cek Ulang Data Anda</h3>
                 <p class="text-xs text-gray-500 mb-4 text-center">Pastikan semua data di bawah ini sudah benar sebelum disimpan.</p>
@@ -166,7 +182,6 @@
                 </div>
             </div>
 
-            <!-- Tahap 2: Sukses Terkirim -->
             <div id="modalSuccess" class="hidden text-center">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -180,7 +195,6 @@
                 </button>
             </div>
 
-            <!-- Tahap 3: Gagal Terkirim -->
             <div id="modalError" class="hidden text-center">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -198,6 +212,16 @@
     </div>
 
     <script>
+        // Supabase Init
+        const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Variabel Kontrol Aplikasi
+        let currentMode = "DAFTAR"; // Opsi: "DAFTAR" atau "UPDATE"
+        let targetIdGenerus = null; // Menyimpan ID data jika sedang mengedit
+        let payloadData = null;
+
         const dobTanggal = document.getElementById('dob_tanggal');
         const dobTahun = document.getElementById('dob_tahun');
 
@@ -221,34 +245,146 @@
         const kelompokSelect = document.getElementById('kelompok');
         const submitBtn = document.getElementById('submitBtn');
         const confirmSaveBtn = document.getElementById('confirmSaveBtn');
-        
         const customModal = document.getElementById('customModal');
         const modalReview = document.getElementById('modalReview');
         const modalSuccess = document.getElementById('modalSuccess');
         const modalError = document.getElementById('modalError');
         const errorMessage = document.getElementById('errorMessage');
 
-        // Memori Penyimpanan Sementara sebelum user klik "Sudah Benar"
-        let payloadData = null;
-
         desaSelect.addEventListener('change', function() {
-            const desaTerpilih = this.value;
+            updateKelompokDropdown(this.value, "");
+        });
+
+        function updateKelompokDropdown(desaTerpilih, kelompokTerpilih) {
             kelompokSelect.innerHTML = '<option value="">-- Pilih Kelompok --</option>';
             if(desaTerpilih && dataWilayah[desaTerpilih]) {
                 kelompokSelect.disabled = false;
                 kelompokSelect.classList.remove('bg-gray-50/50', 'text-gray-400');
                 kelompokSelect.classList.add('bg-white', 'text-gray-800');
-                dataWilayah[desaTerpilih].forEach(k => kelompokSelect.add(new Option(k, k)));
+                dataWilayah[desaTerpilih].forEach(k => {
+                    const opt = new Option(k, k);
+                    if(k === kelompokTerpilih) opt.selected = true;
+                    kelompokSelect.add(opt);
+                });
             } else {
                 kelompokSelect.disabled = true;
                 kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
                 kelompokSelect.classList.remove('bg-white', 'text-gray-800');
             }
-        });
+        }
 
         function toTitleCase(str) { return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }
 
-        // STEP 1: Tombol Form Utama ditekan -> Tahan Data, Tampilkan review cek ulang
+        // FUNGSI GANTI MODE (DAFTAR BARU <-> UPDATE DATA)
+        function switchMode(forcedMode = null) {
+            if (forcedMode) currentMode = forcedMode;
+            else currentMode = currentMode === "DAFTAR" ? "UPDATE" : "DAFTAR";
+
+            const toggleModeBtn = document.getElementById('toggleModeBtn');
+            const modeIcon = document.getElementById('modeIcon');
+            const modeText = document.getElementById('modeText');
+            const searchSection = document.getElementById('searchSection');
+            const formGenerus = document.getElementById('formGenerus');
+            const mainTitle = document.getElementById('mainTitle');
+            const mainSubtitle = document.getElementById('mainSubtitle');
+
+            // Reset Form & Feedback
+            formGenerus.reset();
+            updateKelompokDropdown("", "");
+            document.getElementById('searchNama').value = "";
+            document.getElementById('searchFeedback').className = "hidden text-xs p-3 rounded-xl font-medium";
+            targetIdGenerus = null;
+
+            if (currentMode === "UPDATE") {
+                modeIcon.textContent = "➕";
+                modeText.textContent = "Switch ke Mode Daftar Baru";
+                mainTitle.textContent = "UPDATE DATA GENERUS";
+                mainSubtitle.textContent = "Cari nama anda terlebih dahulu untuk diperbarui";
+                searchSection.classList.remove('hidden');
+                formGenerus.classList.add('hidden'); // Sembunyikan form sebelum dicari
+                submitBtn.textContent = "Perbarui Data Generus";
+            } else {
+                modeIcon.textContent = "🔄";
+                modeText.textContent = "Switch ke Mode Update";
+                mainTitle.textContent = "PENDATAAN GENERUS";
+                mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
+                searchSection.classList.add('hidden');
+                formGenerus.classList.remove('hidden');
+                submitBtn.textContent = "Kirim Data Generus";
+            }
+        }
+
+        // FUNGSI PROSES PENCARIAN KE SUPABASE
+        async function searchGenerusFromSupabase() {
+            const keyword = document.getElementById('searchNama').value.trim();
+            const feedback = document.getElementById('searchFeedback');
+            const formGenerus = document.getElementById('formGenerus');
+
+            if (!keyword) {
+                alert("Ketik nama yang ingin dicari!");
+                return;
+            }
+
+            feedback.className = "text-xs p-3 rounded-xl font-medium bg-blue-50 text-blue-700 block";
+            feedback.textContent = "⏳ Sedang mencari data...";
+
+            try {
+                // Mencari nama yang mirip (case-insensitive)
+                const { data, error } = await supabaseClient
+                    .from('data_generus')
+                    .select('*')
+                    .ilike('nama', `%${keyword}%`);
+
+                if (error) throw error;
+
+                if (data.length === 0) {
+                    feedback.className = "text-xs p-3 rounded-xl font-medium bg-amber-50 text-amber-700 block space-y-2";
+                    feedback.innerHTML = `
+                        <p>❌ Nama "<strong>${keyword}</strong>" tidak ditemukan di database.</p>
+                        <p class="font-normal text-gray-500">Apakah ini generus baru? Silakan klik tombol di bawah:</p>
+                        <button type="button" onclick="switchMode('DAFTAR')" class="mt-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-[11px] transition">Daftar Sekarang</button>
+                    `;
+                    formGenerus.classList.add('hidden');
+                } else {
+                    // Jika ada beberapa nama mirip, ambil yang paling pertama (atau index 0)
+                    const match = data[0];
+                    targetIdGenerus = match.id; // Kunci ID untuk proses update nanti
+
+                    feedback.className = "text-xs p-3 rounded-xl font-medium bg-green-50 text-green-700 block";
+                    feedback.innerHTML = `✅ Data ditemukan! Silakan periksa atau sesuaikan data di bawah.`;
+
+                    // ISI OTOMATIS FORM UTAMA DENGAN DATA LAMA
+                    document.getElementById('nama').value = match.nama;
+                    document.getElementById('jenis_kelamin').value = match.jenis_kelamin;
+                    document.getElementById('tempat_lahir').value = match.tempat_lahir;
+                    
+                    // Parsing Tanggal Lahir (YYYY-MM-DD)
+                    if (match.tanggal_lahir) {
+                        const parts = match.tanggal_lahir.split('-');
+                        if(parts.length === 3) {
+                            document.getElementById('dob_tahun').value = parts[0];
+                            document.getElementById('dob_bulan').value = parts[1];
+                            document.getElementById('dob_tanggal').value = parts[2];
+                        }
+                    }
+
+                    document.getElementById('desa').value = match.desa;
+                    updateKelompokDropdown(match.desa, match.kelompok);
+                    document.getElementById('kategori_usia').value = match.kategori_usia;
+                    document.getElementById('kelas_formal').value = match.kelas_formal;
+
+                    // Munculkan Form untuk diedit
+                    formGenerus.classList.remove('hidden');
+                }
+
+            } catch (err) {
+                console.error(err);
+                feedback.className = "text-xs p-3 rounded-xl font-medium bg-red-50 text-red-700 block";
+                feedback.textContent = "Gagal memproses pencarian: " + err.message;
+            }
+        }
+
+        // TAHAP SUBMIT FORM (TAHAN DATA UNTUK DICECK ULANG)
         document.getElementById('formGenerus').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -263,14 +399,13 @@
             const kategori = document.getElementById('kategori_usia').value;
             const kelas = toTitleCase(document.getElementById('kelas_formal').value.trim());
 
-            // Masukkan ke memori sementara (Belum dikirim ke mana-mana)
             payloadData = { 
                 nama, jenis_kelamin: jk, tempat_lahir: tempat, 
                 tanggal_lahir: `${thn}-${bln}-${tgl}`, desa, kelompok, 
                 kategori_usia: kategori, kelas_formal: kelas 
             };
 
-            // Tampilkan data ke teks di dalam modal review
+            // Set visual Review data di Modal
             document.getElementById('revNama').textContent = nama;
             document.getElementById('revJK').textContent = jk === "L" ? "Laki-laki" : "Perempuan";
             document.getElementById('revTTL').textContent = `${tempat}, ${tgl}-${bln}-${thn}`;
@@ -279,7 +414,7 @@
             document.getElementById('revUsia').textContent = kategori;
             document.getElementById('revKelas').textContent = kelas;
 
-            // Buka modal review
+            // Buka Modal Review
             modalReview.classList.remove('hidden');
             modalSuccess.classList.add('hidden');
             modalError.classList.add('hidden');
@@ -287,11 +422,7 @@
             setTimeout(() => { customModal.classList.remove('opacity-0'); customModal.querySelector('div').classList.remove('scale-95'); }, 10);
         });
 
-        // STEP 2: Jika Klik "Sudah Benar" -> Data Baru Meluncur ke Supabase
-        const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        // TAHAP EKSEKUSI NYATA KE SUPABASE (SETELAH KLIK "SUDAH BENAR")
         async function executeSaveToSupabase() {
             if(!payloadData) return;
             
@@ -299,44 +430,52 @@
             confirmSaveBtn.textContent = "Menyimpan...";
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('data_generus')
-                    .insert([payloadData]);
+                let resultError = null;
 
-                if (error) throw error;
+                if (currentMode === "UPDATE" && targetIdGenerus) {
+                    // JALUR UPDATE DATA (Menggunakan perintah .update() berdasarkan ID)
+                    const { error } = await supabaseClient
+                        .from('data_generus')
+                        .update(payloadData)
+                        .eq('id', targetIdGenerus);
+                    resultError = error;
+                } else {
+                    // JALUR DAFTAR BARU (Menggunakan .insert())
+                    const { error } = await supabaseClient
+                        .from('data_generus')
+                        .insert([payloadData]);
+                    resultError = error;
+                }
 
-                // Tampilkan sukses
+                if (resultError) throw resultError;
+
                 modalReview.classList.add('hidden');
                 modalSuccess.classList.remove('hidden');
+
             } catch (err) {
                 console.error(err);
                 modalReview.classList.add('hidden');
                 modalError.classList.remove('hidden');
-                errorMessage.textContent = err.message || 'Koneksi terputus.';
+                errorMessage.textContent = err.message || 'Koneksi bermasalah.';
             } finally {
                 confirmSaveBtn.disabled = false;
                 confirmSaveBtn.textContent = "✅ Sudah Benar";
             }
         }
 
-        // Fungsi jika user klik "Perbaiki" (Hanya menutup modal, isi form tetap aman utuh)
         function closeModalOnly() {
             customModal.classList.add('opacity-0');
             customModal.querySelector('div').classList.add('scale-95');
             setTimeout(() => { customModal.classList.add('hidden'); }, 300);
         }
 
-        // Fungsi selesai sukses (Form dibersihkan total untuk pendaftar selanjutnya)
         function finalResetAndClose() {
             customModal.classList.add('opacity-0');
             customModal.querySelector('div').classList.add('scale-95');
             setTimeout(() => {
                 customModal.classList.add('hidden');
-                document.getElementById('formGenerus').reset();
-                kelompokSelect.disabled = true;
-                kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
-                kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
-                payloadData = null;
+                // Kembalikan ke mode default awal setelah berhasil
+                switchMode("DAFTAR");
             }, 300);
         }
     </script>
