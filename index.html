@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <meta http-serif="cache-control" content="no-cache, no-store, must-revalidate">
-    <meta http-serif="pragma" content="no-cache">
-    <meta http-serif="expires" content="0">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    
     <title>Formulir Mandiri Generus</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,7 +23,6 @@
             text-transform: capitalize;
         }
 
-        /* Gaya custom untuk mempercantik input focus */
         .glass-input {
             transition: all 0.3s ease;
             background-color: #ffffff;
@@ -153,7 +153,7 @@
         <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300">
             
             <div id="modalSuccess" class="hidden">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4 animate-bounce">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -163,23 +163,23 @@
             </div>
 
             <div id="modalError" class="hidden">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4 animate-pulse">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-1">Gagal Terkirim</h3>
-                <p id="errorMessage" class="text-xs text-gray-400 mt-2 bg-gray-50 p-2 rounded border border-dashed break-words text-left max-h-24 overflow-y-auto">Detail masalah sistem.</p>
+                <p id="errorMessage" class="text-xs text-gray-400 mt-2 bg-gray-50 p-2 rounded border border-dashed break-words text-left max-h-24 overflow-y-auto">Detail Error.</p>
             </div>
 
-            <button onclick="closeModal()" class="mt-6 w-full py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition">
+            <button type="button" onclick="closeModal()" class="mt-6 w-full py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition">
                 Tutup
             </button>
         </div>
     </div>
 
     <script>
-        // GENERATE DROPDOWN TANGGAL DAN TAHUN OTOMATIS
+        // Generate Dropdown Tanggal Otomatis
         const dobTanggal = document.getElementById('dob_tanggal');
         const dobTahun = document.getElementById('dob_tahun');
 
@@ -193,7 +193,7 @@
             dobTahun.options[dobTahun.options.length] = new Option(i, i);
         }
 
-        // DATA WILAYAH DROPDOWN (Sudah diperbaiki typo Gondang)
+        // Data Wilayah (Sudah Diperbaiki)
         const dataWilayah = {
             "Desa Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
             "Desa Karanglo Utara": ["Pandeyan", "Dukuh", "Sadakan Lor", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sekuwung", "Cepogo", "Plombokan"],
@@ -205,13 +205,11 @@
         const kelompokSelect = document.getElementById('kelompok');
         const submitBtn = document.getElementById('submitBtn');
         
-        // Elemen Modal
         const customModal = document.getElementById('customModal');
         const modalSuccess = document.getElementById('modalSuccess');
         const modalError = document.getElementById('modalError');
         const errorMessage = document.getElementById('errorMessage');
 
-        // LOGIKA DROPDOWN BERJENJANG
         desaSelect.addEventListener('change', function() {
             const desaTerpilih = this.value;
             kelompokSelect.innerHTML = '<option value="">-- Pilih Kelompok --</option>';
@@ -235,7 +233,7 @@
             }
         });
 
-        // FUNGSI LOGIKA MODAL CUSTOM
+        // Logika Pengontrol Tampilan Modal Custom
         function showModal(isSuccess, messageText = "") {
             customModal.classList.remove('hidden');
             setTimeout(() => {
@@ -265,13 +263,13 @@
             return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
         }
 
-        // KONFIGURASI SUPABASE
+        // KREDENSIAL SUPABASE
         const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // PROSES SUBMIT FORM
+        // Menangkap Aksi Kirim Form Secara Aman
         document.getElementById('formGenerus').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -311,7 +309,7 @@
 
                 if (error) throw error;
 
-                // Tampilkan Modal Sukses
+                // Memanggil Modal Sukses Custom
                 showModal(true);
                 document.getElementById('formGenerus').reset();
                 
@@ -321,8 +319,8 @@
                 kelompokSelect.innerHTML = '<option value="">-- Pilih Desa Terlebih Dahulu --</option>';
 
             } catch (err) {
-                console.error('Detail Error:', err);
-                // Tampilkan Modal Gagal + Detail Pesan Error (Misal: masalah RLS Policy)
+                console.error('Detail Masalah:', err);
+                // Memanggil Modal Gagal Custom
                 showModal(false, err.message || 'Koneksi bermasalah atau RLS policy belum disetting.');
             } finally {
                 submitBtn.disabled = false;
