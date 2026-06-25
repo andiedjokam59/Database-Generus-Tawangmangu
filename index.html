@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Tag Anti-Cache -->
     <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="0">
@@ -95,7 +94,6 @@
 
     <div class="bg-white/90 backdrop-blur-md p-6 sm:p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 w-full max-w-xl my-4 relative">
         
-        <!-- TOMBOL REKAP DATA (POJOK KANAN ATAS) -->
         <div class="absolute top-4 right-4 sm:top-6 sm:right-6">
             <button type="button" onclick="openRekapAuth()" class="inline-flex items-center justify-center p-2.5 rounded-xl bg-gray-50 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 border border-gray-200/60 transition active:scale-[0.95]" title="Rekap Data">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
@@ -104,7 +102,6 @@
             </button>
         </div>
 
-        <!-- SWITCH MENU ELEGAN (SEGMENTED CONTROL) DENGAN IKON SATU WARNA -->
         <div class="bg-gray-100 p-1 rounded-xl grid grid-cols-2 gap-1 mb-8 max-w-sm mx-auto text-center border border-gray-200/40 shadow-inner">
             <button type="button" id="tabDaftar" onclick="switchMode('DAFTAR')" class="inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
@@ -120,7 +117,6 @@
             </button>
         </div>
 
-        <!-- HEADER -->
         <div class="text-center mb-8">
             <div class="flex justify-center mb-4">
                 <img src="logo insan qurany.jpg" alt="Logo" class="h-20 w-auto object-contain drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
@@ -135,20 +131,38 @@
             <div class="w-12 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto mt-4 rounded-full"></div>
         </div>
 
-        <!-- MENU PENCARIAN DATA (Hanya muncul di Mode Update) -->
         <div id="searchSection" class="hidden bg-gray-50 p-5 rounded-2xl border border-gray-100 mb-6 space-y-3.5">
             <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider">🔍 Cari Data Lama</h3>
-            <p class="text-xs text-gray-400">Ketik nama lengkap generus yang sudah terdaftar sebelumnya untuk diperbarui.</p>
-            <div class="flex flex-col sm:flex-row gap-2">
-                <input type="text" id="searchNama" placeholder="Ketik nama lengkap..." class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400 flex-1">
-                <button type="button" onclick="searchGenerusFromSupabase()" class="px-5 py-3 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition active:scale-[0.98]">
+            <p class="text-xs text-gray-400">Pilih kelompok dan ketik nama lengkap generus untuk diperbarui.</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1">Desa Pencarian</label>
+                    <select id="searchDesa" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-2.5 border text-xs text-gray-800 bg-white">
+                        <option value="">-- Pilih Desa --</option>
+                        <option value="Karanglo Selatan">Karanglo Selatan</option>
+                        <option value="Karanglo Utara">Karanglo Utara</option>
+                        <option value="Bandardawung">Bandardawung</option>
+                        <option value="Krangean">Krangean</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1">Kelompok Pencarian</label>
+                    <select id="searchKelompok" disabled class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-2.5 border text-xs text-gray-400 bg-gray-50/50">
+                        <option value="">-- Pilih Desa Terlebih Dahulu --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                <input type="text" id="searchNama" disabled placeholder="Pilih desa & kelompok dahulu..." class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-400 bg-gray-50/50 placeholder-gray-400 flex-1">
+                <button type="button" id="searchBtn" disabled onclick="searchGenerusFromSupabase()" class="px-5 py-3 text-sm font-semibold text-white bg-gray-300 cursor-not-allowed rounded-xl shadow-sm transition">
                     Cari Data
                 </button>
             </div>
             <div id="searchFeedback" class="hidden text-xs p-3 rounded-xl font-medium"></div>
         </div>
         
-        <!-- FORM UTAMA -->
         <form id="formGenerus" class="space-y-5">
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Nama Lengkap</label>
@@ -225,7 +239,7 @@
                     <option value="Pra Remaja">Pra Remaja</option>
                     <option value="Remaja">Remaja</option>
                     <option value="Usia Mandiri">Usia Mandiri</option>
-                    <option value="Sudah Menikah" id="optMenikah" class="hidden bg-red-50 text-red-700 font-semibold">👉 Sudah Menikah</option>
+                    <option value="Sudah Menikah/Non Aktif" id="optMenikah" class="hidden bg-red-50 text-red-700 font-semibold">👉 Sudah Menikah/Non Aktif</option>
                 </select>
             </div>
 
@@ -242,11 +256,9 @@
         </form>
     </div>
 
-    <!-- MODAL POPUP MULTIFUNGSI -->
     <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
             
-            <!-- TAHAP AUTH REKAP (PASSWORD) -->
             <div id="modalAuthRekap" class="hidden text-center space-y-4">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-emerald-50 text-emerald-600">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
@@ -263,21 +275,17 @@
                 </div>
             </div>
 
-            <!-- TAHAP VIEW REKAP DATA -->
             <div id="modalViewRekap" class="hidden text-left space-y-5">
                 <div class="flex items-center justify-between border-b pb-3">
                     <h3 class="text-base font-bold text-gray-800 flex items-center gap-2">📊 Rekapitulasi Data Generus</h3>
                     <span class="text-[11px] px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded-full" id="rekapTotalData">Total: 0</span>
                 </div>
                 
-                <!-- LOADING SCREEN UNTUK REKAP -->
                 <div id="rekapLoader" class="text-center py-8 text-sm font-medium text-gray-500">
                     ⏳ Sedang menghitung dan menyusun data...
                 </div>
 
-                <!-- ISI REKAP -->
                 <div id="rekapContent" class="hidden space-y-6 max-h-[60vh] overflow-y-auto pr-1">
-                    <!-- 1. Berdasarkan Kategori Usia -->
                     <div class="space-y-2">
                         <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wide">1. Berdasarkan Kategori Usia</h4>
                         <div class="overflow-hidden border border-gray-100 rounded-xl shadow-sm">
@@ -291,18 +299,15 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tableUsiaBody" class="divide-y divide-gray-100 text-gray-700">
-                                    <!-- Terisi Otomatis via JS -->
-                                </tbody>
+                                    </tbody>
                                 <tfoot class="bg-gray-100 font-bold text-gray-800 border-t-2 border-gray-200">
                                     <tr id="tableUsiaFoot">
-                                        <!-- Terisi Otomatis via JS -->
-                                    </tr>
+                                        </tr>
                                 </tfoot>
                             </table>
                         </div>
                     </div>
 
-                    <!-- 2. Berdasarkan Kelas Formal / Status -->
                     <div class="space-y-2">
                         <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wide">2. Berdasarkan Kelas Formal / Status</h4>
                         <div class="overflow-hidden border border-gray-100 rounded-xl shadow-sm">
@@ -316,19 +321,16 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tableKelasBody" class="divide-y divide-gray-100 text-gray-700">
-                                    <!-- Terisi Otomatis via JS -->
-                                </tbody>
+                                    </tbody>
                                 <tfoot class="bg-gray-100 font-bold text-gray-800 border-t-2 border-gray-200">
                                     <tr id="tableKelasFoot">
-                                        <!-- Terisi Otomatis via JS -->
-                                    </tr>
+                                        </tr>
                                 </tfoot>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer Buttons -->
                 <div class="pt-3 text-right border-t flex items-center justify-end gap-2">
                     <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 py-2 px-4 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition shadow-sm active:scale-[0.97]">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
@@ -342,7 +344,6 @@
                 </div>
             </div>
 
-            <!-- Tahap 1: Cek Ulang Data -->
             <div id="modalReview" class="hidden text-left">
                 <h3 id="reviewTitle" class="text-lg font-bold text-gray-800 mb-3 text-center border-b pb-2">🔍 Cek Ulang Data Anda</h3>
                 <p id="reviewSubtitle" class="text-xs text-gray-500 mb-4 text-center">Pastikan semua data di bawah ini sudah benar sebelum disimpan.</p>
@@ -367,7 +368,6 @@
                 </div>
             </div>
 
-            <!-- Tahap 2: Sukses Terkirim -->
             <div id="modalSuccess" class="hidden text-center">
                 <div id="successIcon" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -381,17 +381,16 @@
                 </button>
             </div>
 
-            <!-- Tahap 3: Gagal Terkirim -->
             <div id="modalError" class="hidden text-center">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
+                <div id="errorIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-1">Gagal Terkirim</h3>
-                <p id="errorMessage" class="text-xs text-gray-400 mt-2 bg-gray-50 p-2 rounded border border-dashed break-words text-left max-h-24 overflow-y-auto"></p>
+                <h3 id="errorTitle" class="text-xl font-bold text-gray-800 mb-1">Gagal Terkirim</h3>
+                <p id="errorMessage" class="text-xs text-gray-500 mt-2 bg-gray-50 p-3 rounded-xl border border-dashed border-gray-200 break-words text-left max-h-32 overflow-y-auto font-medium"></p>
                 <button type="button" onclick="closeModalOnly()" class="mt-6 w-full py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition">
-                    Coba Lagi
+                    Kembali
                 </button>
             </div>
 
@@ -428,6 +427,11 @@
 
         const desaSelect = document.getElementById('desa');
         const kelompokSelect = document.getElementById('kelompok');
+        const searchDesaSelect = document.getElementById('searchDesa');
+        const searchKelompokSelect = document.getElementById('searchKelompok');
+        const searchNamaInput = document.getElementById('searchNama');
+        const searchBtn = document.getElementById('searchBtn');
+        
         const submitBtn = document.getElementById('submitBtn');
         const confirmSaveBtn = document.getElementById('confirmSaveBtn');
         const customModal = document.getElementById('customModal');
@@ -448,24 +452,86 @@
         const rekapTotalData = document.getElementById('rekapTotalData');
 
         desaSelect.addEventListener('change', function() {
-            updateKelompokDropdown(this.value, "");
+            updateKelompokDropdown(this.value, "", kelompokSelect);
         });
 
-        function updateKelompokDropdown(desaTerpilih, kelompokTerpilih) {
-            kelompokSelect.innerHTML = '<option value="">-- Pilih Kelompok --</option>';
+        searchDesaSelect.addEventListener('change', function() {
+            updateKelompokDropdown(this.value, "", searchKelompokSelect, "-- Pilih Kelompok Pencarian --");
+            checkSearchInputs();
+        });
+
+        searchKelompokSelect.addEventListener('change', function() {
+            checkSearchInputs();
+        });
+
+        function checkSearchInputs() {
+            if (searchDesaSelect.value && searchKelompokSelect.value) {
+                searchNamaInput.disabled = false;
+                searchNamaInput.placeholder = "Ketik nama lengkap...";
+                searchNamaInput.classList.remove('bg-gray-50/50', 'text-gray-400');
+                searchNamaInput.classList.add('bg-white', 'text-gray-800');
+
+                searchBtn.disabled = false;
+                searchBtn.className = "px-5 py-3 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition active:scale-[0.98]";
+            } else {
+                searchNamaInput.disabled = true;
+                searchNamaInput.value = "";
+                searchNamaInput.placeholder = "Pilih desa & kelompok dahulu...";
+                searchNamaInput.classList.add('bg-gray-50/50', 'text-gray-400');
+                searchNamaInput.classList.remove('bg-white', 'text-gray-800');
+
+                searchBtn.disabled = true;
+                searchBtn.className = "px-5 py-3 text-sm font-semibold text-white bg-gray-300 cursor-not-allowed rounded-xl shadow-sm transition";
+            }
+        }
+
+        function triggerPopupModal(title, msg, type = 'error') {
+            const errorTitle = document.getElementById('errorTitle');
+            const errorIconContainer = document.getElementById('errorIconContainer');
+            
+            errorTitle.textContent = title;
+            errorMessage.textContent = msg;
+
+            if(type === 'warning') {
+                errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 text-amber-600 mb-4";
+                errorIconContainer.innerHTML = `
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                `;
+            } else {
+                errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4";
+                errorIconContainer.innerHTML = `
+                    <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                `;
+            }
+
+            modalAuthRekap.classList.add('hidden');
+            modalViewRekap.classList.add('hidden');
+            modalReview.classList.add('hidden');
+            modalSuccess.classList.add('hidden');
+            modalError.classList.remove('hidden');
+            customModal.classList.remove('hidden');
+            setTimeout(() => { customModal.classList.remove('opacity-0'); customModal.querySelector('div').classList.remove('scale-95'); }, 10);
+        }
+
+        function updateKelompokDropdown(desaTerpilih, kelompokTerpilih, targetSelect, placeholderText = "-- Pilih Kelompok --") {
+            targetSelect.innerHTML = `<option value="">${placeholderText}</option>`;
             if(desaTerpilih && dataWilayah[desaTerpilih]) {
-                kelompokSelect.disabled = false;
-                kelompokSelect.classList.remove('bg-gray-50/50', 'text-gray-400');
-                kelompokSelect.classList.add('bg-white', 'text-gray-800');
+                targetSelect.disabled = false;
+                targetSelect.classList.remove('bg-gray-50/50', 'text-gray-400');
+                targetSelect.classList.add('bg-white', 'text-gray-800');
                 dataWilayah[desaTerpilih].forEach(k => {
                     const opt = new Option(k, k);
                     if(k === kelompokTerpilih) opt.selected = true;
-                    kelompokSelect.add(opt);
+                    targetSelect.add(opt);
                 });
             } else {
-                kelompokSelect.disabled = true;
-                kelompokSelect.classList.add('bg-gray-50/50', 'text-gray-400');
-                kelompokSelect.classList.remove('bg-white', 'text-gray-800');
+                targetSelect.disabled = true;
+                targetSelect.classList.add('bg-gray-50/50', 'text-gray-400');
+                targetSelect.classList.remove('bg-white', 'text-gray-800');
             }
         }
 
@@ -482,8 +548,10 @@
             const mainSubtitle = document.getElementById('mainSubtitle');
 
             formGenerus.reset();
-            updateKelompokDropdown("", "");
-            document.getElementById('searchNama').value = "";
+            updateKelompokDropdown("", "", kelompokSelect);
+            updateKelompokDropdown("", "", searchKelompokSelect, "-- Pilih Kelompok Pencarian --");
+            document.getElementById('searchDesa').value = "";
+            checkSearchInputs();
             document.getElementById('searchFeedback').className = "hidden text-xs p-3 rounded-xl font-medium";
             targetIdGenerus = null;
 
@@ -492,7 +560,7 @@
                 tabDaftar.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
                 
                 mainTitle.textContent = "UPDATE DATA GENERUS";
-                mainSubtitle.textContent = "Cari nama anda terlebih dahulu untuk diperbarui";
+                mainSubtitle.textContent = "Cari kelompok dan nama anda terlebih dahulu untuk diperbarui";
                 searchSection.classList.remove('hidden');
                 formGenerus.classList.add('hidden');
                 submitBtn.textContent = "Perbarui Data Generus";
@@ -511,12 +579,18 @@
         }
 
         async function searchGenerusFromSupabase() {
+            const sDesa = document.getElementById('searchDesa').value;
+            const sKelompok = document.getElementById('searchKelompok').value;
             const keyword = document.getElementById('searchNama').value.trim();
             const feedback = document.getElementById('searchFeedback');
             const formGenerus = document.getElementById('formGenerus');
 
+            if (!sDesa || !sKelompok) {
+                triggerPopupModal("Pencarian Gagal", "Silakan tentukan Desa dan Kelompok pencarian terlebih dahulu!", "warning");
+                return;
+            }
             if (!keyword) {
-                alert("Ketik nama yang ingin dicari!");
+                triggerPopupModal("Kolom Kosong", "Silakan ketik nama generus yang ingin dicari!", "warning");
                 return;
             }
 
@@ -527,6 +601,8 @@
                 const { data, error } = await supabaseClient
                     .from('data_generus')
                     .select('*')
+                    .eq('desa', sDesa)
+                    .eq('kelompok', sKelompok)
                     .ilike('nama', `%${keyword}%`);
 
                 if (error) throw error;
@@ -534,8 +610,8 @@
                 if (data.length === 0) {
                     feedback.className = "text-xs p-3 rounded-xl font-medium bg-amber-50 text-amber-700 block space-y-2";
                     feedback.innerHTML = `
-                        <p>❌ Nama "<strong>${keyword}</strong>" tidak ditemukan.</p>
-                        <p class="font-normal text-gray-500">Apakah ini generus baru? Silakan daftar lewat menu pendaftaran.</p>
+                        <p>❌ Nama "<strong>${keyword}</strong>" tidak ditemukan di kelompok <strong>${sKelompok}</strong>.</p>
+                        <p class="font-normal text-gray-500">Apakah salah memilih kelompok atau ini generus baru? Silakan daftar lewat menu pendaftaran.</p>
                         <button type="button" onclick="switchMode('DAFTAR')" class="mt-1 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-[11px] transition">Buka Form Pendaftaran Baru</button>
                     `;
                     formGenerus.classList.add('hidden');
@@ -560,7 +636,7 @@
                     }
 
                     document.getElementById('desa').value = match.desa;
-                    updateKelompokDropdown(match.desa, match.kelompok);
+                    updateKelompokDropdown(match.desa, match.kelompok, kelompokSelect);
                     document.getElementById('kategori_usia').value = match.kategori_usia;
                     document.getElementById('kelas_formal').value = match.kelas_formal;
 
@@ -598,10 +674,10 @@
             const revSubtitle = document.getElementById('reviewSubtitle');
             const confirmBtn = document.getElementById('confirmSaveBtn');
 
-            if (currentMode === "UPDATE" && kategori === "Sudah Menikah") {
+            if (currentMode === "UPDATE" && kategori === "Sudah Menikah/Non Aktif") {
                 revTitle.textContent = "⚠️ Konfirmasi Hapus Generus";
                 revTitle.className = "text-lg font-bold text-red-600 mb-3 text-center border-b pb-2";
-                revSubtitle.textContent = `Anda memilih status "Sudah Menikah". Menekan tombol di bawah akan menghapus generus ini secara permanen dari database aktif.`;
+                revSubtitle.textContent = `Anda memilih status "Sudah Menikah/Non Aktif". Menekan tombol di bawah akan menghapus generus ini secara permanen dari database aktif.`;
                 confirmBtn.className = "py-2.5 px-4 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 shadow-md transition";
                 confirmBtn.textContent = "💥 Ya, Hapus Data";
             } else {
@@ -638,7 +714,7 @@
 
             try {
                 let resultError = null;
-                const isMenikah = (payloadData.kategori_usia === "Sudah Menikah");
+                const isMenikah = (payloadData.kategori_usia === "Sudah Menikah/Non Aktif");
 
                 if (currentMode === "UPDATE" && targetIdGenerus && isMenikah) {
                     btn.textContent = "Menghapus...";
@@ -684,8 +760,7 @@
             } catch (err) {
                 console.error(err);
                 modalReview.classList.add('hidden');
-                modalError.classList.remove('hidden');
-                errorMessage.textContent = err.message || 'Koneksi bermasalah.';
+                triggerPopupModal("Gagal Menyimpan", err.message || 'Koneksi bermasalah dengan database.', "error");
             } finally {
                 btn.disabled = false;
             }
@@ -705,12 +780,12 @@
 
         function validateRekapAuth() {
             const pass = document.getElementById('passwordAdmin').value;
-            if(pass === "admin") {
+            if(pass === "adminIQ") {
                 modalAuthRekap.classList.add('hidden');
                 modalViewRekap.classList.remove('hidden');
                 fetchAndBuildRekap();
             } else {
-                alert("Password Salah! Akses ditolak.");
+                triggerPopupModal("Akses Ditolak", "Password Admin salah! Silakan coba lagi.", "error");
             }
         }
 
