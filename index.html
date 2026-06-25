@@ -920,7 +920,31 @@
             customModal.querySelector('div').classList.add('scale-95');
             setTimeout(() => {
                 customModal.classList.add('hidden');
-                switchMode("DAFTAR");
+                
+                if (currentMode === "UPDATE") {
+                    // 1. Simpan nilai Desa dan Kelompok yang sedang dipilih
+                    const savedDesa = document.getElementById('searchDesa').value;
+                    const savedKelompok = document.getElementById('searchKelompok').value;
+                    
+                    // 2. Reset form input utama (kolom data generus)
+                    document.getElementById('formGenerus').reset();
+                    updateKelompokDropdown("", "", kelompokSelect);
+                    document.getElementById('formGenerus').classList.add('hidden');
+                    
+                    // 3. Kosongkan feedback dan teks pencarian nama
+                    document.getElementById('searchFeedback').className = "hidden text-xs p-3 rounded-xl font-medium";
+                    document.getElementById('searchNama').value = ""; 
+                    targetIdGenerus = null;
+                    
+                    // 4. Kembalikan nilai Desa dan Kelompok pencarian
+                    document.getElementById('searchDesa').value = savedDesa;
+                    updateKelompokDropdown(savedDesa, savedKelompok, searchKelompokSelect, "-- Pilih Kelompok Pencarian --");
+                    
+                    // 5. Validasi ulang status tombol & input nama agar sinkron
+                    checkSearchInputs();
+                } else {
+                    switchMode("DAFTAR");
+                }
             }, 300);
         }
     </script>
