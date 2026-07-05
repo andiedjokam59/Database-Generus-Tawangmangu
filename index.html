@@ -502,6 +502,33 @@
         const wrapperKelasFormal = document.getElementById('wrapperKelasFormal');
         const kelasFormalInput = document.getElementById('kelas_formal');
 
+        // FUNGSI STANDARISASI HURUF KAPITAL UNTUK PAUD, TK, SD, SMP, SMA, SMK
+        function formatKelasFormal(val) {
+            // Mengubah teks input awal ke format Title Case standar browser
+            let formatted = toTitleCase(val);
+            
+            // Menggunakan Regex dengan penanda batas kata (\b) agar penggantian kata singkatan akurat tanpa merusak kata lain
+            formatted = formatted.replace(/\bPaud\b/gi, 'PAUD');
+            formatted = formatted.replace(/\bTk\b/gi, 'TK');
+            formatted = formatted.replace(/\bSd\b/gi, 'SD');
+            formatted = formatted.replace(/\bSmp\b/gi, 'SMP');
+            formatted = formatted.replace(/\bSma\b/gi, 'SMA');
+            formatted = formatted.replace(/\bSmk\b/gi, 'SMK');
+            
+            return formatted;
+        }
+
+        // Event listener saat pengguna mengetik langsung di kolom kelas formal
+        kelasFormalInput.addEventListener('input', function() {
+            // Menyimpan posisi kursor agar pengetikan tidak melompat-lompat ke akhir baris
+            const startPosition = this.selectionStart;
+            const endPosition = this.selectionEnd;
+            
+            this.value = formatKelasFormal(this.value);
+            
+            this.setSelectionRange(startPosition, endPosition);
+        });
+
         kategoriSelect.addEventListener('change', function() {
             if (this.value === "Pengajar" || this.value === "PJ Kelompok") {
                 formTambahanKhusus.classList.remove('hidden');
@@ -645,7 +672,6 @@
                 tabUpdate.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
                 tabDaftar.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
                 
-                // PERBAIKAN: Hanya mengubah teks judul tanpa menyentuh elemen logo
                 mainTitle.textContent = "UPDATE DATA GENERUS";
                 mainSubtitle.textContent = "Cari kelompok dan nama anda terlebih dahulu untuk diperbarui";
                 
@@ -657,7 +683,6 @@
                 tabDaftar.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
                 tabUpdate.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
                 
-                // PERBAIKAN: Hanya mengubah teks judul tanpa menyentuh elemen logo
                 mainTitle.textContent = "PENDATAAN GENERUS";
                 mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
                 
@@ -752,7 +777,8 @@
                         
                         wrapperKelasFormal.classList.remove('hidden');
                         kelasFormalInput.required = true;
-                        kelasFormalInput.value = match.kelas_formal || "";
+                        // Data lama diformat ulang agar otomatis kapital saat load data update
+                        kelasFormalInput.value = match.kelas_formal ? formatKelasFormal(match.kelas_formal) : "";
                     }
 
                     formGenerus.classList.remove('hidden');
@@ -777,7 +803,9 @@
             const desa = document.getElementById('desa').value;
             const kelompok = document.getElementById('kelompok').value;
             const kategori = document.getElementById('kategori_usia').value;
-            const kelas = toTitleCase(document.getElementById('kelas_formal').value.trim());
+            
+            // Format kapitalisasi otomatis akhir sebelum di-post ke database Supabase
+            const kelas = formatKelasFormal(document.getElementById('kelas_formal').value.trim());
 
             payloadData = { 
                 nama, 
@@ -933,7 +961,6 @@
             tableKelasBody.innerHTML = "";
             tableKelasFoot.innerHTML = "";
 
-            // Deteksi atau buat pembungkus Tabel ke-3 (Rincian Kelompok) secara dinamis agar tidak merusak HTML dasar
             let sectionKelompok = document.getElementById('sectionRekapKelompok');
             if(!sectionKelompok) {
                 sectionKelompok = document.createElement('div');
@@ -977,7 +1004,7 @@
                     "Pengajar": { L: 0, P: 0 }, "PJ Kelompok": { L: 0, P: 0 }
                 };
                 const rekapKelas = {};
-                const rekapKlp = {}; // Menyimpan akumulasi per Desa + Kelompok
+                const rekapKlp = {}; 
 
                 let countGenerusOnly = 0, countPengajarOnly = 0, countPJOnly = 0;
                 let totalUsiaL = 0, totalUsiaP = 0, totalUsiaSemua = 0;
@@ -986,12 +1013,12 @@
                 data.forEach(item => {
                     const jk = item.jenis_kelamin;
                     const usia = item.kategori_usia;
-                    const kelas = item.kelas_formal ? toTitleCase(item.kelas_formal.trim()) : "Tidak Diisi/Pengajar";
+                    // Format rekap kelas dari database juga dipastikan terkapitalisasi otomatis
+                    const kelas = item.kelas_formal ? formatKelasFormal(item.kelas_formal.trim()) : "Tidak Diisi/Pengajar";
                     const dsa = item.desa || "Tanpa Desa";
                     const klp = item.kelompok || "Tanpa Kelompok";
                     const klpKey = `${dsa} - ${klp}`;
 
-                    // Inisialisasi map kelompok
                     if(!rekapKlp[klpKey]) {
                         rekapKlp[klpKey] = { jml_generus: 0, L: 0, P: 0, jml_pengajar: 0, jml_pj: 0 };
                     }
@@ -1019,7 +1046,6 @@
                     if(jk === 'L' || jk === 'P') rekapKelas[kelas][jk]++;
                 });
 
-                // Perbarui Teks Tunggal Atas
                 rekapTotalData.className = "px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-full border border-emerald-200 text-right";
                 rekapTotalData.innerHTML = `Generus: ${countGenerusOnly} | Pengajar: ${countPengajarOnly} | PJ: ${countPJOnly}`;
 
@@ -1073,7 +1099,7 @@
                     `;
                 }
 
-                // 3. Build Tabel Integrasi SQL Kelompok Baru (Otomatis & Urut)
+                // 3. Build Tabel Rincian Kelompok
                 const sortedKlp = Object.keys(rekapKlp).sort();
                 if(sortedKlp.length === 0) {
                     tableKelompokBody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400">Belum ada rincian data per kelompok.</td></tr>`;
