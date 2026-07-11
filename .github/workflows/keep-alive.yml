@@ -2,9 +2,8 @@ name: Supabase Keep Alive
 
 on:
   schedule:
-    # Berjalan setiap 3 hari sekali pada jam 00:00 UTC
     - cron: '0 0 */3 * *'
-  workflow_dispatch: # Memungkinkan Anda menjalankan ini secara manual jika mau
+  workflow_dispatch:
 
 jobs:
   ping:
