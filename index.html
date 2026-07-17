@@ -9,7 +9,7 @@
     <meta http-equiv="expires" content="0">
     
     <title>Formulir Mandiri Generus</title>
-		<!-- Hubungkan file manifest -->
+	<!-- Hubungkan file manifest -->
 	<link rel="manifest" href="manifest.json">
 
 	<!-- Warna tema browser untuk menyesuaikan tampilan HP -->
@@ -35,6 +35,19 @@
             border-color: #059669;
             box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
             outline: none;
+        }
+
+        /* EFEK TRANSISI HALUS PADA PILIHAN DROPDOWN (Poin 3) */
+        .smooth-select {
+            transition: all 0.3s ease-in-out;
+        }
+        .smooth-select:focus {
+            transform: translateY(-1px);
+        }
+        
+        /* Animasi wrapper dinamis */
+        #wrapperKelasFormal, #formTambahanKhusus {
+            transition: all 0.4s ease-in-out;
         }
 
         /* STYLE KHUSUS UNTUK CETAK (PRINT) */
@@ -149,7 +162,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1">Desa Pencarian</label>
-                    <select id="searchDesa" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-2.5 border text-xs text-gray-800 bg-white">
+                    <select id="searchDesa" class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-2.5 border text-xs text-gray-800 bg-white">
                         <option value="">-- Pilih Desa --</option>
                         <option value="Karanglo Selatan">Karanglo Selatan</option>
                         <option value="Karanglo Utara">Karanglo Utara</option>
@@ -159,7 +172,7 @@
                 </div>
                 <div>
                     <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1">Kelompok Pencarian</label>
-                    <select id="searchKelompok" disabled class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-2.5 border text-xs text-gray-400 bg-gray-50/50">
+                    <select id="searchKelompok" disabled class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-2.5 border text-xs text-gray-400 bg-gray-50/50">
                         <option value="">-- Pilih Desa Terlebih Dahulu --</option>
                     </select>
                 </div>
@@ -182,7 +195,7 @@
             
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Jenis Kelamin</label>
-                <select id="jenis_kelamin" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                <select id="jenis_kelamin" required class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                     <option value="" class="text-gray-400">-- Pilih Jenis Kelamin --</option>
                     <option value="L">Laki-laki</option>
                     <option value="P">Perempuan</option>
@@ -197,10 +210,10 @@
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Tanggal Lahir</label>
                 <div class="grid grid-cols-3 gap-2">
-                    <select id="dob_tanggal" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                    <select id="dob_tanggal" required class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                         <option value="">Tgl</option>
                     </select>
-                    <select id="dob_bulan" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                    <select id="dob_bulan" required class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                         <option value="">Bulan</option>
                         <option value="01">Januari</option>
                         <option value="02">Februari</option>
@@ -215,7 +228,7 @@
                         <option value="11">November</option>
                         <option value="12">Desember</option>
                     </select>
-                    <select id="dob_tahun" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                    <select id="dob_tahun" required class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                         <option value="">Tahun</option>
                     </select>
                 </div>
@@ -224,7 +237,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Desa</label>
-                    <select id="desa" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                    <select id="desa" required class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                         <option value="">-- Pilih Desa --</option>
                         <option value="Karanglo Selatan">Karanglo Selatan</option>
                         <option value="Karanglo Utara">Karanglo Utara</option>
@@ -234,7 +247,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kelompok</label>
-                    <select id="kelompok" required disabled class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-gray-50/50 text-gray-400">
+                    <select id="kelompok" required disabled class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-gray-50/50 text-gray-400">
                         <option value="">-- Pilih Desa Terlebih Dahulu --</option>
                     </select>
                 </div>
@@ -242,7 +255,7 @@
 
             <div>
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kategori</label>
-                <select id="kategori_usia" required class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                <select id="kategori_usia" required class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
                     <option value="">-- Pilih Kategori --</option>
                     <option value="PAUD">PAUD</option>
                     <option value="TK">TK</option>
@@ -294,10 +307,12 @@
                 </div>
             </div>
 
-            <!-- WRAPPER KELAS FORMAL / STATUS (UNTUK SEMBUNYI OTOMATIS) -->
+            <!-- WRAPPER KELAS FORMAL / STATUS (Poin 4: Sekarang mendukung select dinamis berkondisi) -->
             <div id="wrapperKelasFormal">
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kelas Formal / Status</label>
-                <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
+                <div id="containerKelasFormal">
+                    <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
+                </div>
             </div>
             
             <div class="pt-2">
@@ -437,6 +452,7 @@
                 </button>
             </div>
 
+            <!-- MODAL GAGAL / DUPLIKAT (Poin 2: Kalimat diubah agar menjelaskan error duplikasi nama) -->
             <div id="modalError" class="hidden text-center">
                 <div id="errorIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -444,6 +460,9 @@
                     </svg>
                 </div>
                 <h3 id="errorTitle" class="text-xl font-bold text-gray-800 mb-1">Gagal Terkirim</h3>
+                <p class="text-xs text-emerald-700 font-semibold mb-2 bg-emerald-50 p-2 rounded-lg border border-emerald-100">
+                    💡 Pengertian: Nama generus ini terdeteksi sudah terdaftar sebelumnya atau terjadi duplikasi data di database kelompok Anda.
+                </p>
                 <p id="errorMessage" class="text-xs text-gray-500 mt-2 bg-gray-50 p-3 rounded-xl border border-dashed border-gray-200 break-words text-left max-h-32 overflow-y-auto font-medium"></p>
                 <button type="button" onclick="closeModalOnly()" class="mt-6 w-full py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition">
                     Kembali
@@ -511,51 +530,73 @@
         const formTambahanKhusus = document.getElementById('formTambahanKhusus');
         const nomorHpInput = document.getElementById('nomor_hp');
         const wrapperKelasFormal = document.getElementById('wrapperKelasFormal');
-        const kelasFormalInput = document.getElementById('kelas_formal');
+        
+        // Poin 4: Element penampung manipulasi select kelas dinamis
+        const containerKelasFormal = document.getElementById('containerKelasFormal');
 
-        // FUNGSI STANDARISASI HURUF KAPITAL UNTUK PAUD, TK, SD, SMP, SMA, SMK
         function formatKelasFormal(val) {
-            // Mengubah teks input awal ke format Title Case standar browser
             let formatted = toTitleCase(val);
-            
-            // Menggunakan Regex dengan penanda batas kata (\b) agar penggantian kata singkatan akurat tanpa merusak kata lain
             formatted = formatted.replace(/\bPaud\b/gi, 'PAUD');
             formatted = formatted.replace(/\bTk\b/gi, 'TK');
             formatted = formatted.replace(/\bSd\b/gi, 'SD');
             formatted = formatted.replace(/\bSmp\b/gi, 'SMP');
             formatted = formatted.replace(/\bSma\b/gi, 'SMA');
             formatted = formatted.replace(/\bSmk\b/gi, 'SMK');
-            
             return formatted;
         }
 
-        // Event listener saat pengguna mengetik langsung di kolom kelas formal
-        kelasFormalInput.addEventListener('input', function() {
-            // Menyimpan posisi kursor agar pengetikan tidak melompat-lompat ke akhir baris
-            const startPosition = this.selectionStart;
-            const endPosition = this.selectionEnd;
-            
-            this.value = formatKelasFormal(this.value);
-            
-            this.setSelectionRange(startPosition, endPosition);
-        });
-
+        // Poin 4: Logika Pembagian Kelas Otomatis Berdasarkan Pilihan Kategori Usia
         kategoriSelect.addEventListener('change', function() {
-            if (this.value === "Pengajar" || this.value === "PJ Kelompok") {
+            const kat = this.value;
+            
+            if (kat === "Pengajar" || kat === "PJ Kelompok") {
                 formTambahanKhusus.classList.remove('hidden');
                 nomorHpInput.required = true;
                 
                 wrapperKelasFormal.classList.add('hidden');
-                kelasFormalInput.required = false;
-                kelasFormalInput.value = ""; 
-            } else {
+                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
+            } 
+            else if (kat === "PAUD") {
+                // Saat PAUD dipilih, hilangkan kolom selanjutnya (di-hidden dan dikosongkan nilainya)
+                formTambahanKhusus.classList.add('hidden');
+                nomorHpInput.required = false;
+                nomorHpInput.value = "";
+                resetMengajarCheckboxes();
+                
+                wrapperKelasFormal.classList.add('hidden');
+                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="PAUD" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
+            } 
+            else {
                 formTambahanKhusus.classList.add('hidden');
                 nomorHpInput.required = false;
                 nomorHpInput.value = "";
                 resetMengajarCheckboxes();
                 
                 wrapperKelasFormal.classList.remove('hidden');
-                kelasFormalInput.required = true;
+                
+                let selectOptions = `<option value="">-- Pilih Kelas/Status --</option>`;
+                
+                if (kat === "TK") {
+                    selectOptions += `<option value="TK A">TK A</option><option value="TK B">TK B</option>`;
+                } else if (kat === "Caberawit") {
+                    for(let i=1; i<=6; i++) selectOptions += `<option value="${i} SD">${i} SD</option>`;
+                } else if (kat === "Pra Remaja") {
+                    for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMP">${i} SMP</option>`;
+                } else if (kat === "Remaja") {
+                    for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMA">${i} SMA</option>`;
+                } else if (kat === "Usia Mandiri") {
+                    selectOptions += `<option value="KULIAH">KULIAH</option><option value="KERJA">KERJA</option><option value="PENGANGGURAN">PENGANGGURAN</option>`;
+                } else {
+                    // Fail-safe jika bernilai kosong/Sudah Menikah
+                    containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
+                    return;
+                }
+
+                containerKelasFormal.innerHTML = `
+                    <select id="kelas_formal" required class="glass-input smooth-select block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 bg-white">
+                        ${selectOptions}
+                    </select>
+                `;
             }
         });
 
@@ -670,8 +711,8 @@
             formGenerus.reset();
             formTambahanKhusus.classList.add('hidden');
             wrapperKelasFormal.classList.remove('hidden');
+            containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
             nomorHpInput.required = false;
-            kelasFormalInput.required = true;
             updateKelompokDropdown("", "", kelompokSelect);
             updateKelompokDropdown("", "", searchKelompokSelect, "-- Pilih Kelompok Pencarian --");
             document.getElementById('searchDesa').value = "";
@@ -763,7 +804,10 @@
 
                     document.getElementById('desa').value = match.desa;
                     updateKelompokDropdown(match.desa, match.kelompok, kelompokSelect);
+                    
                     document.getElementById('kategori_usia').value = match.kategori_usia;
+                    // Trigger pembuat komponen input kelas sesuai tipenya
+                    document.getElementById('kategori_usia').dispatchEvent(new Event('change'));
                     
                     if (match.kategori_usia === "Pengajar" || match.kategori_usia === "PJ Kelompok") {
                         formTambahanKhusus.classList.remove('hidden');
@@ -771,8 +815,6 @@
                         nomorHpInput.value = match.nomor_hp || "";
                         
                         wrapperKelasFormal.classList.add('hidden');
-                        kelasFormalInput.required = false;
-                        kelasFormalInput.value = "";
 
                         resetMengajarCheckboxes();
                         if (match.mengajar_usia) {
@@ -782,14 +824,12 @@
                                 if (cb) cb.checked = true;
                             });
                         }
+                    } else if (match.kategori_usia === "PAUD") {
+                        wrapperKelasFormal.classList.add('hidden');
                     } else {
-                        formTambahanKhusus.classList.add('hidden');
-                        nomorHpInput.required = false;
-                        
                         wrapperKelasFormal.classList.remove('hidden');
-                        kelasFormalInput.required = true;
-                        // Data lama diformat ulang agar otomatis kapital saat load data update
-                        kelasFormalInput.value = match.kelas_formal ? formatKelasFormal(match.kelas_formal) : "";
+                        const elKelas = document.getElementById('kelas_formal');
+                        if(elKelas) elKelas.value = match.kelas_formal ? match.kelas_formal.trim().toUpperCase() : "";
                     }
 
                     formGenerus.classList.remove('hidden');
@@ -815,7 +855,6 @@
             const kelompok = document.getElementById('kelompok').value;
             const kategori = document.getElementById('kategori_usia').value;
             
-            // Format kapitalisasi otomatis akhir sebelum di-post ke database Supabase
             const kelas = formatKelasFormal(document.getElementById('kelas_formal').value.trim());
 
             payloadData = { 
@@ -985,7 +1024,19 @@
                         <table class="w-full text-xs text-left text-gray-500">
                             <thead class="text-[11px] uppercase bg-gray-50/70 text-gray-700 font-bold border-b">
                                 <tr>
-                                    <th class="p-3">Desa / Kelompok</th>
+                                    <th class="p-3">
+                                        <div class="flex items-center gap-1.5">
+                                            <!-- Poin 1: Di bagian judul hanya menampilkan Logo Filter SVG saja, nama isi desa & kelompok tetap ada di select option -->
+                                            <div class="relative flex items-center bg-white border border-gray-200 rounded px-1.5 py-1 hover:border-emerald-500 transition shadow-sm focus-within:border-emerald-500 cursor-pointer print:hidden">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                                </svg>
+                                                <select id="filterDesaKelompok" onchange="applyFilterKelompok(this.value)" class="text-[10px] font-bold bg-transparent text-emerald-700 outline-none cursor-pointer pl-1 pr-1 appearance-none smooth-select">
+                                                    <option value="ALL">Filter Semua</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th class="p-3 text-center bg-emerald-50/30 text-emerald-900">Total Generus</th>
                                     <th class="p-3 text-center text-blue-800">L</th>
                                     <th class="p-3 text-center text-pink-700">P</th>
@@ -1024,7 +1075,6 @@
                 data.forEach(item => {
                     const jk = item.jenis_kelamin;
                     const usia = item.kategori_usia;
-                    // Format rekap kelas dari database juga dipastikan terkapitalisasi otomatis
                     const kelas = item.kelas_formal ? formatKelasFormal(item.kelas_formal.trim()) : "Tidak Diisi/Pengajar";
                     const dsa = item.desa || "Tanpa Desa";
                     const klp = item.kelompok || "Tanpa Kelompok";
@@ -1060,7 +1110,6 @@
                 rekapTotalData.className = "px-3 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-full border border-emerald-200 text-right";
                 rekapTotalData.innerHTML = `Generus: ${countGenerusOnly} | Pengajar: ${countPengajarOnly} | PJ: ${countPJOnly}`;
 
-                // 1. Build Tabel Usia
                 for (const [key, val] of Object.entries(rekapUsia)) {
                     const totalRow = val.L + val.P;
                     totalUsiaL += val.L; totalUsiaP += val.P; totalUsiaSemua += totalRow;
@@ -1082,7 +1131,6 @@
                     <td class="p-3 text-center text-white bg-emerald-600 font-extrabold">${totalUsiaSemua}</td>
                 `;
 
-                // 2. Build Tabel Kelas
                 const sortedKelas = Object.keys(rekapKelas).sort();
                 if(sortedKelas.length === 0) {
                     tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400">Belum ada data kelas formal.</td></tr>`;
@@ -1110,25 +1158,31 @@
                     `;
                 }
 
-                // 3. Build Tabel Rincian Kelompok
-                const sortedKlp = Object.keys(rekapKlp).sort();
-                if(sortedKlp.length === 0) {
-                    tableKelompokBody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400">Belum ada rincian data per kelompok.</td></tr>`;
-                } else {
-                    sortedKlp.forEach(key => {
-                        const row = rekapKlp[key];
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-gray-50/80 transition font-medium text-gray-800";
-                        tr.innerHTML = `
-                            <td class="p-3 font-bold text-gray-700">${key}</td>
-                            <td class="p-3 text-center bg-emerald-50/20 font-bold text-emerald-800">${row.jml_generus}</td>
-                            <td class="p-3 text-center text-blue-600">${row.L}</td>
-                            <td class="p-3 text-center text-pink-600">${row.P}</td>
-                            <td class="p-3 text-center bg-orange-50/20 font-bold text-orange-800">${row.jml_pengajar}</td>
-                            <td class="p-3 text-center bg-purple-50/20 font-bold text-purple-800">${row.jml_pj}</td>
-                        `;
-                        tableKelompokBody.appendChild(tr);
+                window.globalRekapKlp = rekapKlp;
+
+                const filterSelect = document.getElementById('filterDesaKelompok');
+                if (filterSelect) {
+                    filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
+                    
+                    const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
+                    const optgroupDesa = document.createElement('optgroup');
+                    optgroupDesa.label = "=== Berdasarkan Desa ===";
+                    uniqueDesa.forEach(desa => {
+                        optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`;
                     });
+                    filterSelect.appendChild(optgroupDesa);
+
+                    const optgroupKlp = document.createElement('optgroup');
+                    optgroupKlp.label = "=== Berdasarkan Kelompok ===";
+                    const sortedKlpKeys = Object.keys(rekapKlp).sort();
+                    sortedKlpKeys.forEach(key => {
+                        optgroupKlp.innerHTML += `<option value="KLP:${key}">${key}</option>`;
+                    });
+                    filterSelect.appendChild(optgroupKlp);
+                }
+
+                if (window.applyFilterKelompok) {
+                    window.applyFilterKelompok("ALL");
                 }
 
                 rekapLoader.classList.add('hidden');
@@ -1139,6 +1193,46 @@
                 rekapLoader.innerHTML = `<span class="text-red-600">⚠️ Gagal mengambil rekap data: ${err.message}</span>`;
             }
         }
+
+        window.applyFilterKelompok = function(filterVal) {
+            const tableKelompokBody = document.getElementById('tableKelompokBody');
+            tableKelompokBody.innerHTML = "";
+            
+            const rekapKlp = window.globalRekapKlp;
+            if (!rekapKlp) return;
+
+            const sortedKlp = Object.keys(rekapKlp).sort();
+            let filteredKeys = sortedKlp;
+            
+            if (filterVal !== "ALL") {
+                if (filterVal.startsWith("DESA:")) {
+                    const searchDesa = filterVal.split("DESA:")[1];
+                    filteredKeys = sortedKlp.filter(k => k.startsWith(searchDesa + " - "));
+                } else if (filterVal.startsWith("KLP:")) {
+                    const searchKlp = filterVal.split("KLP:")[1];
+                    filteredKeys = sortedKlp.filter(k => k === searchKlp);
+                }
+            }
+
+            if (filteredKeys.length === 0) {
+                tableKelompokBody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-gray-400">Tidak ada rincian data untuk pilihan tersebut.</td></tr>`;
+            } else {
+                filteredKeys.forEach(key => {
+                    const row = rekapKlp[key];
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50/80 transition font-medium text-gray-800";
+                    tr.innerHTML = `
+                        <td class="p-3 font-bold text-gray-700">${key}</td>
+                        <td class="p-3 text-center bg-emerald-50/20 font-bold text-emerald-800">${row.jml_generus}</td>
+                        <td class="p-3 text-center text-blue-600">${row.L}</td>
+                        <td class="p-3 text-center text-pink-600">${row.P}</td>
+                        <td class="p-3 text-center bg-orange-50/20 font-bold text-orange-800">${row.jml_pengajar}</td>
+                        <td class="p-3 text-center bg-purple-50/20 font-bold text-purple-800">${row.jml_pj}</td>
+                    `;
+                    tableKelompokBody.appendChild(tr);
+                });
+            }
+        };
 
         function closeModalOnly() {
             customModal.classList.add('opacity-0');
@@ -1159,8 +1253,8 @@
                     document.getElementById('formGenerus').reset();
                     formTambahanKhusus.classList.add('hidden');
                     wrapperKelasFormal.classList.remove('hidden');
+                    containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
                     nomorHpInput.required = false;
-                    kelasFormalInput.required = true;
                     updateKelompokDropdown("", "", kelompokSelect);
                     document.getElementById('formGenerus').classList.add('hidden');
                     
