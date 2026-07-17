@@ -241,7 +241,7 @@
                     <option value="Usia Mandiri">Usia Mandiri</option>
                     <option value="Pengajar">Pengajar</option>
                     <option value="PJ Kelompok">PJ Kelompok</option>
-                    <option value="Sudah Menikah/Boarding/Non Aktif" id="optMenikah" class="hidden bg-red-50 text-red-700 font-semibold">👉 Sudah Menikah/Boarding/Non Aktif</option>
+                    <option value="Sudah Menikah/Boarding/Pindah Sambung" id="optMenikah" class="hidden bg-red-50 text-red-700 font-semibold">Sudah Menikah/Boarding/Pindah Sambung</option>
                 </select>
             </div>
 
@@ -824,10 +824,10 @@
             const revSubtitle = document.getElementById('reviewSubtitle');
             const confirmBtn = document.getElementById('confirmSaveBtn');
 
-            if (currentMode === "UPDATE" && kategori === "Sudah Menikah/Boarding/Non Aktif") {
+            if (currentMode === "UPDATE" && kategori === "Sudah Menikah/Boarding/Pindah Sambung") {
                 revTitle.textContent = "⚠️ Konfirmasi Hapus Generus";
                 revTitle.className = "text-lg font-bold text-red-600 mb-3 text-center border-b pb-2";
-                revSubtitle.textContent = `Anda memilih status "Sudah Menikah/Boarding/Non Aktif". Menekan tombol di bawah akan menghapus generus ini secara permanen dari database aktif.`;
+                revSubtitle.textContent = `Anda memilih status "Sudah Menikah/Boarding/Pindah Sambung". Menekan tombol di bawah akan menghapus generus ini secara permanen dari database aktif.`;
                 confirmBtn.className = "py-2.5 px-4 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 shadow-md transition";
                 confirmBtn.textContent = "💥 Ya, Hapus Data";
             } else {
@@ -877,7 +877,7 @@
 
             try {
                 let resultError = null;
-                const isMenikah = (payloadData.kategori_usia === "Sudah Menikah/Boarding/Non Aktif");
+                const isMenikah = (payloadData.kategori_usia === "Sudah Menikah/Boarding/Non Pindah Sambung");
 
                 if (currentMode === "UPDATE" && targetIdGenerus && isMenikah) {
                     btn.textContent = "Menghapus...";
