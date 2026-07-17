@@ -1160,26 +1160,29 @@
 
                 window.globalRekapKlp = rekapKlp;
 
-                const filterSelect = document.getElementById('filterDesaKelompok');
-                if (filterSelect) {
-                    filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
-                    
-                    const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
-                    const optgroupDesa = document.createElement('optgroup');
-                    optgroupDesa.label = "=== Berdasarkan Desa ===";
-                    uniqueDesa.forEach(desa => {
-                        optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`;
-                    });
-                    filterSelect.appendChild(optgroupDesa);
+                // ====== GANTI BLOK KODE PEMBUAT OPTION DROPDOWN MENJADI SEPERTI INI ======
+				const filterSelect = document.getElementById('filterDesaKelompok');
+				if (filterSelect) {
+					filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
+					
+					const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
+					const optgroupDesa = document.createElement('optgroup');
+					optgroupDesa.label = "📂 PER DESA";
+					uniqueDesa.forEach(desa => {
+						optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`;
+					});
+					filterSelect.appendChild(optgroupDesa);
 
-                    const optgroupKlp = document.createElement('optgroup');
-                    optgroupKlp.label = "=== Berdasarkan Kelompok ===";
-                    const sortedKlpKeys = Object.keys(rekapKlp).sort();
-                    sortedKlpKeys.forEach(key => {
-                        optgroupKlp.innerHTML += `<option value="KLP:${key}">${key}</option>`;
-                    });
-                    filterSelect.appendChild(optgroupKlp);
-                }
+					const optgroupKlp = document.createElement('optgroup');
+					optgroupKlp.label = "👥 PER KELOMPOK";
+					const sortedKlpKeys = Object.keys(rekapKlp).sort();
+					sortedKlpKeys.forEach(key => {
+						// Meringkas tulisan "Desa X - Kelompok Y" menjadi "Kelompok Y" saja di dalam list
+						const shortName = key.includes(" - ") ? key.split(" - ")[1] : key;
+						optgroupKlp.innerHTML += `<option value="KLP:${key}">${shortName}</option>`;
+					});
+					filterSelect.appendChild(optgroupKlp);
+				}
 
                 if (window.applyFilterKelompok) {
                     window.applyFilterKelompok("ALL");
