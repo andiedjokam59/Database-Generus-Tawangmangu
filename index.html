@@ -1026,7 +1026,6 @@
                                 <tr>
                                     <th class="p-3">
                                         <div class="flex items-center gap-1.5">
-                                            <!-- Poin 1: Di bagian judul hanya menampilkan Logo Filter SVG saja, nama isi desa & kelompok tetap ada di select option -->
                                             <div class="relative flex items-center bg-white border border-gray-200 rounded px-1.5 py-1 hover:border-emerald-500 transition shadow-sm focus-within:border-emerald-500 cursor-pointer print:hidden">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -1131,7 +1130,25 @@
                     <td class="p-3 text-center text-white bg-emerald-600 font-extrabold">${totalUsiaSemua}</td>
                 `;
 
-                const sortedKelas = Object.keys(rekapKelas).sort();
+                // --- BAGIAN PENYUSUNAN URUTAN KELAS FORMAL / STATUS (KUSTOM) ---
+                const urutanKustom = [
+                    "PAUD", "TK A", "TK B",
+                    "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD",
+                    "1 SMP", "2 SMP", "3 SMP",
+                    "1 SMA", "2 SMA", "3 SMA",
+                    "KULIAH", "KERJA", "PENGANGGURAN"
+                ];
+
+                const sortedKelas = Object.keys(rekapKelas).sort((a, b) => {
+                    const indexA = urutanKustom.indexOf(a.toUpperCase());
+                    const indexB = urutanKustom.indexOf(b.toUpperCase());
+                    
+                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                    if (indexA !== -1) return -1;
+                    if (indexB !== -1) return 1;
+                    return a.localeCompare(b);
+                });
+
                 if(sortedKelas.length === 0) {
                     tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400">Belum ada data kelas formal.</td></tr>`;
                 } else {
@@ -1160,8 +1177,7 @@
 
                 window.globalRekapKlp = rekapKlp;
 
-                // ====== GANTI BLOK KODE PEMBUAT OPTION DROPDOWN MENJADI SEPERTI INI ======
-				const filterSelect = document.getElementById('filterDesaKelompok');
+                const filterSelect = document.getElementById('filterDesaKelompok');
 				if (filterSelect) {
 					filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
 					
@@ -1177,7 +1193,6 @@
 					optgroupKlp.label = "👥 PER KELOMPOK";
 					const sortedKlpKeys = Object.keys(rekapKlp).sort();
 					sortedKlpKeys.forEach(key => {
-						// Meringkas tulisan "Desa X - Kelompok Y" menjadi "Kelompok Y" saja di dalam list
 						const shortName = key.includes(" - ") ? key.split(" - ")[1] : key;
 						optgroupKlp.innerHTML += `<option value="KLP:${key}">${shortName}</option>`;
 					});
