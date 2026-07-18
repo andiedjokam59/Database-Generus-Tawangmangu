@@ -1130,7 +1130,6 @@
                     <td class="p-3 text-center text-white bg-emerald-600 font-extrabold">${totalUsiaSemua}</td>
                 `;
 
-                // --- BAGIAN PENYUSUNAN URUTAN KELAS FORMAL / STATUS (KUSTOM) ---
                 const urutanKustom = [
                     "PAUD", "TK A", "TK B",
                     "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD",
@@ -1139,15 +1138,18 @@
                     "KULIAH", "KERJA", "PENGANGGURAN"
                 ];
 
-                const sortedKelas = Object.keys(rekapKelas).sort((a, b) => {
-                    const indexA = urutanKustom.indexOf(a.toUpperCase());
-                    const indexB = urutanKustom.indexOf(b.toUpperCase());
-                    
-                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-                    if (indexA !== -1) return -1;
-                    if (indexB !== -1) return 1;
-                    return a.localeCompare(b);
-                });
+                // Memfilter Object.keys(rekapKelas) agar mengecualikan nilai "Tidak Diisi/Pengajar" sebelum diurutkan
+                const sortedKelas = Object.keys(rekapKelas)
+                    .filter(kelasKey => kelasKey !== "Tidak Diisi/Pengajar")
+                    .sort((a, b) => {
+                        const indexA = urutanKustom.indexOf(a.toUpperCase());
+                        const indexB = urutanKustom.indexOf(b.toUpperCase());
+                        
+                        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                        if (indexA !== -1) return -1;
+                        if (indexB !== -1) return 1;
+                        return a.localeCompare(b);
+                    });
 
                 if(sortedKelas.length === 0) {
                     tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-gray-400">Belum ada data kelas formal.</td></tr>`;
