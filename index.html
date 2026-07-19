@@ -29,7 +29,7 @@
             background: linear-gradient(135deg, #f4f7f5 0%, #e8efe9 100%);
         }
         .capitalize-input { text-transform: capitalize; }
-        .glass-input { transition: all 0.3s ease; background-color: #ffffff; }
+        .glass-input transition: all 0.3s ease; background-color: #ffffff; }
         .glass-input:focus {
             background-color: #ffffff;
             border-color: #059669;
@@ -37,7 +37,7 @@
             outline: none;
         }
 
-        /* EFEK TRANSISI HALUS PADA PILIHAN DROPDOWN (Poin 3) */
+        /* EFEK TRANSISI HALUS PADA PILIHAN DROPDOWN */
         .smooth-select {
             transition: all 0.3s ease-in-out;
         }
@@ -307,7 +307,7 @@
                 </div>
             </div>
 
-            <!-- WRAPPER KELAS FORMAL / STATUS (Poin 4: Sekarang mendukung select dinamis berkondisi) -->
+            <!-- WRAPPER KELAS FORMAL / STATUS -->
             <div id="wrapperKelasFormal">
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kelas Formal / Status</label>
                 <div id="containerKelasFormal">
@@ -452,7 +452,7 @@
                 </button>
             </div>
 
-            <!-- MODAL GAGAL / DUPLIKAT (Poin 2: Kalimat diubah agar menjelaskan error duplikasi nama) -->
+            <!-- MODAL GAGAL / DUPLIKAT (Poin 1: Menghilangkan teks campuran bahasa Inggris) -->
             <div id="modalError" class="hidden text-center">
                 <div id="errorIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600 mb-4">
                     <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
@@ -530,9 +530,24 @@
         const formTambahanKhusus = document.getElementById('formTambahanKhusus');
         const nomorHpInput = document.getElementById('nomor_hp');
         const wrapperKelasFormal = document.getElementById('wrapperKelasFormal');
-        
-        // Poin 4: Element penampung manipulasi select kelas dinamis
         const containerKelasFormal = document.getElementById('containerKelasFormal');
+
+        // FUNGSI UTAMA: PAKSA KAPITAL DI AWAL KATA SAJA (Meskipun Caps Lock Menyala)
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'text') {
+                let cursorPosition = e.target.selectionStart;
+                let originalValue = e.target.value;
+                
+                // Konversi paksa ke Title Case secara real-time
+                let formattedValue = originalValue.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
+                
+                if (originalValue !== formattedValue) {
+                    e.target.value = formattedValue;
+                    // Kembalikan posisi kursor agar tidak loncat ke belakang teks saat mengetik
+                    e.target.setSelectionRange(cursorPosition, cursorPosition);
+                }
+            }
+        });
 
         function formatKelasFormal(val) {
             let formatted = toTitleCase(val);
@@ -545,7 +560,10 @@
             return formatted;
         }
 
-        // Poin 4: Logika Pembagian Kelas Otomatis Berdasarkan Pilihan Kategori Usia
+        function toTitleCase(str) { 
+            return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); 
+        }
+
         kategoriSelect.addEventListener('change', function() {
             const kat = this.value;
             
@@ -554,18 +572,27 @@
                 nomorHpInput.required = true;
                 
                 wrapperKelasFormal.classList.add('hidden');
-                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
+                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
             } 
             else if (kat === "PAUD") {
-                // Saat PAUD dipilih, hilangkan kolom selanjutnya (di-hidden dan dikosongkan nilainya)
                 formTambahanKhusus.classList.add('hidden');
                 nomorHpInput.required = false;
                 nomorHpInput.value = "";
                 resetMengajarCheckboxes();
                 
                 wrapperKelasFormal.classList.add('hidden');
-                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="PAUD" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
+                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="PAUD" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
             } 
+            // TAMBAHAN LOGIKA UNTUK KATEGORI SUDAH MENIKAH / BOARDING / PINDAH SAMBUNG
+            else if (kat === "Sudah Menikah/Boarding/Pindah Sambung") {
+                formTambahanKhusus.classList.add('hidden');
+                nomorHpInput.required = false;
+                nomorHpInput.value = "";
+                resetMengajarCheckboxes();
+                
+                wrapperKelasFormal.classList.add('hidden'); // Sembunyikan kolom kelas formal
+                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
+            }
             else {
                 formTambahanKhusus.classList.add('hidden');
                 nomorHpInput.required = false;
@@ -587,8 +614,7 @@
                 } else if (kat === "Usia Mandiri") {
                     selectOptions += `<option value="KULIAH">KULIAH</option><option value="KERJA">KERJA</option><option value="PENGANGGURAN">PENGANGGURAN</option>`;
                 } else {
-                    // Fail-safe jika bernilai kosong/Sudah Menikah
-                    containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
+                    containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah, Kerja" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800">`;
                     return;
                 }
 
@@ -631,7 +657,6 @@
                 searchNamaInput.placeholder = "Ketik nama lengkap...";
                 searchNamaInput.classList.remove('bg-gray-50/50', 'text-gray-400');
                 searchNamaInput.classList.add('bg-white', 'text-gray-800');
-
                 searchBtn.disabled = false;
                 searchBtn.className = "px-5 py-3 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition active:scale-[0.98]";
             } else {
@@ -640,7 +665,6 @@
                 searchNamaInput.placeholder = "Pilih desa & kelompok dahulu...";
                 searchNamaInput.classList.add('bg-gray-50/50', 'text-gray-400');
                 searchNamaInput.classList.remove('bg-white', 'text-gray-800');
-
                 searchBtn.disabled = true;
                 searchBtn.className = "px-5 py-3 text-sm font-semibold text-white bg-gray-300 cursor-not-allowed rounded-xl shadow-sm transition";
             }
@@ -696,11 +720,8 @@
             }
         }
 
-        function toTitleCase(str) { return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }
-
         function switchMode(selectedMode) {
             currentMode = selectedMode;
-
             const tabDaftar = document.getElementById('tabDaftar');
             const tabUpdate = document.getElementById('tabUpdate');
             const searchSection = document.getElementById('searchSection');
@@ -711,7 +732,7 @@
             formGenerus.reset();
             formTambahanKhusus.classList.add('hidden');
             wrapperKelasFormal.classList.remove('hidden');
-            containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
+            containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
             nomorHpInput.required = false;
             updateKelompokDropdown("", "", kelompokSelect);
             updateKelompokDropdown("", "", searchKelompokSelect, "-- Pilih Kelompok Pencarian --");
@@ -723,10 +744,8 @@
             if (currentMode === "UPDATE") {
                 tabUpdate.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
                 tabDaftar.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
-                
                 mainTitle.textContent = "UPDATE DATA GENERUS";
                 mainSubtitle.textContent = "Cari kelompok dan nama anda terlebih dahulu untuk diperbarui";
-                
                 searchSection.classList.remove('hidden');
                 formGenerus.classList.add('hidden');
                 submitBtn.textContent = "Perbarui Data";
@@ -734,10 +753,8 @@
             } else {
                 tabDaftar.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-800 shadow-sm";
                 tabUpdate.className = "inline-flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-all duration-200 text-gray-500 hover:text-gray-800";
-                
                 mainTitle.textContent = "PENDATAAN GENERUS";
                 mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
-                
                 searchSection.classList.add('hidden');
                 formGenerus.classList.remove('hidden');
                 submitBtn.textContent = "Kirim Data";
@@ -804,18 +821,14 @@
 
                     document.getElementById('desa').value = match.desa;
                     updateKelompokDropdown(match.desa, match.kelompok, kelompokSelect);
-                    
                     document.getElementById('kategori_usia').value = match.kategori_usia;
-                    // Trigger pembuat komponen input kelas sesuai tipenya
                     document.getElementById('kategori_usia').dispatchEvent(new Event('change'));
                     
                     if (match.kategori_usia === "Pengajar" || match.kategori_usia === "PJ Kelompok") {
                         formTambahanKhusus.classList.remove('hidden');
                         nomorHpInput.required = true;
                         nomorHpInput.value = match.nomor_hp || "";
-                        
                         wrapperKelasFormal.classList.add('hidden');
-
                         resetMengajarCheckboxes();
                         if (match.mengajar_usia) {
                             let muArray = Array.isArray(match.mengajar_usia) ? match.mengajar_usia : match.mengajar_usia.split(',');
@@ -831,10 +844,8 @@
                         const elKelas = document.getElementById('kelas_formal');
                         if(elKelas) elKelas.value = match.kelas_formal ? match.kelas_formal.trim().toUpperCase() : "";
                     }
-
                     formGenerus.classList.remove('hidden');
                 }
-
             } catch (err) {
                 console.error(err);
                 feedback.className = "text-xs p-3 rounded-xl font-medium bg-red-50 text-red-700 block";
@@ -844,7 +855,6 @@
 
         document.getElementById('formGenerus').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const nama = toTitleCase(document.getElementById('nama').value.trim());
             const jk = document.getElementById('jenis_kelamin').value;
             const tempat = toTitleCase(document.getElementById('tempat_lahir').value.trim());
@@ -854,7 +864,6 @@
             const desa = document.getElementById('desa').value;
             const kelompok = document.getElementById('kelompok').value;
             const kategori = document.getElementById('kategori_usia').value;
-            
             const kelas = formatKelasFormal(document.getElementById('kelas_formal').value.trim());
 
             payloadData = { 
@@ -911,7 +920,6 @@
 
             modalAuthRekap.classList.add('hidden');
             modalViewRekap.classList.add('hidden');
-
             modalReview.classList.remove('hidden');
             modalSuccess.classList.add('hidden');
             modalError.classList.add('hidden');
@@ -919,15 +927,16 @@
             setTimeout(() => { customModal.classList.remove('opacity-0'); customModal.querySelector('div').classList.remove('scale-95'); }, 10);
         });
 
+        // FUNGSI SIMPAN DENGAN PROTEKSI BAHASA INGGRIS DAN TETAP MENJAGA FUNGSI CAPSLOCK
         async function executeSaveToSupabase() {
             if(!payloadData) return;
-            
             const btn = document.getElementById('confirmSaveBtn');
             btn.disabled = true;
 
             try {
                 let resultError = null;
-                const isMenikah = (payloadData.kategori_usia === "Sudah Menikah/Boarding/Non Pindah Sambung");
+                // PERBAIKAN: Menyamakan string sesuai dengan value option di HTML
+                const isMenikah = (payloadData.kategori_usia === "Sudah Menikah/Boarding/Pindah Sambung");
 
                 if (currentMode === "UPDATE" && targetIdGenerus && isMenikah) {
                     btn.textContent = "Menghapus...";
@@ -936,7 +945,6 @@
                         .delete()
                         .eq('id', targetIdGenerus);
                     resultError = error;
-
                     if (!resultError) {
                         document.getElementById('successTitle').textContent = "Berhasil Dihapus";
                         document.getElementById('successMessage').textContent = `Data generus atas nama ${payloadData.nama} telah resmi dihapus dari database aktif.`;
@@ -957,7 +965,6 @@
                             .insert([payloadData]);
                         resultError = error;
                     }
-
                     if (!resultError) {
                         document.getElementById('successTitle').textContent = "Terima Kasih";
                         document.getElementById('successMessage').textContent = "Data sudah disimpan";
@@ -973,7 +980,14 @@
             } catch (err) {
                 console.error(err);
                 modalReview.classList.add('hidden');
-                triggerPopupModal("Gagal Menyimpan", err.message || 'Koneksi bermasalah dengan database.', "error");
+                
+                if (err.message && err.message.toLowerCase().includes('duplicate')) {
+                    document.getElementById('errorMessage').classList.add('hidden');
+                    triggerPopupModal("Data Sudah Ada", "Nama generus ini sudah terdaftar.", "error");
+                } else {
+                    document.getElementById('errorMessage').classList.remove('hidden');
+                    triggerPopupModal("Gagal Menyimpan", err.message || 'Koneksi bermasalah dengan database.', "error");
+                }
             } finally {
                 btn.disabled = false;
             }
@@ -985,7 +999,6 @@
             modalSuccess.classList.add('hidden');
             modalError.classList.add('hidden');
             modalViewRekap.classList.add('hidden');
-            
             modalAuthRekap.classList.remove('hidden');
             customModal.classList.remove('hidden');
             setTimeout(() => { customModal.classList.remove('opacity-0'); customModal.querySelector('div').classList.remove('scale-95'); }, 10);
@@ -1005,7 +1018,6 @@
         async function fetchAndBuildRekap() {
             rekapLoader.classList.remove('hidden');
             rekapContent.classList.add('hidden');
-            
             tableUsiaBody.innerHTML = "";
             tableUsiaFoot.innerHTML = "";
             tableKelasBody.innerHTML = "";
@@ -1085,7 +1097,6 @@
 
                     if(rekapUsia[usia]) {
                         if(jk === 'L' || jk === 'P') rekapUsia[usia][jk]++;
-                        
                         if (["PAUD", "TK", "Caberawit", "Pra Remaja", "Remaja", "Usia Mandiri"].includes(usia)) {
                             countGenerusOnly++;
                             rekapKlp[klpKey].jml_generus++;
@@ -1138,13 +1149,11 @@
                     "KULIAH", "KERJA", "PENGANGGURAN"
                 ];
 
-                // Memfilter Object.keys(rekapKelas) agar mengecualikan nilai "Tidak Diisi/Pengajar" sebelum diurutkan
                 const sortedKelas = Object.keys(rekapKelas)
                     .filter(kelasKey => kelasKey !== "Tidak Diisi/Pengajar")
                     .sort((a, b) => {
                         const indexA = urutanKustom.indexOf(a.toUpperCase());
                         const indexB = urutanKustom.indexOf(b.toUpperCase());
-                        
                         if (indexA !== -1 && indexB !== -1) return indexA - indexB;
                         if (indexA !== -1) return -1;
                         if (indexB !== -1) return 1;
@@ -1182,7 +1191,6 @@
                 const filterSelect = document.getElementById('filterDesaKelompok');
 				if (filterSelect) {
 					filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
-					
 					const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
 					const optgroupDesa = document.createElement('optgroup');
 					optgroupDesa.label = "📂 PER DESA";
@@ -1217,7 +1225,6 @@
         window.applyFilterKelompok = function(filterVal) {
             const tableKelompokBody = document.getElementById('tableKelompokBody');
             tableKelompokBody.innerHTML = "";
-            
             const rekapKlp = window.globalRekapKlp;
             if (!rekapKlp) return;
 
@@ -1265,7 +1272,6 @@
             customModal.querySelector('div').classList.add('scale-95');
             setTimeout(() => {
                 customModal.classList.add('hidden');
-                
                 if (currentMode === "UPDATE") {
                     const savedDesa = document.getElementById('searchDesa').value;
                     const savedKelompok = document.getElementById('searchKelompok').value;
@@ -1273,18 +1279,15 @@
                     document.getElementById('formGenerus').reset();
                     formTambahanKhusus.classList.add('hidden');
                     wrapperKelasFormal.classList.remove('hidden');
-                    containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
+                    containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
                     nomorHpInput.required = false;
                     updateKelompokDropdown("", "", kelompokSelect);
                     document.getElementById('formGenerus').classList.add('hidden');
-                    
                     document.getElementById('searchFeedback').className = "hidden text-xs p-3 rounded-xl font-medium";
                     document.getElementById('searchNama').value = ""; 
                     targetIdGenerus = null;
-                    
                     document.getElementById('searchDesa').value = savedDesa;
                     updateKelompokDropdown(savedDesa, savedKelompok, searchKelompokSelect, "-- Pilih Kelompok Pencarian --");
-                    
                     checkSearchInputs();
                 } else {
                     switchMode("DAFTAR");
