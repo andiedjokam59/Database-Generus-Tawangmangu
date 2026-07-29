@@ -95,14 +95,44 @@
         }
 
         /* Delay Kemunculan Satu per Satu dari Atas */
-        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(1) {
-            animation-delay: 0.02s;
+        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(1) { animation-delay: 0.02s; }
+        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(2) { animation-delay: 0.09s; }
+        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(3) { animation-delay: 0.16s; }
+
+        /* ========================================================= */
+        /* ANIMASI KEMUNCULAN FIELD FORMULIR BERTAHAP (SMOOTH FIELD) */
+        /* ========================================================= */
+        @keyframes fieldFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(2) {
-            animation-delay: 0.09s;
+
+        #formGenerus.fade-visible > div {
+            animation: fieldFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+            will-change: transform, opacity;
         }
-        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(3) {
-            animation-delay: 0.16s;
+
+        /* Delay bertingkat untuk setiap baris field di dalam form */
+        #formGenerus.fade-visible > div:nth-child(1) { animation-delay: 0.05s; }
+        #formGenerus.fade-visible > div:nth-child(2) { animation-delay: 0.09s; }
+        #formGenerus.fade-visible > div:nth-child(3) { animation-delay: 0.13s; }
+        #formGenerus.fade-visible > div:nth-child(4) { animation-delay: 0.17s; }
+        #formGenerus.fade-visible > div:nth-child(5) { animation-delay: 0.21s; }
+        #formGenerus.fade-visible > div:nth-child(6) { animation-delay: 0.25s; }
+        #formGenerus.fade-visible > div:nth-child(7) { animation-delay: 0.29s; }
+        #formGenerus.fade-visible > div:nth-child(8) { animation-delay: 0.33s; }
+        #formGenerus.fade-visible > div:nth-child(9) { animation-delay: 0.37s; }
+        #formGenerus.fade-visible > div:nth-child(10) { animation-delay: 0.41s; }
+
+        /* Animasi khusus saat field tambahan/dinamis muncul */
+        .animate-field-in {
+            animation: fieldFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
         }
 
         /* 3. Interaction Hover & Active State Tombol Menu */
@@ -259,7 +289,7 @@
             </button>
         </div>
 
-        <!-- AREA REKAP DATA (TANPA TRANSISI BARIS TABEL) -->
+        <!-- AREA REKAP DATA -->
         <div id="rekapSection" class="fade-transition fade-hidden space-y-5">
             <div class="flex items-center justify-between border-b pb-3">
                 <div class="flex items-center gap-2">
@@ -342,7 +372,7 @@
             </div>
         </div>
 
-        <!-- AREA MENU UPDATE DATA (DENGAN HEADER STICKY DIPERBAIKI) -->
+        <!-- AREA MENU UPDATE DATA -->
         <div id="searchSection" class="fade-transition fade-hidden space-y-6">
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
@@ -372,7 +402,6 @@
                     </div>
                     <div class="max-h-60 overflow-y-auto relative">
                         <table class="min-w-full divide-y divide-gray-200 text-xs">
-                            <!-- HEADER DIUBAH MENJADI STICKY DENGAN Z-INDEX AGAR TIDAK TERTABRAK ISI TABEL -->
                             <thead class="bg-gray-50 font-semibold text-gray-600 sticky top-0 z-10 shadow-sm">
                                 <tr>
                                     <th class="p-2.5 text-center w-8 bg-gray-50">No</th>
@@ -537,7 +566,7 @@
         </form>
     </div>
 
-    <!-- MODAL KHUSUS REVIEW SIMPAN, SUKSES, & DOKUMEN ERROR -->
+    <!-- MODAL REVIEW SIMPAN, SUKSES, & DOKUMEN ERROR -->
     <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden opacity-0">
         <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl transform scale-95 opacity-0 max-h-[90vh] overflow-y-auto">
 
@@ -738,6 +767,7 @@
             
             if (kat === "Pengajar" || kat === "PJ Kelompok") {
                 formTambahanKhusus.classList.remove('hidden');
+                formTambahanKhusus.classList.add('animate-field-in');
                 nomorHpInput.required = true;
                 
                 wrapperKelasFormal.classList.add('hidden');
@@ -745,6 +775,7 @@
             } 
             else if (kat === "PAUD") {
                 formTambahanKhusus.classList.add('hidden');
+                formTambahanKhusus.classList.remove('animate-field-in');
                 nomorHpInput.required = false;
                 nomorHpInput.value = "";
                 resetMengajarCheckboxes();
@@ -754,6 +785,7 @@
             } 
             else if (kat === "Sudah Menikah/Boarding/Pindah Sambung") {
                 formTambahanKhusus.classList.add('hidden');
+                formTambahanKhusus.classList.remove('animate-field-in');
                 nomorHpInput.required = false;
                 nomorHpInput.value = "";
                 resetMengajarCheckboxes();
@@ -763,11 +795,13 @@
             }
             else {
                 formTambahanKhusus.classList.add('hidden');
+                formTambahanKhusus.classList.remove('animate-field-in');
                 nomorHpInput.required = false;
                 nomorHpInput.value = "";
                 resetMengajarCheckboxes();
                 
                 wrapperKelasFormal.classList.remove('hidden');
+                wrapperKelasFormal.classList.add('animate-field-in');
                 
                 let selectOptions = `<option value="">-- Pilih Kelas/Status --</option>`;
                 
