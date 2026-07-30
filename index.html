@@ -1283,11 +1283,28 @@
             tableKelompokBody.innerHTML = "";
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('data_generus')
-                    .select('jenis_kelamin, kategori_usia, kelas_formal, desa, kelompok');
+                // PAGINASI BERTAHAP (BATCHING DATA PER 1000 BARIS)
+                let data = [];
+                let page = 0;
+                const pageSize = 1000;
+                let hasMore = true;
 
-                if (error) throw error;
+                while (hasMore) {
+                    const { data: pageData, error } = await supabaseClient
+                        .from('data_generus')
+                        .select('jenis_kelamin, kategori_usia, kelas_formal, desa, kelompok')
+                        .range(page * pageSize, (page + 1) * pageSize - 1);
+
+                    if (error) throw error;
+
+                    data = data.concat(pageData);
+
+                    if (pageData.length < pageSize) {
+                        hasMore = false;
+                    } else {
+                        page++;
+                    }
+                }
 
                 const rekapUsia = {
                     "PAUD": { L: 0, P: 0 }, "TK": { L: 0, P: 0 }, "Caberawit": { L: 0, P: 0 },
@@ -1479,15 +1496,32 @@
             }
         };
 
-        // FUNGSI EKSPOR CSV
+        // FUNGSI EKSPOR CSV DENGAN PAGINASI BERTAHAP
         async function exportToCSV() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('data_generus')
-                    .select('*')
-                    .order('created_at', { ascending: true });
+                let data = [];
+                let page = 0;
+                const pageSize = 1000;
+                let hasMore = true;
 
-                if (error) throw error;
+                while (hasMore) {
+                    const { data: pageData, error } = await supabaseClient
+                        .from('data_generus')
+                        .select('*')
+                        .order('created_at', { ascending: true })
+                        .range(page * pageSize, (page + 1) * pageSize - 1);
+
+                    if (error) throw error;
+
+                    data = data.concat(pageData);
+
+                    if (pageData.length < pageSize) {
+                        hasMore = false;
+                    } else {
+                        page++;
+                    }
+                }
+
                 if (!data || data.length === 0) {
                     alert("Tidak ada data untuk diekspor!");
                     return;
