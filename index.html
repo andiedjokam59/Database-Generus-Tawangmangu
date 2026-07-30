@@ -475,6 +475,8 @@
                         <option value="">Tahun</option>
                     </select>
                 </div>
+                <!-- ELEMEN PENAMPIL UMUR OTOMATIS (UKURAN KECIL) -->
+                <p id="infoUmurText" class="text-[11px] font-semibold text-emerald-600 mt-1.5 hidden"></p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -643,6 +645,7 @@
         let payloadData = null;
 
         const dobTanggal = document.getElementById('dob_tanggal');
+        const dobBulan = document.getElementById('dob_bulan');
         const dobTahun = document.getElementById('dob_tahun');
 
         for (let i = 1; i <= 31; i++) {
@@ -653,6 +656,40 @@
         for (let i = tahunSekarang; i >= tahunSekarang - 50; i--) {
             dobTahun.options[dobTahun.options.length] = new Option(i, i);
         }
+
+        // FUNGSI HITUNG UMUR OTOMATIS
+        function hitungUmurOtomatis(thn, bln, tgl) {
+            if (!thn || !bln || !tgl) return null;
+            const today = new Date();
+            const birthDate = new Date(thn, parseInt(bln) - 1, tgl);
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age >= 0 ? age : null;
+        }
+
+        // FUNGSI DISPLAY UMUR DI FORM
+        function updateInfoUmurForm() {
+            const tgl = dobTanggal.value;
+            const bln = dobBulan.value;
+            const thn = dobTahun.value;
+            const infoUmurEl = document.getElementById('infoUmurText');
+
+            const umur = hitungUmurOtomatis(thn, bln, tgl);
+            if (umur !== null) {
+                infoUmurEl.textContent = `💡 Umur saat ini: ${umur} tahun`;
+                infoUmurEl.classList.remove('hidden');
+            } else {
+                infoUmurEl.textContent = '';
+                infoUmurEl.classList.add('hidden');
+            }
+        }
+
+        dobTanggal.addEventListener('change', updateInfoUmurForm);
+        dobBulan.addEventListener('change', updateInfoUmurForm);
+        dobTahun.addEventListener('change', updateInfoUmurForm);
 
         const dataWilayah = {
             "Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
@@ -921,6 +958,7 @@
             const mainSubtitle = document.getElementById('mainSubtitle');
 
             formGenerus.reset();
+            updateInfoUmurForm();
             formTambahanKhusus.classList.add('hidden');
             wrapperKelasFormal.classList.remove('hidden');
             containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
@@ -974,6 +1012,7 @@
                     document.getElementById('dob_tanggal').value = parts[2];
                 }
             }
+            updateInfoUmurForm();
 
             document.getElementById('desa').value = match.desa;
             updateKelompokDropdown(match.desa, match.kelompok, kelompokSelect);
@@ -1052,9 +1091,12 @@
                 confirmBtn.textContent = "✅ Sudah Benar";
             }
 
+            const umur = hitungUmurOtomatis(thn, bln, tgl);
+            const teksUmur = umur !== null ? ` (${umur} thn)` : '';
+
             document.getElementById('revNama').textContent = nama;
             document.getElementById('revJK').textContent = jk === "L" ? "Laki-laki" : "Perempuan";
-            document.getElementById('revTTL').textContent = `${tempat}, ${tgl}-${bln}-${thn}`;
+            document.getElementById('revTTL').textContent = `${tempat}, ${tgl}-${bln}-${thn}${teksUmur}`;
             document.getElementById('revDesa').textContent = desa;
             document.getElementById('revKelompok').textContent = kelompok;
             document.getElementById('revUsia').textContent = kategori;
@@ -1199,10 +1241,19 @@
                     
                     const safeItem = JSON.stringify(item).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
 
+                    let umurText = '';
+                    if (item.tanggal_lahir) {
+                        const parts = item.tanggal_lahir.split('-');
+                        if (parts.length === 3) {
+                            const u = hitungUmurOtomatis(parts[0], parts[1], parts[2]);
+                            if (u !== null) umurText = `<span class="text-[10px] text-gray-400 font-normal block">${u} thn</span>`;
+                        }
+                    }
+
                     tr.innerHTML = `
                         <td class="p-2.5 text-center font-medium text-gray-400">${index + 1}</td>
                         <td class="p-2.5 font-bold text-emerald-700 hover:text-emerald-900 hover:underline cursor-pointer cell-nama" onclick="selectGenerusForUpdate(${safeItem})" title="Klik untuk perbarui data ${item.nama}">
-                            ${item.nama} ✏️
+                            ${item.nama} ✏️ ${umurText}
                         </td>
                         <td class="p-2.5 text-center font-semibold ${item.jenis_kelamin === 'L' ? 'text-blue-600' : 'text-pink-600'}">${item.jenis_kelamin}</td>
                         <td class="p-2.5 text-gray-600">${item.kategori_usia}</td>
