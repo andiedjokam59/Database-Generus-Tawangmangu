@@ -556,7 +556,7 @@
             <div id="wrapperKelasFormal">
                 <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Kelas Formal / Status</label>
                 <div id="containerKelasFormal">
-                    <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
+                    <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA/SMK, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">
                 </div>
             </div>
             
@@ -785,15 +785,23 @@
         });
 
         function formatKelasFormal(val) {
-            let formatted = toTitleCase(val);
-            formatted = formatted.replace(/\bPaud\b/gi, 'PAUD');
-            formatted = formatted.replace(/\bTk\b/gi, 'TK');
-            formatted = formatted.replace(/\bSd\b/gi, 'SD');
-            formatted = formatted.replace(/\bSmp\b/gi, 'SMP');
-            formatted = formatted.replace(/\bSma\b/gi, 'SMA');
-            formatted = formatted.replace(/\bSmk\b/gi, 'SMK');
-            return formatted;
-        }
+			if (!val) return "";
+			let formatted = toTitleCase(val.trim());
+			
+			// Ubah singkatan umum ke huruf kapital
+			formatted = formatted.replace(/\bPaud\b/gi, 'PAUD')
+								 .replace(/\bTk\b/gi, 'TK')
+								 .replace(/\bSd\b/gi, 'SD')
+								 .replace(/\bSmp\b/gi, 'SMP')
+								 .replace(/\bSma\b/gi, 'SMA')
+								 .replace(/\bSmk\b/gi, 'SMK');
+
+			// Rapikan duplikasi penulisan seperti SMA/SMK/Smk atau SMA/SMK/SMK
+			formatted = formatted.replace(/SMA\/SMK\/Smk/gi, 'SMA/SMK')
+								 .replace(/SMA\/SMK\/SMK/gi, 'SMA/SMK');
+
+			return formatted;
+		}
 
         function toTitleCase(str) { 
             return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); 
@@ -849,7 +857,7 @@
                 } else if (kat === "Pra Remaja") {
                     for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMP">${i} SMP</option>`;
                 } else if (kat === "Remaja") {
-                    for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMA">${i} SMA</option>`;
+                    for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMA/SMK">${i} SMA/SMK</option>`;
                 } else if (kat === "Usia Mandiri") {
                     selectOptions += `<option value="KULIAH">KULIAH</option><option value="KERJA">KERJA</option><option value="PENGANGGURAN">PENGANGGURAN</option>`;
                 } else {
@@ -961,7 +969,7 @@
             updateInfoUmurForm();
             formTambahanKhusus.classList.add('hidden');
             wrapperKelasFormal.classList.remove('hidden');
-            containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
+            containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA/SMK, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-xl border-gray-200 shadow-sm p-3 border text-sm text-gray-800 placeholder-gray-400">`;
             nomorHpInput.required = false;
             updateKelompokDropdown("", "", kelompokSelect);
             targetIdGenerus = null;
@@ -1428,12 +1436,15 @@
                 `;
 
                 const urutanKustom = [
-                    "PAUD", "TK A", "TK B",
-                    "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD",
-                    "1 SMP", "2 SMP", "3 SMP",
-                    "1 SMA", "2 SMA", "3 SMA",
-                    "KULIAH", "KERJA", "PENGANGGURAN"
-                ];
+					"PAUD", "TK A", "TK B",
+					"1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD",
+					"1 SMP", "2 SMP", "3 SMP",
+					"1 SMA", "2 SMA", "3 SMA",
+					"1 SMK", "2 SMK", "3 SMK",
+					"1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK", // <-- Menangani format gabungan SMA/SMK
+					"1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK", // <-- Menangani data lama di DB
+					"KULIAH", "KERJA", "PENGANGGURAN"
+				];
 
                 const sortedKelas = Object.keys(rekapKelas)
                     .filter(kelasKey => kelasKey !== "Tidak Diisi/Pengajar")
