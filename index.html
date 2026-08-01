@@ -19,7 +19,8 @@
 	<!-- Khusus untuk iOS / iPhone -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-	<meta name="apple-mobile-web-app-title" content="Data PPG"
+	<meta name="apple-mobile-web-app-title" content="Data PPG">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -242,7 +243,6 @@
         <!-- HEADER APPS -->
         <div class="text-center mb-8">
             <div class="flex justify-center mb-4">
-                <!-- LOGO DIBUAT LANGSUNG TAMPIL TANPA ANIMASI / MUNCUL SEDIKIT DEMI SEDIKIT -->
                 <img src="logo ppg.png" alt="Logo" class="h-20 w-auto object-contain block" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
                 <div id="fallback-icon" class="hidden items-center justify-center w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 shadow-inner">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
@@ -644,7 +644,7 @@
         </div>
     </div>
 
-<script>
+    <script>
         // JS ANIMASI HILANGKAN LOADING SCREEN KETIKA HALAMAN SELESAI DIMUAT
         window.addEventListener('load', function() {
             const loader = document.getElementById('appLoadingScreen');
@@ -1135,12 +1135,12 @@
             if (kategori === "Pengajar" || kategori === "PJ Kelompok") {
                 revKhususContainer.classList.remove('hidden');
                 revKelasContainer.classList.add('hidden');
-                document.getElementById('revNoHP').textContent = payloadData.nomor_hp;
-                document.getElementById('revMengajar').textContent = payloadData.mengajar_usia.length > 0 ? payloadData.mengajar_usia.join(', ') : "Tidak memilih";
+                document.getElementById('revNoHP').textContent = payloadData.nomor_hp || "-";
+                document.getElementById('revMengajar').textContent = (payloadData.mengajar_usia && payloadData.mengajar_usia.length > 0) ? payloadData.mengajar_usia.join(', ') : "Tidak memilih";
             } else {
                 revKhususContainer.classList.add('hidden');
                 revKelasContainer.classList.remove('hidden');
-                document.getElementById('revKelas').textContent = kelas;
+                document.getElementById('revKelas').textContent = kelas || "-";
             }
 
             modalReview.classList.remove('hidden');
@@ -1362,7 +1362,6 @@
             tableKelompokBody.innerHTML = "";
 
             try {
-                // PAGINASI BERTAHAP (BATCHING DATA PER 1000 BARIS)
                 let data = [];
                 let page = 0;
                 const pageSize = 1000;
@@ -1461,8 +1460,8 @@
 					"1 SMP", "2 SMP", "3 SMP",
 					"1 SMA", "2 SMA", "3 SMA",
 					"1 SMK", "2 SMK", "3 SMK",
-					"1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK", // <-- Menangani format gabungan SMA/SMK
-					"1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK", // <-- Menangani data lama di DB
+					"1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK",
+					"1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK",
 					"KULIAH", "KERJA", "PENGANGGURAN"
 				];
 
@@ -1541,6 +1540,7 @@
 
         window.applyFilterKelompok = function(filterVal) {
             const tableKelompokBody = document.getElementById('tableKelompokBody');
+            if(!tableKelompokBody) return;
             tableKelompokBody.innerHTML = "";
             const rekapKlp = window.globalRekapKlp;
             if (!rekapKlp) return;
@@ -1623,11 +1623,8 @@
                         }
 
                         if (Array.isArray(val)) {
-                            const arrayFormatted = `{${val.map(v => `"${v}"`).join(',')}}`;
-                            return `"${arrayFormatted.replace(/"/g, '""')}"`;
-                        }
-
-                        if (typeof val === 'object') {
+                            val = val.join('; ');
+                        } else if (typeof val === 'object') {
                             val = JSON.stringify(val);
                         }
 
