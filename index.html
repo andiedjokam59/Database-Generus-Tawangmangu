@@ -314,6 +314,28 @@
                 </div>
                 <span class="text-[11px] px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold rounded-full border border-emerald-100" id="rekapTotalData">Total: 0</span>
             </div>
+
+            <!-- BARIS TOMBOL AKSI DIPINDAHKAN KE ATAS REKAP -->
+            <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2 pb-2 border-b border-gray-100">
+                <button type="button" onclick="openPjPengajarModal()" class="inline-flex items-center gap-1.5 py-2 px-3.5 bg-emerald-500 text-white text-xs font-bold rounded-xl hover:bg-emerald-600 transition-all duration-200 shadow-sm active:scale-[0.97] cursor-pointer">
+                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    Kontak PJ & Pengajar
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="exportToCSV()" class="inline-flex items-center gap-1.5 py-2 px-3.5 bg-teal-600 text-white text-xs font-bold rounded-xl hover:bg-teal-700 transition-all duration-200 shadow-sm active:scale-[0.97] cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                        Eksport CSV
+                    </button>
+                    <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 py-2 px-3.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-all duration-200 shadow-sm active:scale-[0.97] cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.89l-2.1 2.1m0 0l-2.1-2.1m2.1 2.1V6.11M16.5 9V5.25A2.25 2.25 0 0014.25 3h-4.5A2.25 2.25 0 007.5 5.25V9m9 0H18a2.25 2.25 0 012.25 2.25v6.75A2.25 2.25 0 0118 20.25h-1.5M16.5 9V5.25M9 16.5h.008v.008H9V16.5zm3 0h.008v.008H12V16.5zm3 0h.008v.008H15V16.5zM7.5 16.5H5.25A2.25 2.25 0 003 18.75V21h18v-2.25A2.25 2.25 0 0018.75 16.5H16.5" />
+                        </svg>
+                        Cetak Rekap
+                    </button>
+                </div>
+            </div>
             
             <div id="rekapLoader" class="text-center py-8 text-sm font-medium text-gray-500">
                 ⏳ Sedang menghitung dan menyusun data...
@@ -363,21 +385,6 @@
                         </table>
                     </div>
                 </div>
-            </div>
-
-            <div class="pt-3 text-right border-t flex flex-wrap items-center justify-end gap-2">
-                <button type="button" onclick="exportToCSV()" class="inline-flex items-center gap-1.5 py-2 px-3.5 bg-teal-600 text-white text-xs font-bold rounded-xl hover:bg-teal-700 transition-all duration-200 shadow-sm active:scale-[0.97] cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                    Eksport CSV
-                </button>
-                <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 py-2 px-3.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-all duration-200 shadow-sm active:scale-[0.97] cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.89l-2.1 2.1m0 0l-2.1-2.1m2.1 2.1V6.11M16.5 9V5.25A2.25 2.25 0 0014.25 3h-4.5A2.25 2.25 0 007.5 5.25V9m9 0H18a2.25 2.25 0 012.25 2.25v6.75A2.25 2.25 0 0118 20.25h-1.5M16.5 9V5.25M9 16.5h.008v.008H9V16.5zm3 0h.008v.008H12V16.5zm3 0h.008v.008H15V16.5zM7.5 16.5H5.25A2.25 2.25 0 003 18.75V21h18v-2.25A2.25 2.25 0 0018.75 16.5H16.5" />
-                    </svg>
-                    Cetak Rekap
-                </button>
             </div>
         </div>
 
@@ -577,7 +584,7 @@
         </form>
     </div>
 
-    <!-- MODAL REVIEW SIMPAN, SUKSES, & DOKUMEN ERROR -->
+    <!-- MODAL REVIEW SIMPAN, SUKSES, DOKUMEN ERROR, SINGLE CONTACT WA, & POPUP LIST KONTAK PJ/PENGAJAR -->
     <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden opacity-0">
         <div class="bg-white rounded-2xl p-6 sm:p-8 max-w-xl w-full shadow-2xl transform scale-95 opacity-0 max-h-[90vh] overflow-y-auto">
 
@@ -641,6 +648,75 @@
                 </button>
             </div>
 
+            <!-- MODAL SINGLE KONTAK WHATSAPP (PJ & PENGAJAR) -->
+            <div id="modalContact" class="hidden text-center">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-emerald-100 text-emerald-600 mb-4 shadow-inner">
+                    <svg class="h-9 w-9" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                    </svg>
+                </div>
+                <h3 id="contactName" class="text-lg font-bold text-gray-800 mb-0.5">Nama Kontak</h3>
+                <p id="contactRole" class="text-xs font-semibold text-emerald-600 bg-emerald-50 py-0.5 px-3 rounded-full inline-block border border-emerald-100 mb-3">PJ Kelompok</p>
+                
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-100 text-left text-xs space-y-2 mb-5">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Wilayah / Kelompok:</span>
+                        <span id="contactWilayah" class="font-semibold text-gray-700"></span>
+                    </div>
+                    <div class="flex justify-between border-t pt-2">
+                        <span class="text-gray-400">Nomor WhatsApp:</span>
+                        <span id="contactPhone" class="font-bold text-emerald-800"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button type="button" onclick="closeModalOnly()" class="py-2.5 px-4 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+                        Batal
+                    </button>
+                    <a id="btnWaDirect" href="#" target="_blank" class="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200 inline-flex items-center justify-center gap-1.5 cursor-pointer">
+                        <span>Hubungi WA</span>
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- MODAL POPUP LIST DAFTAR KONTAK PJ & PENGAJAR DENGAN PENCARIAN REALTIME -->
+            <div id="modalPjPengajarList" class="hidden text-left space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="p-2 bg-emerald-100 text-emerald-700 rounded-lg">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-gray-800">Daftar Kontak PJ & Pengajar</h3>
+                            <p class="text-[11px] text-gray-500">Klik tombol WA untuk langsung menghubungi</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeModalOnly()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
+                        ✕
+                    </button>
+                </div>
+
+                <!-- INPUT SEARCH KHUSUS POPUP -->
+                <div class="relative">
+                    <input type="text" id="searchPjPengajarInput" onkeyup="filterPjPengajarList()" placeholder="Cari nama, kelompok, atau peran..." class="w-full text-xs p-2.5 pl-8 border border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none shadow-sm">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+
+                <!-- CONTAINER BISA DI-SCROLL -->
+                <div id="pjPengajarContainer" class="max-h-72 overflow-y-auto space-y-2 pr-1">
+                    <p class="text-center text-xs text-gray-400 py-6">⏳ Memuat daftar kontak...</p>
+                </div>
+
+                <div class="pt-2 text-right border-t">
+                    <button type="button" onclick="closeModalOnly()" class="py-2 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition-colors">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -663,6 +739,7 @@
         let currentMode = "DAFTAR";
         let targetIdGenerus = null;
         let payloadData = null;
+        let rawPjPengajarData = []; // Menyimpan raw data PJ & Pengajar untuk filter popup
 
         const dobTanggal = document.getElementById('dob_tanggal');
         const dobBulan = document.getElementById('dob_bulan');
@@ -672,8 +749,10 @@
             const val = i < 10 ? '0' + i : i;
             dobTanggal.options[dobTanggal.options.length] = new Option(val, val);
         }
+        
+        // TAHUN KELAHIRAN DITARIK HINGGA 100 TAHUN KE BELAKANG & OTOMATIS BERUBAH TIAP TAHUN
         const tahunSekarang = new Date().getFullYear();
-        for (let i = tahunSekarang; i >= tahunSekarang - 50; i--) {
+        for (let i = tahunSekarang; i >= tahunSekarang - 100; i--) {
             dobTahun.options[dobTahun.options.length] = new Option(i, i);
         }
 
@@ -727,6 +806,8 @@
         const modalReview = document.getElementById('modalReview');
         const modalSuccess = document.getElementById('modalSuccess');
         const modalError = document.getElementById('modalError');
+        const modalContact = document.getElementById('modalContact');
+        const modalPjPengajarList = document.getElementById('modalPjPengajarList');
         const errorMessage = document.getElementById('errorMessage');
         const optMenikah = document.getElementById('optMenikah');
 
@@ -934,9 +1015,142 @@
 
             modalReview.classList.add('hidden');
             modalSuccess.classList.add('hidden');
+            modalContact.classList.add('hidden');
+            modalPjPengajarList.classList.add('hidden');
             modalError.classList.remove('hidden');
             
             openModalAnimation();
+        }
+
+        // FUNGSI TAMPILKAN MODAL CUSTOM UNTUK KONTAK WA SATUAN (PJ & PENGAJAR)
+        function showContactModal(nama, peran, desa, kelompok, noHp) {
+            document.getElementById('contactName').textContent = nama;
+            document.getElementById('contactRole').textContent = peran;
+            document.getElementById('contactWilayah').textContent = `${desa} - ${kelompok}`;
+            document.getElementById('contactPhone').textContent = noHp || "Belum mendaftarkan nomor";
+
+            const btnWa = document.getElementById('btnWaDirect');
+            if (noHp) {
+                let cleanPhone = noHp.replace(/[^0-9]/g, '');
+                if (cleanPhone.startsWith('0')) {
+                    cleanPhone = '62' + cleanPhone.slice(1);
+                }
+                const msgText = encodeURIComponent(`Assalamu'alaikum Wr. Wb. Halo ${peran} ${nama}, saya menghubungi dari SIM Data Generus.`);
+                btnWa.href = `https://wa.me/${cleanPhone}?text=${msgText}`;
+                btnWa.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                btnWa.href = "#";
+                btnWa.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            modalReview.classList.add('hidden');
+            modalSuccess.classList.add('hidden');
+            modalError.classList.add('hidden');
+            modalPjPengajarList.classList.add('hidden');
+            modalContact.classList.remove('hidden');
+
+            openModalAnimation();
+        }
+
+        // FUNGSI UTAMA BUKA MODAL POPUP SELURUH DAFTAR KONTAK PJ & PENGAJAR DARI REKAP
+        async function openPjPengajarModal() {
+            const container = document.getElementById('pjPengajarContainer');
+            const searchInput = document.getElementById('searchPjPengajarInput');
+            searchInput.value = "";
+            container.innerHTML = `<p class="text-center text-xs text-gray-400 py-6">⏳ Mengambil data PJ & Pengajar...</p>`;
+
+            modalReview.classList.add('hidden');
+            modalSuccess.classList.add('hidden');
+            modalError.classList.add('hidden');
+            modalContact.classList.add('hidden');
+            modalPjPengajarList.classList.remove('hidden');
+
+            openModalAnimation();
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('data_generus')
+                    .select('id, nama, kategori_usia, desa, kelompok, nomor_hp, mengajar_usia')
+                    .in('kategori_usia', ['PJ Kelompok', 'Pengajar'])
+                    .order('kategori_usia', { ascending: false })
+                    .order('nama', { ascending: true });
+
+                if (error) throw error;
+
+                rawPjPengajarData = data || [];
+                renderPjPengajarList(rawPjPengajarData);
+
+            } catch (err) {
+                console.error("Gagal mengambil data PJ & Pengajar:", err);
+                container.innerHTML = `<p class="text-center text-xs text-red-500 py-6">⚠️ Gagal memuat data kontak: ${err.message}</p>`;
+            }
+        }
+
+        // RENDER ITEM KONTAK BISA DICARI REALTIME
+        function renderPjPengajarList(items) {
+            const container = document.getElementById('pjPengajarContainer');
+            if (!items || items.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-6">Tidak ada data PJ atau Pengajar ditemukan.</p>`;
+                return;
+            }
+
+            container.innerHTML = "";
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = "p-3 bg-gray-50 hover:bg-emerald-50/60 rounded-xl border border-gray-100 flex items-center justify-between gap-3 transition-colors";
+
+                const isPj = item.kategori_usia === 'PJ Kelompok';
+                const badgeColor = isPj ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700';
+
+                let cleanPhone = (item.nomor_hp || '').replace(/[^0-9]/g, '');
+                if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1);
+
+                const msgText = encodeURIComponent(`Assalamu'alaikum Wr. Wb. Halo ${item.kategori_usia} ${item.nama}, saya menghubungi dari SIM Data Generus.`);
+                const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${msgText}` : '#';
+
+                let extraInfo = '';
+                if (item.mengajar_usia && Array.isArray(item.mengajar_usia) && item.mengajar_usia.length > 0) {
+                    extraInfo = `<p class="text-[10px] text-gray-400 mt-0.5">Mengajar: ${item.mengajar_usia.join(', ')}</p>`;
+                } else if (typeof item.mengajar_usia === 'string' && item.mengajar_usia.trim() !== '') {
+                    extraInfo = `<p class="text-[10px] text-gray-400 mt-0.5">Mengajar: ${item.mengajar_usia}</p>`;
+                }
+
+                itemDiv.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-xs text-gray-800">${item.nama}</span>
+                            <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-md ${badgeColor}">${item.kategori_usia}</span>
+                        </div>
+                        <p class="text-[11px] text-gray-500 font-medium">📍 ${item.desa} - ${item.kelompok}</p>
+                        ${extraInfo}
+                    </div>
+                    <div>
+                        ${cleanPhone ? `
+                            <a href="${waUrl}" target="_blank" class="inline-flex items-center gap-1 py-1.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg shadow-sm transition-all active:scale-95">
+                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                <span>Hubungi</span>
+                            </a>
+                        ` : `
+                            <span class="text-[10px] text-gray-400 bg-gray-100 px-2 py-1 rounded">No HP (-)</span>
+                        `}
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
+
+        // FILTER REALTIME UNTUK MODAL LIST PJ & PENGAJAR
+        function filterPjPengajarList() {
+            const query = document.getElementById('searchPjPengajarInput').value.toLowerCase();
+            const filtered = rawPjPengajarData.filter(item => {
+                const name = (item.nama || '').toLowerCase();
+                const role = (item.kategori_usia || '').toLowerCase();
+                const desa = (item.desa || '').toLowerCase();
+                const kelompok = (item.kelompok || '').toLowerCase();
+                const phone = (item.nomor_hp || '').toLowerCase();
+                return name.includes(query) || role.includes(query) || desa.includes(query) || kelompok.includes(query) || phone.includes(query);
+            });
+            renderPjPengajarList(filtered);
         }
 
         function openModalAnimation() {
@@ -1146,6 +1360,8 @@
             modalReview.classList.remove('hidden');
             modalSuccess.classList.add('hidden');
             modalError.classList.add('hidden');
+            modalContact.classList.add('hidden');
+            modalPjPengajarList.classList.add('hidden');
             
             openModalAnimation();
         });
@@ -1278,10 +1494,30 @@
                         }
                     }
 
+                    // KONEKSI DENGAN MODAL CONTACT UNTUK PJ KELOMPOK / PENGAJAR
+                    let waButtonHtml = '';
+                    if ((item.kategori_usia === 'PJ Kelompok' || item.kategori_usia === 'Pengajar') && item.nomor_hp) {
+                        const escapedNama = item.nama.replace(/'/g, "\\'");
+                        const escapedKategori = item.kategori_usia.replace(/'/g, "\\'");
+                        const escapedDesa = item.desa.replace(/'/g, "\\'");
+                        const escapedKelompok = item.kelompok.replace(/'/g, "\\'");
+                        const escapedHp = item.nomor_hp.replace(/'/g, "\\'");
+
+                        waButtonHtml = `
+                            <button type="button" onclick="event.stopPropagation(); showContactModal('${escapedNama}', '${escapedKategori}', '${escapedDesa}', '${escapedKelompok}', '${escapedHp}')" title="Hubungi WA ${item.nama}" class="ml-1.5 inline-flex items-center justify-center p-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-md transition-colors">
+                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            </button>
+                        `;
+                    }
+
                     tr.innerHTML = `
                         <td class="p-2.5 text-center font-medium text-gray-400">${index + 1}</td>
                         <td class="p-2.5 font-bold text-emerald-700 hover:text-emerald-900 hover:underline cursor-pointer cell-nama" onclick="selectGenerusForUpdate(${safeItem})" title="Klik untuk perbarui data ${item.nama}">
-                            ${item.nama} ✏️ ${umurText}
+                            <div class="flex items-center">
+                                <span>${item.nama} ✏️</span>
+                                ${waButtonHtml}
+                            </div>
+                            ${umurText}
                         </td>
                         <td class="p-2.5 text-center font-semibold ${item.jenis_kelamin === 'L' ? 'text-blue-600' : 'text-pink-600'}">${item.jenis_kelamin}</td>
                         <td class="p-2.5 text-gray-600">${item.kategori_usia}</td>
