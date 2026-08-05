@@ -177,16 +177,66 @@
                         opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        /* POPUP OPTION PICKER GLASSMORPHISM DI TENGAH LAYAR */
+        #centerPickerModal {
+            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        #centerPickerModal > div {
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .picker-option-item {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .picker-option-item:hover, .picker-option-item:active {
+            background: rgba(16, 185, 129, 0.12);
+            color: #047857;
+            transform: translateX(4px);
+        }
+        .picker-option-item.active-selected {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: #ffffff;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        /* KHUSUS UNTUK TAMPILAN PRINT / PDF */
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
             body { background: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important; }
             body::before { display: none !important; }
-            #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #rekapLoader, .print\:hidden, button { display: none !important; }
+            #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #centerPickerModal, #rekapLoader, .print\:hidden, button { display: none !important; }
             .glass-container { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
             #rekapSection, #rekapContent { display: block !important; opacity: 1 !important; transform: none !important; max-height: none !important; overflow: visible !important; }
-            table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important; font-size: 11pt !important; }
+            table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important; font-size: 10pt !important; }
             th, td { border: 1px solid #333 !important; padding: 6px 8px !important; color: #000000 !important; }
-            th, tfoot tr { background-color: #f2f2f2 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            
+            /* WARNA TEKS DIBUAT SANGAT JELAS SAAT DICETAK */
+            th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold !important; }
+            
+            /* STYLE KHUSUS JUMLAH / TOTAL DI BANNER SAMPING & FOOTER TABEL */
+            tfoot tr, tfoot td { 
+                background-color: #e2e8f0 !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                font-weight: 900 !important; 
+                color: #000000 !important;
+                border-top: 2px solid #000000 !important;
+            }
+            .total-cell-highlight {
+                background-color: #cbd5e1 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-weight: 900 !important;
+                color: #000000 !important;
+            }
         }
     </style>
 </head>
@@ -373,13 +423,13 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white/40 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-white/60 shadow-sm">
                     <div>
                         <label class="block text-[10px] font-extrabold text-slate-600 uppercase tracking-wide mb-1.5">Pilih Desa</label>
-                        <select id="listFilterDesa" onchange="updateFilterKelompokDaftar()" class="glass-input smooth-select w-full rounded-xl border-slate-200/60 p-2.5 text-xs font-medium text-slate-700">
+                        <select id="listFilterDesa" onchange="updateFilterKelompokDaftar()" class="glass-input smooth-select w-full rounded-xl border-slate-200/60 p-2.5 text-xs font-medium text-slate-700 cursor-pointer">
                             <option value="">-- Pilih Desa --</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-[10px] font-extrabold text-slate-600 uppercase tracking-wide mb-1.5">Pilih Kelompok</label>
-                        <select id="listFilterKelompok" onchange="loadNamaGenerusKelompok()" disabled class="glass-input smooth-select w-full rounded-xl border-slate-200/60 p-2.5 text-xs font-medium text-slate-700">
+                        <select id="listFilterKelompok" onchange="loadNamaGenerusKelompok()" disabled class="glass-input smooth-select w-full rounded-xl border-slate-200/60 p-2.5 text-xs font-medium text-slate-700 cursor-pointer">
                             <option value="">-- Pilih Desa Terlebih Dahulu --</option>
                         </select>
                     </div>
@@ -428,7 +478,7 @@
             
             <div>
                 <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-1.5 ml-1">Jenis Kelamin</label>
-                <select id="jenis_kelamin" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium appearance-none">
+                <select id="jenis_kelamin" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">
                     <option value="" class="text-slate-400">-- Pilih Jenis Kelamin --</option>
                     <option value="L">Laki-laki</option>
                     <option value="P">Perempuan</option>
@@ -443,10 +493,10 @@
             <div>
                 <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-1.5 ml-1">Tanggal Lahir</label>
                 <div class="grid grid-cols-3 gap-2 sm:gap-3">
-                    <select id="dob_tanggal" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium text-center">
+                    <select id="dob_tanggal" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium text-center cursor-pointer">
                         <option value="">Tgl</option>
                     </select>
-                    <select id="dob_bulan" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">
+                    <select id="dob_bulan" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">
                         <option value="">Bulan</option>
                         <option value="01">Januari</option>
                         <option value="02">Februari</option>
@@ -461,7 +511,7 @@
                         <option value="11">November</option>
                         <option value="12">Desember</option>
                     </select>
-                    <select id="dob_tahun" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium text-center">
+                    <select id="dob_tahun" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium text-center cursor-pointer">
                         <option value="">Tahun</option>
                     </select>
                 </div>
@@ -472,7 +522,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                     <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-1.5 ml-1">Desa</label>
-                    <select id="desa" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">
+                    <select id="desa" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">
                         <option value="">-- Pilih Desa --</option>
                         <option value="Karanglo Selatan">Karanglo Selatan</option>
                         <option value="Karanglo Utara">Karanglo Utara</option>
@@ -482,7 +532,7 @@
                 </div>
                 <div>
                     <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-1.5 ml-1">Kelompok</label>
-                    <select id="kelompok" required disabled class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium disabled:opacity-60 disabled:bg-slate-100/50">
+                    <select id="kelompok" required disabled class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium disabled:opacity-60 disabled:bg-slate-100/50 cursor-pointer">
                         <option value="">-- Pilih Desa Terlebih Dahulu --</option>
                     </select>
                 </div>
@@ -490,7 +540,7 @@
 
             <div>
                 <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-1.5 ml-1">Kategori</label>
-                <select id="kategori_usia" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">
+                <select id="kategori_usia" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">
                     <option value="">-- Pilih Kategori --</option>
                     <option value="PAUD">PAUD</option>
                     <option value="TK">TK</option>
@@ -697,6 +747,21 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOM PICKER PILIHAN TEPAT DI TENGAH LAYAR (GLASSMORPHISM) -->
+    <div id="centerPickerModal" class="fixed inset-0 z-[150] flex items-center justify-center p-4 hidden opacity-0" onclick="closeCenterPicker()">
+        <div class="rounded-[2rem] p-5 sm:p-6 max-w-sm w-full transform scale-90 opacity-0 max-h-[75vh] flex flex-col" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between border-b border-slate-200/60 pb-3 mb-3 shrink-0">
+                <span id="centerPickerTitle" class="text-xs font-extrabold uppercase tracking-widest text-emerald-800">Pilih Opsi</span>
+                <button type="button" onclick="closeCenterPicker()" class="p-1.5 text-slate-400 hover:text-slate-800 bg-slate-100/80 rounded-full transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div id="centerPickerOptions" class="overflow-y-auto space-y-1.5 pr-1 scrollbar-hide flex-1">
+                <!-- Pilihan opsi akan dirender otomatis -->
+            </div>
         </div>
     </div>
 
@@ -940,7 +1005,7 @@
                 }
 
                 containerKelasFormal.innerHTML = `
-                    <select id="kelas_formal" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">
+                    <select id="kelas_formal" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">
                         ${selectOptions}
                     </select>
                 `;
@@ -1102,7 +1167,7 @@
                     <div class="shrink-0">
                         ${cleanPhone ? `
                             <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl transition-all active:scale-95 border border-emerald-200 shadow-sm" title="Hubungi WA">
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.893 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                             </a>
                         ` : `
                             <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">No HP (-)</span>
@@ -1176,7 +1241,7 @@
             updateInfoUmurForm();
             formTambahanKhusus.classList.add('hidden');
             wrapperKelasFormal.classList.remove('hidden');
-            containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA/SMK, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
+            containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
             nomorHpInput.required = false;
             updateKelompokDropdown("", "", kelompokSelect);
             targetIdGenerus = null;
@@ -1655,7 +1720,7 @@
                         <td class="p-3 sm:p-4 font-bold text-slate-800">${key}</td>
                         <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
                         <td class="p-3 sm:p-4 text-center font-medium">${val.P}</td>
-                        <td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800">${totalRow}</td>
+                        <td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800 total-cell-highlight">${totalRow}</td>
                     `;
                     tableUsiaBody.appendChild(tr);
                 }
@@ -1663,7 +1728,7 @@
                     <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left">TOTAL AKUMULASI</td>
                     <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalUsiaL}</td>
                     <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalUsiaP}</td>
-                    <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner">${totalUsiaSemua}</td>
+                    <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight">${totalUsiaSemua}</td>
                 `;
 
                 const urutanKustom = [
@@ -1702,7 +1767,7 @@
                             <td class="p-3 sm:p-4 font-bold text-slate-800">${kelasKey}</td>
                             <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
                             <td class="p-3 sm:p-4 text-center font-medium">${val.P}</td>
-                            <td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800">${totalRow}</td>
+                            <td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800 total-cell-highlight">${totalRow}</td>
                         `;
                         tableKelasBody.appendChild(tr);
                     });
@@ -1710,7 +1775,7 @@
                         <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left">TOTAL AKUMULASI</td>
                         <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalKelasL}</td>
                         <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalKelasP}</td>
-                        <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner">${totalKelasSemua}</td>
+                        <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight">${totalKelasSemua}</td>
                     `;
                 }
 
@@ -1721,14 +1786,14 @@
 					filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
 					const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
 					const optgroupDesa = document.createElement('optgroup');
-					optgroupDesa.label = "📂 PER DESA";
+					optgroupDesa.label = "PER DESA";
 					uniqueDesa.forEach(desa => {
 						optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`;
 					});
 					filterSelect.appendChild(optgroupDesa);
 
 					const optgroupKlp = document.createElement('optgroup');
-					optgroupKlp.label = "👥 PER KELOMPOK";
+					optgroupKlp.label = "PER KELOMPOK";
 					const sortedKlpKeys = Object.keys(rekapKlp).sort();
 					sortedKlpKeys.forEach(key => {
 						const shortName = key.includes(" - ") ? key.split(" - ")[1] : key;
@@ -1786,7 +1851,7 @@
                     tr.className = "hover:bg-white/70 transition-colors duration-200 font-medium text-slate-800";
                     tr.innerHTML = `
                         <td class="p-3 sm:p-4 font-bold text-slate-700">${key}</td>
-                        <td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-800">${row.jml_generus}</td>
+                        <td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-800 total-cell-highlight">${row.jml_generus}</td>
                         <td class="p-3 sm:p-4 text-center text-indigo-600 font-bold">${row.L}</td>
                         <td class="p-3 sm:p-4 text-center text-pink-600 font-bold">${row.P}</td>
                         <td class="p-3 sm:p-4 text-center bg-orange-50/50 font-extrabold text-orange-800">${row.jml_pengajar}</td>
@@ -1891,6 +1956,114 @@
 					.catch((err) => console.error('Gagal mendaftarkan Service Worker:', err));
 			});
 		}
+
+        /* -------------------------------------------------------------
+         * INTERCEPTOR POPUP OPTION PICKER DI TENGAH LAYAR
+         * ------------------------------------------------------------- */
+        let activeSelectTarget = null;
+
+        document.addEventListener('mousedown', handleSelectClick);
+        document.addEventListener('touchstart', handleSelectClick, { passive: false });
+
+        function handleSelectClick(e) {
+            const select = e.target.closest('select');
+            if (!select || select.disabled) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            activeSelectTarget = select;
+            openCenterPicker(select);
+        }
+
+        function openCenterPicker(select) {
+            const modal = document.getElementById('centerPickerModal');
+            const modalContent = modal.querySelector('div');
+            const titleEl = document.getElementById('centerPickerTitle');
+            const optionsContainer = document.getElementById('centerPickerOptions');
+
+            let labelText = "Pilih Ospi";
+            const parent = select.closest('div');
+            if (parent) {
+                const label = parent.querySelector('label');
+                if (label) labelText = label.textContent;
+            }
+            titleEl.textContent = labelText;
+
+            optionsContainer.innerHTML = '';
+
+            // CEK APAKAH SELECT MEMILIKI OPTGROUP (SEPERTI FILTER REKAP NO 3)
+            const hasOptGroup = select.querySelectorAll('optgroup').length > 0;
+
+            if (hasOptGroup) {
+                // RENDER DENGAN GAP & HEADER PEMBATAS UNTUK OPTGROUP
+                Array.from(select.children).forEach((child) => {
+                    if (child.tagName.toLowerCase() === 'option') {
+                        if (child.disabled) return;
+                        appendPickerOptionItem(optionsContainer, child, select);
+                    } else if (child.tagName.toLowerCase() === 'optgroup') {
+                        // BUAT CONTAINER PEMBATAS / GAP
+                        const groupDivider = document.createElement('div');
+                        groupDivider.className = "pt-3 pb-1 px-1 border-t border-slate-200/80 mt-2 first:mt-0 first:border-0";
+                        groupDivider.innerHTML = `<span class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-md inline-block border border-indigo-100/80 shadow-2xs">${child.label}</span>`;
+                        optionsContainer.appendChild(groupDivider);
+
+                        Array.from(child.children).forEach((opt) => {
+                            if (opt.disabled) return;
+                            appendPickerOptionItem(optionsContainer, opt, select);
+                        });
+                    }
+                });
+            } else {
+                // RENDER OPTION BIASA
+                Array.from(select.options).forEach((opt) => {
+                    if (opt.disabled) return;
+                    appendPickerOptionItem(optionsContainer, opt, select);
+                });
+            }
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-90', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+        }
+
+        function appendPickerOptionItem(container, opt, select) {
+            const item = document.createElement('button');
+            item.type = "button";
+            const isSelected = (opt.value === select.value);
+            item.className = `w-full text-left p-3 rounded-xl text-xs font-semibold flex items-center justify-between cursor-pointer picker-option-item ${isSelected ? 'active-selected' : 'text-slate-700 bg-white/40 border border-white/60'}`;
+            
+            item.innerHTML = `
+                <span>${opt.text}</span>
+                ${isSelected ? `<svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>` : ''}
+            `;
+
+            item.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                select.value = opt.value;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                closeCenterPicker();
+            });
+
+            container.appendChild(item);
+        }
+
+        function closeCenterPicker() {
+            const modal = document.getElementById('centerPickerModal');
+            if (!modal || modal.classList.contains('hidden')) return;
+
+            const modalContent = modal.querySelector('div');
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-90', 'opacity-0');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                activeSelectTarget = null;
+            }, 300);
+        }
 	</script>
 </body>
 </html>
