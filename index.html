@@ -1974,7 +1974,7 @@
 		}
 
         /* -------------------------------------------------------------
-		 * INTERCEPTOR POPUP OPTION PICKER DI TENGAH LAYAR
+		 * INTERCEPTOR POPUP OPTION PICKER DI TENGAH LAYAR (RESPONSIF & MULUS)
 		 * ------------------------------------------------------------- */
 		let activeSelectTarget = null;
 
@@ -1982,17 +1982,19 @@
 		let touchStartX = 0;
 		let isSwiping = false;
 
-		// Mencegah dropdown bawaan browser muncul di PC (mouse) dan HP (touch)
-		document.addEventListener('mousedown', interceptSelect, { capture: true });
-		document.addEventListener('touchstart', interceptSelectTouchStart, { capture: true, passive: false });
+		// Tangkap interaksi di desktop (mousedown)
+		document.addEventListener('mousedown', interceptSelectMouseDown, { capture: true });
+
+		// Tangkap interaksi di mobile (touch) tanpa mematikan scroll bawaan
+		document.addEventListener('touchstart', interceptSelectTouchStart, { capture: true, passive: true });
 		document.addEventListener('touchmove', interceptSelectTouchMove, { capture: true, passive: true });
 		document.addEventListener('touchend', interceptSelectTouchEnd, { capture: true });
 
-		function interceptSelect(e) {
+		function interceptSelectMouseDown(e) {
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
 
-			// Matikan popup bawaan browser
+			// Untuk PC/Desktop: Matikan dropdown native bawaan browser
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -2004,9 +2006,7 @@
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
 
-			// Matikan dropdown native di mobile
-			e.preventDefault();
-			
+			// CATATAN: e.preventDefault() DIBUANG di sini agar scroll layar tetap MULUS!
 			isSwiping = false;
 			touchStartY = e.touches[0].clientY;
 			touchStartX = e.touches[0].clientX;
@@ -2014,11 +2014,12 @@
 
 		function interceptSelectTouchMove(e) {
 			if (!touchStartY) return;
+
 			const diffY = Math.abs(e.touches[0].clientY - touchStartY);
 			const diffX = Math.abs(e.touches[0].clientX - touchStartX);
 
-			// Jika jari bergeser lebih dari 8px, anggap pengguna sedang meluncur/scrolling
-			if (diffY > 8 || diffX > 8) {
+			// Jika jari bergeser lebih dari 6px, tandai bahwa pengguna sedang scrolling
+			if (diffY > 6 || diffX > 6) {
 				isSwiping = true;
 			}
 		}
@@ -2027,12 +2028,16 @@
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
 
-			// Jika bukan gerakan scrolling/swiping, buka custom popup
+			// Jika jari TIDAK mengusap/scrolling (murni di-tap), buka custom popup
 			if (!isSwiping) {
+				e.preventDefault(); // Hentikan klik/dropdown native bawaan browser
+				e.stopPropagation();
+				
 				activeSelectTarget = select;
 				openCenterPicker(select);
 			}
-			
+
+			// Reset koordinat
 			isSwiping = false;
 			touchStartY = 0;
 			touchStartX = 0;
