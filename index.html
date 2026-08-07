@@ -26,6 +26,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');
@@ -53,6 +57,7 @@
             -webkit-backdrop-filter: blur(28px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+            will-change: transform, opacity;
         }
 
         .capitalize-input { text-transform: capitalize; }
@@ -61,7 +66,7 @@
             background: rgba(255, 255, 255, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); 
         }
         .glass-input:focus {
             background: rgba(255, 255, 255, 0.95);
@@ -72,14 +77,14 @@
         }
 
 		.fade-transition {
-			transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-						transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+			transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+						transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 			will-change: opacity, transform;
 		}
 
 		.fade-hidden {
 			opacity: 0 !important;
-			transform: translateY(20px) scale(0.97) !important;
+			transform: translateY(12px) scale(0.98) !important;
 			pointer-events: none !important;
 			display: none !important;
 		}
@@ -95,110 +100,125 @@
 			display: grid !important;
 		}
 
+        /* ANIMASI EFEK DENYUT SMOOTH (SOFT PULSE) */
+        @keyframes buttonPulseSmooth {
+            0% { transform: scale(1); }
+            40% { transform: scale(0.96); }
+            70% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .animate-bounce-click {
+            animation: buttonPulseSmooth 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+
         @keyframes menuCascadeIn {
-            0% { opacity: 0; transform: translateY(-24px) scale(0.95); }
+            0% { opacity: 0; transform: translateY(-16px) scale(0.96); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         #mainDashboard.fade-visible .menu-btn-smooth {
-            animation: menuCascadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation: menuCascadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
             will-change: transform, opacity;
             backface-visibility: hidden;
         }
 
-        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(1) { animation-delay: 0.05s; }
-        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(2) { animation-delay: 0.15s; }
-        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(3) { animation-delay: 0.25s; }
+        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(1) { animation-delay: 0.03s; }
+        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(2) { animation-delay: 0.08s; }
+        #mainDashboard.fade-visible .menu-btn-smooth:nth-child(3) { animation-delay: 0.13s; }
 
         @keyframes fieldFadeIn {
-            0% { opacity: 0; transform: translateY(12px); }
+            0% { opacity: 0; transform: translateY(8px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
         #formGenerus.fade-visible > div {
-            animation: fieldFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation: fieldFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
             will-change: transform, opacity;
         }
 
-        #formGenerus.fade-visible > div:nth-child(1) { animation-delay: 0.05s; }
-        #formGenerus.fade-visible > div:nth-child(2) { animation-delay: 0.10s; }
-        #formGenerus.fade-visible > div:nth-child(3) { animation-delay: 0.15s; }
-        #formGenerus.fade-visible > div:nth-child(4) { animation-delay: 0.20s; }
-        #formGenerus.fade-visible > div:nth-child(5) { animation-delay: 0.25s; }
-        #formGenerus.fade-visible > div:nth-child(6) { animation-delay: 0.30s; }
-        #formGenerus.fade-visible > div:nth-child(7) { animation-delay: 0.35s; }
-        #formGenerus.fade-visible > div:nth-child(8) { animation-delay: 0.40s; }
-
         .animate-field-in {
-            animation: fieldFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+            animation: fieldFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
         }
 
         .menu-btn-smooth {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
+                        background-color 0.2s ease, 
+                        box-shadow 0.2s ease;
+            touch-action: manipulation;
+            will-change: transform;
         }
         .menu-btn-smooth:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateY(-8px) scale(1.02) !important;
-            box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.12), 0 10px 15px -4px rgba(0, 0, 0, 0.08);
-            border-color: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+        }
+        .menu-btn-smooth:active {
+            transform: scale(0.97) !important;
         }
         
         .icon-box-smooth {
             background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+                        box-shadow 0.3s ease;
             will-change: transform;
         }
         .menu-btn-smooth:hover .icon-box-smooth {
-            transform: scale(1.15) rotate(-3deg);
-            box-shadow: 0 10px 25px -3px rgba(16, 185, 129, 0.4);
+            transform: scale(1.06);
+            box-shadow: 0 6px 16px -2px rgba(16, 185, 129, 0.3);
         }
 
         .icon-update { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
-        .menu-btn-smooth:hover .icon-update { box-shadow: 0 10px 25px -3px rgba(59, 130, 246, 0.4); }
+        .menu-btn-smooth:hover .icon-update { box-shadow: 0 6px 16px -2px rgba(59, 130, 246, 0.3); }
         
         .icon-rekap { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%); }
-        .menu-btn-smooth:hover .icon-rekap { box-shadow: 0 10px 25px -3px rgba(139, 92, 246, 0.4); }
+        .menu-btn-smooth:hover .icon-rekap { box-shadow: 0 6px 16px -2px rgba(139, 92, 246, 0.3); }
 
         .smooth-select {
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         #customModal {
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.4s ease;
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            will-change: opacity;
         }
         #customModal > div {
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), 
-                        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                        opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity;
         }
 
         /* POPUP OPTION PICKER GLASSMORPHISM DI TENGAH LAYAR */
         #centerPickerModal {
-            transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             background: rgba(15, 23, 42, 0.5);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            will-change: opacity;
         }
         #centerPickerModal > div {
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(255, 255, 255, 0.85);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(28px) saturate(200%);
             -webkit-backdrop-filter: blur(28px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.9);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            will-change: transform, opacity;
         }
         .picker-option-item {
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: background-color 0.15s ease, color 0.15s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            touch-action: manipulation;
         }
         .picker-option-item:hover, .picker-option-item:active {
             background: rgba(16, 185, 129, 0.12);
             color: #047857;
-            transform: translateX(4px);
+            transform: scale(1.01);
         }
         .picker-option-item.active-selected {
             background: linear-gradient(135deg, #10b981 0%, #047857 100%);
@@ -217,11 +237,7 @@
             #rekapSection, #rekapContent { display: block !important; opacity: 1 !important; transform: none !important; max-height: none !important; overflow: visible !important; }
             table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important; font-size: 10pt !important; }
             th, td { border: 1px solid #333 !important; padding: 6px 8px !important; color: #000000 !important; }
-            
-            /* WARNA TEKS DIBUAT SANGAT JELAS SAAT DICETAK */
             th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold !important; }
-            
-            /* STYLE KHUSUS JUMLAH / TOTAL DI BANNER SAMPING & FOOTER TABEL */
             tfoot tr, tfoot td { 
                 background-color: #e2e8f0 !important; 
                 -webkit-print-color-adjust: exact; 
@@ -243,7 +259,7 @@
 <body class="min-h-screen flex items-center justify-center p-3 sm:p-6 antialiased">
 
     <!-- ANIMASI LOADING SAAT MASUK APLIKASI (SPLASH SCREEN) -->
-    <div id="appLoadingScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-opacity duration-700">
+    <div id="appLoadingScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-opacity duration-500 ease-out">
         <div class="relative flex items-center justify-center mb-6">
             <div class="w-20 h-20 border-[3px] border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
             <img src="logo ppg.png" alt="Logo" class="w-10 h-10 absolute object-contain drop-shadow-md" onerror="this.style.display='none';">
@@ -306,7 +322,7 @@
 
         <!-- TOMBOL KEMBALI KETIKA DALAM SUB-MENU -->
         <div id="backToHomeBtn" class="fade-transition fade-hidden mb-5 sm:mb-8">
-            <button type="button" onclick="showMainDashboard()" class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 bg-white/70 backdrop-blur-sm border border-white hover:bg-white/90 px-4 py-2.5 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 cursor-pointer">
+            <button type="button" onclick="showMainDashboard()" class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 bg-white/70 backdrop-blur-sm border border-white hover:bg-white/90 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-sm hover:shadow cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transition-transform group-hover:-translate-x-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                 </svg>
@@ -333,21 +349,21 @@
 
             <!-- BARIS TOMBOL AKSI DIPINDAHKAN KE ATAS REKAP -->
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sm:justify-end gap-2.5 pb-3 print:hidden">
-                <button type="button" onclick="openPjPengajarModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-white/80 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl hover:bg-white transition-all duration-200 shadow-sm hover:shadow active:scale-[0.97] cursor-pointer">
+                <button type="button" onclick="openPjPengajarModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-white/80 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl hover:bg-white transition-all duration-200 shadow-sm hover:shadow cursor-pointer">
 					<svg class="w-4 h-4 shrink-0 fill-current text-indigo-500" viewBox="0 0 24 24">
 						<path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
 					</svg>
 					<span>Kontak PJ & Pengajar</span>
 				</button>
                 <div class="grid grid-cols-2 gap-2.5 w-full sm:w-auto">
-                    <button type="button" onclick="exportToCSV()" class="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.97] cursor-pointer">
+                    <button type="button" onclick="exportToCSV()" class="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
                         Eksport CSV
                     </button>
                     <!-- TOMBOL CETAK -->
-                    <button type="button" onclick="cetakRekapitulasiData()" class="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md hover:bg-slate-900 transition-all duration-200 active:scale-[0.97] cursor-pointer">
+                    <button type="button" onclick="cetakRekapitulasiData()" class="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md hover:bg-slate-900 transition-all duration-200 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.89l-2.1 2.1m0 0l-2.1-2.1m2.1 2.1V6.11M16.5 9V5.25A2.25 2.25 0 0014.25 3h-4.5A2.25 2.25 0 007.5 5.25V9m9 0H18a2.25 2.25 0 012.25 2.25v6.75A2.25 2.25 0 0118 20.25h-1.5M16.5 9V5.25M9 16.5h.008v.008H9V16.5zm3 0h.008v.008H12V16.5zm3 0h.008v.008H15V16.5zM7.5 16.5H5.25A2.25 2.25 0 003 18.75V21h18v-2.25A2.25 2.25 0 0018.75 16.5H16.5" />
                         </svg>
@@ -438,7 +454,7 @@
                 <div class="overflow-hidden border border-white/60 rounded-2xl shadow-lg bg-white/50 backdrop-blur-md">
                     <div class="p-3 border-b border-slate-200/50 bg-white/60 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <span id="labelTotalGenerus" class="text-xs font-extrabold text-slate-800">Pilih kelompok untuk lihat data</span>
-                        <input type="text" id="searchNamaInList" onkeyup="filterNamaGenerusTable()" placeholder="Cari nama..." class="text-xs border border-slate-200/80 rounded-xl p-2 px-3 hidden w-full sm:w-48 transition-all duration-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-inner bg-white/70">
+                        <input type="text" id="searchNamaInList" onkeyup="filterNamaGenerusTable()" placeholder="Cari nama..." class="text-xs border border-slate-200/80 rounded-xl p-2 px-3 hidden w-full sm:w-48 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-inner bg-white/70">
                     </div>
                     <div class="max-h-64 overflow-y-auto overflow-x-auto relative scrollbar-hide">
                         <table class="min-w-full divide-y divide-slate-200/50 text-xs">
@@ -601,7 +617,7 @@
             </div>
             
             <div class="pt-4">
-                <button type="submit" id="submitBtn" class="w-full relative inline-flex items-center justify-center p-3.5 sm:p-4 text-sm sm:text-base font-extrabold tracking-widest text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 rounded-2xl shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] transition-all duration-300 ease-out transform hover:-translate-y-1 active:scale-[0.98] cursor-pointer border border-emerald-400/50">
+                <button type="submit" id="submitBtn" class="w-full relative inline-flex items-center justify-center p-3.5 sm:p-4 text-sm sm:text-base font-extrabold tracking-widest text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 rounded-2xl shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] transition-all duration-200 ease-out cursor-pointer border border-emerald-400/50">
                     Kirim Data
                 </button>
             </div>
@@ -767,13 +783,27 @@
 
     <!-- SCRIPT JAVASCRIPT -->
     <script>
+        // EFEK DENYUT SMOOTH OTOMATIS SAAT SETIAP TOMBOL DIKLIK
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('button, a.cursor-pointer, .picker-option-item');
+            if (!btn) return;
+
+            btn.classList.remove('animate-bounce-click');
+            void btn.offsetWidth; // Reflow trigger
+            btn.classList.add('animate-bounce-click');
+
+            setTimeout(() => {
+                btn.classList.remove('animate-bounce-click');
+            }, 350);
+        });
+
         window.addEventListener('load', function() {
             const loader = document.getElementById('appLoadingScreen');
             if(loader) {
                 loader.classList.add('opacity-0');
                 setTimeout(() => {
                     loader.style.display = 'none';
-                }, 700);
+                }, 500);
             }
         });
 
@@ -878,20 +908,17 @@
         });
 
         window.addEventListener('popstate', (e) => {
-            // Priority 1: Tutup modal center picker jika sedang aktif
             const centerPicker = document.getElementById('centerPickerModal');
             if (centerPicker && !centerPicker.classList.contains('hidden')) {
                 closeCenterPicker(false);
                 return;
             }
 
-            // Priority 2: Tutup modal dialog konfirmasi / kontak jika sedang aktif
             if (customModal && !customModal.classList.contains('hidden')) {
                 closeModalOnly(false);
                 return;
             }
 
-            // Priority 3: Navigasi Halaman Utama
             if (e.state && e.state.menu) {
                 switchMenuView(e.state.menu);
             } else {
@@ -910,7 +937,7 @@
             setTimeout(() => {
                 el.classList.add('fade-hidden');
                 if (callback) callback();
-            }, 400);
+            }, 300);
         }
 
         function showMainDashboard(pushHistory = true) {
@@ -940,7 +967,7 @@
                     showElementSmooth(document.getElementById('mainDashboard'));
                     document.getElementById('mainTitle').textContent = "PENDATAAN GENERUS";
                     document.getElementById('mainSubtitle').textContent = "Pilih menu di bawah untuk melanjutkan";
-                }, 350);
+                }, 250);
             } else {
                 hideElementSmooth(document.getElementById('mainDashboard'), () => {
                     showElementSmooth(document.getElementById('backToHomeBtn'));
@@ -1222,7 +1249,7 @@
                     </div>
                     <div class="shrink-0">
                         ${cleanPhone ? `
-                            <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl transition-all active:scale-95 border border-emerald-200 shadow-sm" title="Hubungi WA">
+                            <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl transition-all border border-emerald-200 shadow-sm" title="Hubungi WA">
                                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                             </a>
                         ` : `
@@ -1277,7 +1304,7 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
                 if (callback) callback();
-            }, 350);
+            }, 250);
 
             if (backHistory && window.history.state && window.history.state.modal === modalId) {
                 window.history.back();
@@ -1399,7 +1426,7 @@
             
             setTimeout(() => {
                 formGenerus.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
+            }, 250);
         }
 
         document.getElementById('formGenerus').addEventListener('submit', function(e) {
@@ -1600,7 +1627,7 @@
                 tbody.innerHTML = "";
                 data.forEach((item, index) => {
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/80 transition-colors duration-200 row-Generus backdrop-blur-sm text-xs";
+                    tr.className = "hover:bg-white/80 transition-colors duration-150 row-Generus backdrop-blur-sm text-xs";
                     
                     const safeItem = JSON.stringify(item).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
 
@@ -1793,7 +1820,7 @@
                     totalUsiaL += val.L; totalUsiaP += val.P; totalUsiaSemua += totalRow;
 
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/70 transition-colors duration-200 text-xs";
+                    tr.className = "hover:bg-white/70 transition-colors duration-150 text-xs";
                     tr.innerHTML = `
                         <td class="p-3 sm:p-4 font-bold text-slate-800">${key}</td>
                         <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
@@ -1840,7 +1867,7 @@
                         totalKelasL += val.L; totalKelasP += val.P; totalKelasSemua += totalRow;
 
                         const tr = document.createElement('tr');
-                        tr.className = "hover:bg-white/70 transition-colors duration-200 text-xs";
+                        tr.className = "hover:bg-white/70 transition-colors duration-150 text-xs";
                         tr.innerHTML = `
                             <td class="p-3 sm:p-4 font-bold text-slate-800">${kelasKey}</td>
                             <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
@@ -1926,7 +1953,7 @@
                 filteredKeys.forEach((key) => {
                     const row = rekapKlp[key];
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/70 transition-colors duration-200 font-medium text-slate-800 text-xs";
+                    tr.className = "hover:bg-white/70 transition-colors duration-150 font-medium text-slate-800 text-xs";
                     tr.innerHTML = `
                         <td class="p-3 sm:p-4 font-bold text-slate-700">${key}</td>
                         <td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-800 total-cell-highlight">${row.jml_generus}</td>
@@ -2184,7 +2211,7 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
                 activeSelectTarget = null;
-            }, 300);
+            }, 250);
 
             if (backHistory && window.history.state && window.history.state.modal === 'centerPickerModal') {
                 window.history.back();
