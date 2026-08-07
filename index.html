@@ -423,13 +423,13 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white/40 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-white/60 shadow-sm">
                     <div>
                         <label class="block text-[10px] font-extrabold text-slate-600 uppercase tracking-wide mb-1.5">Pilih Desa</label>
-                        <select id="listFilterDesa" onchange="updateFilterKelompokDaftar()" class="glass-input smooth-select w-full rounded-xl border-slate-200/60 p-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+                        <select id="listFilterDesa" onchange="updateFilterKelompokDaftar()" class="glass-input smooth-select w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm font-medium text-slate-900 cursor-pointer">
                             <option value="">-- Pilih Desa --</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-[10px] font-extrabold text-slate-600 uppercase tracking-wide mb-1.5">Pilih Kelompok</label>
-                        <select id="listFilterKelompok" onchange="loadNamaGenerusKelompok()" disabled class="glass-input smooth-select w-full rounded-xl border-slate-200/60 p-2.5 text-xs font-medium text-slate-700 cursor-pointer">
+                        <select id="listFilterKelompok" onchange="loadNamaGenerusKelompok()" disabled class="glass-input smooth-select w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm font-medium text-slate-900 cursor-pointer">
                             <option value="">-- Pilih Desa Terlebih Dahulu --</option>
                         </select>
                     </div>
@@ -558,7 +558,7 @@
             <div id="formTambahanKhusus" class="hidden space-y-4 border-l-[3px] border-emerald-500 pl-4 bg-white/40 p-4 rounded-r-2xl rounded-bl-sm transition-all duration-300 shadow-sm">
                 <div>
                     <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-emerald-900 mb-1.5">Nomor HP</label>
-                    <input type="tel" id="nomor_hp" placeholder="Contoh: 081234567890" class="glass-input block w-full rounded-xl p-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium">
+                    <input type="tel" id="nomor_hp" placeholder="Contoh: 081234567890" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium">
                 </div>
                 <div>
                     <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-emerald-900 mb-1">Mengajar Usia</label>
@@ -726,7 +726,7 @@
 
                 <!-- INPUT SEARCH KHUSUS POPUP -->
                 <div class="relative">
-                    <input type="text" id="searchPjPengajarInput" onkeyup="filterPjPengajarList()" placeholder="Cari nama, kelompok, atau peran..." class="w-full text-xs p-3.5 pl-10 border border-slate-200/80 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 shadow-inner font-medium bg-slate-50/50">
+                    <input type="text" id="searchPjPengajarInput" onkeyup="filterPjPengajarList()" placeholder="Cari nama, kelompok, atau peran..." class="w-full text-xs sm:text-sm p-3.5 pl-10 border border-slate-200/80 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 shadow-inner font-medium bg-slate-50/50">
                     <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
@@ -868,47 +868,94 @@
         const wrapperKelasFormal = document.getElementById('wrapperKelasFormal');
         const containerKelasFormal = document.getElementById('containerKelasFormal');
 
-		function showElementSmooth(el) {
-			el.classList.remove('fade-hidden');
+        /* -------------------------------------------------------------
+         * INTEGRASI NAVIGASI & SISTEM TOMBOL KEMBALI HP (ANDROID / IOS)
+         * ------------------------------------------------------------- */
+        let activeMenuState = 'home';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            history.replaceState({ menu: 'home' }, '', '#home');
+        });
+
+        window.addEventListener('popstate', (e) => {
+            // Priority 1: Tutup modal center picker jika sedang aktif
+            const centerPicker = document.getElementById('centerPickerModal');
+            if (centerPicker && !centerPicker.classList.contains('hidden')) {
+                closeCenterPicker(false);
+                return;
+            }
+
+            // Priority 2: Tutup modal dialog konfirmasi / kontak jika sedang aktif
+            if (customModal && !customModal.classList.contains('hidden')) {
+                closeModalOnly(false);
+                return;
+            }
+
+            // Priority 3: Navigasi Halaman Utama
+            if (e.state && e.state.menu) {
+                switchMenuView(e.state.menu);
+            } else {
+                switchMenuView('home');
+            }
+        });
+
+        function showElementSmooth(el) {
+            el.classList.remove('fade-hidden');
             void el.offsetWidth; 
-			el.classList.add('fade-visible');
-		}
-
-		function hideElementSmooth(el, callback) {
-			el.classList.remove('fade-visible');
-			setTimeout(() => {
-				el.classList.add('fade-hidden');
-				if (callback) callback();
-			}, 400);
-		}
-
-        function showMainDashboard() {
-            hideElementSmooth(document.getElementById('backToHomeBtn'));
-            hideElementSmooth(document.getElementById('formGenerus'));
-            hideElementSmooth(document.getElementById('searchSection'));
-            hideElementSmooth(document.getElementById('rekapSection'));
-            
-            setTimeout(() => {
-                showElementSmooth(document.getElementById('mainDashboard'));
-                document.getElementById('mainTitle').textContent = "PENDATAAN GENERUS";
-                document.getElementById('mainSubtitle').textContent = "Pilih menu di bawah untuk melanjutkan";
-            }, 350);
+            el.classList.add('fade-visible');
         }
 
-        function openMenu(menuType) {
-            hideElementSmooth(document.getElementById('mainDashboard'), () => {
-                showElementSmooth(document.getElementById('backToHomeBtn'));
+        function hideElementSmooth(el, callback) {
+            el.classList.remove('fade-visible');
+            setTimeout(() => {
+                el.classList.add('fade-hidden');
+                if (callback) callback();
+            }, 400);
+        }
 
-                if (menuType === 'DATABASE') {
-                    switchMode('DAFTAR');
-                } else if (menuType === 'UPDATE') {
-                    switchMode('UPDATE');
-                    initFilterDaftarNama();
-                } else if (menuType === 'REKAP') {
-                    switchMode('REKAP');
-                    fetchAndBuildRekap();
-                }
-            });
+        function showMainDashboard(pushHistory = true) {
+            if (pushHistory) {
+                history.pushState({ menu: 'home' }, '', '#home');
+            }
+            switchMenuView('home');
+        }
+
+        function openMenu(menuType, pushHistory = true) {
+            if (pushHistory) {
+                history.pushState({ menu: menuType }, '', '#' + menuType);
+            }
+            switchMenuView(menuType);
+        }
+
+        function switchMenuView(menuType) {
+            activeMenuState = menuType;
+
+            if (menuType === 'home') {
+                hideElementSmooth(document.getElementById('backToHomeBtn'));
+                hideElementSmooth(document.getElementById('formGenerus'));
+                hideElementSmooth(document.getElementById('searchSection'));
+                hideElementSmooth(document.getElementById('rekapSection'));
+                
+                setTimeout(() => {
+                    showElementSmooth(document.getElementById('mainDashboard'));
+                    document.getElementById('mainTitle').textContent = "PENDATAAN GENERUS";
+                    document.getElementById('mainSubtitle').textContent = "Pilih menu di bawah untuk melanjutkan";
+                }, 350);
+            } else {
+                hideElementSmooth(document.getElementById('mainDashboard'), () => {
+                    showElementSmooth(document.getElementById('backToHomeBtn'));
+
+                    if (menuType === 'DATABASE') {
+                        switchMode('DAFTAR');
+                    } else if (menuType === 'UPDATE') {
+                        switchMode('UPDATE');
+                        initFilterDaftarNama();
+                    } else if (menuType === 'REKAP') {
+                        switchMode('REKAP');
+                        fetchAndBuildRekap();
+                    }
+                });
+            }
         }
 
         document.addEventListener('input', function(e) {
@@ -950,7 +997,6 @@
             const kat = this.value;
             
             if (!kat) {
-                // SEMBUNYIKAN KOLOM KELAS FORMAL JIKA KATEGORI BELUM DIPILIH
                 wrapperKelasFormal.classList.add('hidden');
                 formTambahanKhusus.classList.add('hidden');
                 nomorHpInput.required = false;
@@ -1067,7 +1113,7 @@
             modalPjPengajarList.classList.add('hidden');
             modalError.classList.remove('hidden');
             
-            openModalAnimation();
+            openModalAnimation('customModal');
         }
 
         function showContactModal(nama, peran, desa, kelompok, noHp) {
@@ -1096,7 +1142,7 @@
             modalPjPengajarList.classList.add('hidden');
             modalContact.classList.remove('hidden');
 
-            openModalAnimation();
+            openModalAnimation('customModal');
         }
 
         async function openPjPengajarModal() {
@@ -1116,7 +1162,7 @@
             modalContact.classList.add('hidden');
             modalPjPengajarList.classList.remove('hidden');
 
-            openModalAnimation();
+            openModalAnimation('customModal');
 
             try {
                 const { data, error } = await supabaseClient
@@ -1201,24 +1247,41 @@
             renderPjPengajarList(filtered);
         }
 
-        function openModalAnimation() {
-            const modalBox = customModal.querySelector('div');
-            customModal.classList.remove('hidden');
-            void customModal.offsetWidth;
-            customModal.classList.remove('opacity-0');
-            modalBox.classList.remove('scale-95', 'opacity-0');
-            modalBox.classList.add('scale-100', 'opacity-100');
+        function openModalAnimation(modalId = 'customModal', pushHistory = true) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            if (pushHistory) {
+                history.pushState({ modal: modalId, menu: activeMenuState }, '', '#' + modalId);
+            }
+            const modalBox = modal.querySelector('div');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            if (modalBox) {
+                modalBox.classList.remove('scale-95', 'scale-90', 'opacity-0');
+                modalBox.classList.add('scale-100', 'opacity-100');
+            }
         }
 
-        function closeModalAnimation(callback) {
-            const modalBox = customModal.querySelector('div');
-            customModal.classList.add('opacity-0');
-            modalBox.classList.remove('scale-100', 'opacity-100');
-            modalBox.classList.add('scale-95', 'opacity-0');
+        function closeModalAnimation(modalId = 'customModal', backHistory = true, callback = null) {
+            const modal = document.getElementById(modalId);
+            if (!modal || modal.classList.contains('hidden')) return;
+
+            const modalBox = modal.querySelector('div');
+            modal.classList.add('opacity-0');
+            if (modalBox) {
+                modalBox.classList.remove('scale-100', 'opacity-100');
+                modalBox.classList.add('scale-95', 'opacity-0');
+            }
+
             setTimeout(() => {
-                customModal.classList.add('hidden');
+                modal.classList.add('hidden');
                 if (callback) callback();
-            }, 400);
+            }, 350);
+
+            if (backHistory && window.history.state && window.history.state.modal === modalId) {
+                window.history.back();
+            }
         }
 
         function updateKelompokDropdown(desaTerpilih, kelompokTerpilih, targetSelect, placeholderText = "-- Pilih Kelompok --") {
@@ -1251,7 +1314,6 @@
             updateInfoUmurForm();
             formTambahanKhusus.classList.add('hidden');
             
-            // SEMBUNYIKAN WIDGET KELAS FORMAL SAAT RESET
             wrapperKelasFormal.classList.add('hidden');
             containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
             
@@ -1417,7 +1479,7 @@
             modalContact.classList.add('hidden');
             modalPjPengajarList.classList.add('hidden');
             
-            openModalAnimation();
+            openModalAnimation('customModal');
         });
 
         async function executeSaveToSupabase() {
@@ -1500,7 +1562,7 @@
             const desaVal = document.getElementById('listFilterDesa').value;
             const klpSelect = document.getElementById('listFilterKelompok');
             updateKelompokDropdown(desaVal, "", klpSelect, "-- Pilih Kelompok --");
-            document.getElementById('tableGenerusBody').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500 italic font-medium">Belum ada kelompok yang dipilih.</td></tr>`;
+            document.getElementById('tableGenerusBody').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500 italic font-medium text-xs">Belum ada kelompok yang dipilih.</td></tr>`;
             document.getElementById('labelTotalGenerus').textContent = "Pilih kelompok untuk lihat data";
             document.getElementById('searchNamaInList').classList.add('hidden');
         }
@@ -1514,7 +1576,7 @@
 
             if (!desa || !kelompok) return;
 
-            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-indigo-500 font-bold"><span class="animate-pulse">⏳ Mengambil data Generus...</span></td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-indigo-500 font-bold text-xs"><span class="animate-pulse">⏳ Mengambil data Generus...</span></td></tr>`;
 
             try {
                 const { data, error } = await supabaseClient
@@ -1531,14 +1593,14 @@
                 searchInput.value = "";
 
                 if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold">Belum ada Generus yang terdaftar di kelompok ini.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold text-xs">Belum ada Generus yang terdaftar di kelompok ini.</td></tr>`;
                     return;
                 }
 
                 tbody.innerHTML = "";
                 data.forEach((item, index) => {
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/80 transition-colors duration-200 row-Generus backdrop-blur-sm";
+                    tr.className = "hover:bg-white/80 transition-colors duration-200 row-Generus backdrop-blur-sm text-xs";
                     
                     const safeItem = JSON.stringify(item).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
 
@@ -1584,7 +1646,7 @@
                 });
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold">Gagal memuat data: ${err.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold text-xs">Gagal memuat data: ${err.message}</td></tr>`;
             }
         }
 
@@ -1731,7 +1793,7 @@
                     totalUsiaL += val.L; totalUsiaP += val.P; totalUsiaSemua += totalRow;
 
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/70 transition-colors duration-200";
+                    tr.className = "hover:bg-white/70 transition-colors duration-200 text-xs";
                     tr.innerHTML = `
                         <td class="p-3 sm:p-4 font-bold text-slate-800">${key}</td>
                         <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
@@ -1741,10 +1803,10 @@
                     tableUsiaBody.appendChild(tr);
                 }
                 tableUsiaFoot.innerHTML = `
-                    <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left">TOTAL AKUMULASI</td>
-                    <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalUsiaL}</td>
-                    <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalUsiaP}</td>
-                    <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight">${totalUsiaSemua}</td>
+                    <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td>
+                    <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalUsiaL}</td>
+                    <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalUsiaP}</td>
+                    <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalUsiaSemua}</td>
                 `;
 
                 const urutanKustom = [
@@ -1770,7 +1832,7 @@
                     });
 
                 if(sortedKelas.length === 0) {
-                    tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium">Belum ada data kelas formal.</td></tr>`;
+                    tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium text-xs">Belum ada data kelas formal.</td></tr>`;
                 } else {
                     sortedKelas.forEach((kelasKey) => {
                         const val = rekapKelas[kelasKey];
@@ -1778,7 +1840,7 @@
                         totalKelasL += val.L; totalKelasP += val.P; totalKelasSemua += totalRow;
 
                         const tr = document.createElement('tr');
-                        tr.className = "hover:bg-white/70 transition-colors duration-200";
+                        tr.className = "hover:bg-white/70 transition-colors duration-200 text-xs";
                         tr.innerHTML = `
                             <td class="p-3 sm:p-4 font-bold text-slate-800">${kelasKey}</td>
                             <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
@@ -1788,10 +1850,10 @@
                         tableKelasBody.appendChild(tr);
                     });
                     tableKelasFoot.innerHTML = `
-                        <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left">TOTAL AKUMULASI</td>
-                        <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalKelasL}</td>
-                        <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold">${totalKelasP}</td>
-                        <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight">${totalKelasSemua}</td>
+                        <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td>
+                        <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalKelasL}</td>
+                        <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalKelasP}</td>
+                        <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalKelasSemua}</td>
                     `;
                 }
 
@@ -1827,7 +1889,7 @@
 
             } catch (err) {
                 console.error(err);
-                rekapLoader.innerHTML = `<span class="text-rose-600 font-bold">⚠️ Gagal mengambil rekap data: ${err.message}</span>`;
+                rekapLoader.innerHTML = `<span class="text-rose-600 font-bold text-xs">⚠️ Gagal mengambil rekap data: ${err.message}</span>`;
             }
         }
 
@@ -1859,12 +1921,12 @@
             }
 
             if (filteredKeys.length === 0) {
-                tableKelompokBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 font-medium">Tidak ada rincian data untuk pilihan tersebut.</td></tr>`;
+                tableKelompokBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 font-medium text-xs">Tidak ada rincian data untuk pilihan tersebut.</td></tr>`;
             } else {
                 filteredKeys.forEach((key) => {
                     const row = rekapKlp[key];
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/70 transition-colors duration-200 font-medium text-slate-800";
+                    tr.className = "hover:bg-white/70 transition-colors duration-200 font-medium text-slate-800 text-xs";
                     tr.innerHTML = `
                         <td class="p-3 sm:p-4 font-bold text-slate-700">${key}</td>
                         <td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-800 total-cell-highlight">${row.jml_generus}</td>
@@ -1950,12 +2012,12 @@
             }
         }
 
-        function closeModalOnly() {
-            closeModalAnimation();
+        function closeModalOnly(backHistory = true) {
+            closeModalAnimation('customModal', backHistory);
         }
 
         function finalResetAndClose() {
-            closeModalAnimation(() => {
+            closeModalAnimation('customModal', true, () => {
                 if (currentMode === "UPDATE") {
                     loadNamaGenerusKelompok();
                     hideElementSmooth(document.getElementById('formGenerus'));
@@ -1974,7 +2036,7 @@
 		}
 
         /* -------------------------------------------------------------
-		 * INTERCEPTOR POPUP OPTION PICKER DI TENGAH LAYAR (RESPONSIF & MULUS)
+		 * INTERCEPTOR POPUP OPTION PICKER DI TENGAH LAYAR
 		 * ------------------------------------------------------------- */
 		let activeSelectTarget = null;
 
@@ -1982,10 +2044,8 @@
 		let touchStartX = 0;
 		let isSwiping = false;
 
-		// Tangkap interaksi di desktop (mousedown)
 		document.addEventListener('mousedown', interceptSelectMouseDown, { capture: true });
 
-		// Tangkap interaksi di mobile (touch) tanpa mematikan scroll bawaan
 		document.addEventListener('touchstart', interceptSelectTouchStart, { capture: true, passive: true });
 		document.addEventListener('touchmove', interceptSelectTouchMove, { capture: true, passive: true });
 		document.addEventListener('touchend', interceptSelectTouchEnd, { capture: true });
@@ -1994,7 +2054,6 @@
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
 
-			// Untuk PC/Desktop: Matikan dropdown native bawaan browser
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -2006,7 +2065,6 @@
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
 
-			// CATATAN: e.preventDefault() DIBUANG di sini agar scroll layar tetap MULUS!
 			isSwiping = false;
 			touchStartY = e.touches[0].clientY;
 			touchStartX = e.touches[0].clientX;
@@ -2018,7 +2076,6 @@
 			const diffY = Math.abs(e.touches[0].clientY - touchStartY);
 			const diffX = Math.abs(e.touches[0].clientX - touchStartX);
 
-			// Jika jari bergeser lebih dari 6px, tandai bahwa pengguna sedang scrolling
 			if (diffY > 6 || diffX > 6) {
 				isSwiping = true;
 			}
@@ -2028,28 +2085,30 @@
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
 
-			// Jika jari TIDAK mengusap/scrolling (murni di-tap), buka custom popup
 			if (!isSwiping) {
-				e.preventDefault(); // Hentikan klik/dropdown native bawaan browser
+				e.preventDefault();
 				e.stopPropagation();
 				
 				activeSelectTarget = select;
 				openCenterPicker(select);
 			}
 
-			// Reset koordinat
 			isSwiping = false;
 			touchStartY = 0;
 			touchStartX = 0;
 		}
 
-        function openCenterPicker(select) {
+        function openCenterPicker(select, pushHistory = true) {
             const modal = document.getElementById('centerPickerModal');
             const modalContent = modal.querySelector('div');
             const titleEl = document.getElementById('centerPickerTitle');
             const optionsContainer = document.getElementById('centerPickerOptions');
 
-            let labelText = "Pilih Ospi";
+            if (pushHistory) {
+                history.pushState({ modal: 'centerPickerModal', menu: activeMenuState }, '', '#centerPickerModal');
+            }
+
+            let labelText = "Pilih Opsi";
             const parent = select.closest('div');
             if (parent) {
                 const label = parent.querySelector('label');
@@ -2059,17 +2118,14 @@
 
             optionsContainer.innerHTML = '';
 
-            // CEK APAKAH SELECT MEMILIKI OPTGROUP (SEPERTI FILTER REKAP NO 3)
             const hasOptGroup = select.querySelectorAll('optgroup').length > 0;
 
             if (hasOptGroup) {
-                // RENDER DENGAN GAP & HEADER PEMBATAS UNTUK OPTGROUP
                 Array.from(select.children).forEach((child) => {
                     if (child.tagName.toLowerCase() === 'option') {
                         if (child.disabled) return;
                         appendPickerOptionItem(optionsContainer, child, select);
                     } else if (child.tagName.toLowerCase() === 'optgroup') {
-                        // BUAT CONTAINER PEMBATAS / GAP
                         const groupDivider = document.createElement('div');
                         groupDivider.className = "pt-3 pb-1 px-1 border-t border-slate-200/80 mt-2 first:mt-0 first:border-0";
                         groupDivider.innerHTML = `<span class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-md inline-block border border-indigo-100/80 shadow-2xs">${child.label}</span>`;
@@ -2082,7 +2138,6 @@
                     }
                 });
             } else {
-                // RENDER OPTION BIASA
                 Array.from(select.options).forEach((opt) => {
                     if (opt.disabled || opt.classList.contains('hidden')) return;
                     appendPickerOptionItem(optionsContainer, opt, select);
@@ -2100,7 +2155,7 @@
             const item = document.createElement('button');
             item.type = "button";
             const isSelected = (opt.value === select.value);
-            item.className = `w-full text-left p-3 rounded-xl text-xs font-semibold flex items-center justify-between cursor-pointer picker-option-item ${isSelected ? 'active-selected' : 'text-slate-700 bg-white/40 border border-white/60'}`;
+            item.className = `w-full text-left p-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between cursor-pointer picker-option-item ${isSelected ? 'active-selected' : 'text-slate-700 bg-white/40 border border-white/60'}`;
             
             item.innerHTML = `
                 <span>${opt.text}</span>
@@ -2117,7 +2172,7 @@
             container.appendChild(item);
         }
 
-        function closeCenterPicker() {
+        function closeCenterPicker(backHistory = true) {
             const modal = document.getElementById('centerPickerModal');
             if (!modal || modal.classList.contains('hidden')) return;
 
@@ -2130,6 +2185,10 @@
                 modal.classList.add('hidden');
                 activeSelectTarget = null;
             }, 300);
+
+            if (backHistory && window.history.state && window.history.state.modal === 'centerPickerModal') {
+                window.history.back();
+            }
         }
 	</script>
 </body>
