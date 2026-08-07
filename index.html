@@ -23,6 +23,8 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Library SheetJS untuk Ekspor Excel (.xlsx) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
@@ -181,14 +183,14 @@
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        #customModal {
+        #customModal, #modalExportCsv {
             transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             will-change: opacity;
         }
-        #customModal > div {
+        #customModal > div, #modalExportCsv > div {
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
                         opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform, opacity;
@@ -232,7 +234,7 @@
             @page { size: A4 portrait; margin: 15mm; }
             body { background: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important; }
             body::before { display: none !important; }
-            #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #centerPickerModal, #rekapLoader, .print\:hidden, button { display: none !important; }
+            #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #centerPickerModal, #modalExportCsv, #rekapLoader, .print\:hidden, button { display: none !important; }
             .glass-container { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
             #rekapSection, #rekapContent { display: block !important; opacity: 1 !important; transform: none !important; max-height: none !important; overflow: visible !important; }
             table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important; font-size: 10pt !important; }
@@ -360,7 +362,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
-                        Eksport CSV
+                        Ekspor Data
                     </button>
                     <!-- TOMBOL CETAK -->
                     <button type="button" onclick="cetakRekapitulasiData()" class="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md hover:bg-slate-900 transition-all duration-200 cursor-pointer">
@@ -781,6 +783,94 @@
         </div>
     </div>
 
+    <!-- MODAL OPSI EXPORT DATA (CSV & EXCEL) -->
+    <div id="modalExportCsv" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden opacity-0">
+        <div class="bg-white/95 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white transform scale-95 opacity-0 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200/60 pb-4 mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 bg-emerald-100 text-emerald-600 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800">Opsi Ekspor Data</h3>
+                </div>
+                <button type="button" onclick="closeCsvModal()" class="text-slate-400 hover:text-slate-800 p-1 bg-slate-100 rounded-full transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <!-- 1. PILIHAN FILTER WILAYAH -->
+                <div>
+                    <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Scope Data Filter</label>
+                    <select id="csvScopeType" onchange="handleCsvScopeChange()" class="glass-input smooth-select w-full rounded-xl p-3 font-semibold text-slate-800">
+                        <option value="ALL">Semua Data Generus</option>
+                        <option value="DESA">Per Desa</option>
+                        <option value="KELOMPOK">Per Kelompok</option>
+                    </select>
+                </div>
+
+                <!-- CONTAINER DROPDOWN DESA / KELOMPOK -->
+                <div id="csvDesaContainer" class="hidden">
+                    <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Pilih Desa</label>
+                    <select id="csvFilterDesa" onchange="handleCsvDesaSelectChange()" class="glass-input smooth-select w-full rounded-xl p-3 font-medium text-slate-800">
+                        <option value="">-- Pilih Desa --</option>
+                    </select>
+                </div>
+
+                <div id="csvKelompokContainer" class="hidden">
+                    <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Pilih Kelompok</label>
+                    <select id="csvFilterKelompok" class="glass-input smooth-select w-full rounded-xl p-3 font-medium text-slate-800">
+                        <option value="">-- Pilih Kelompok --</option>
+                    </select>
+                </div>
+
+                <!-- 2. CHECKBOX PILIHAN KOLOM -->
+                <div class="border-t border-slate-200/80 pt-3">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600">Pilih Kolom Yang Diinginkan</label>
+                        <div class="space-x-2">
+                            <button type="button" onclick="toggleAllCsvColumns(true)" class="text-[10px] font-bold text-emerald-600 hover:underline">Pilih Semua</button>
+                            <span class="text-slate-300">|</span>
+                            <button type="button" onclick="toggleAllCsvColumns(false)" class="text-[10px] font-bold text-rose-500 hover:underline">Hapus Semua</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-200/60 font-semibold text-slate-700">
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="id" checked class="accent-emerald-600 rounded"><span>ID</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="nama" checked class="accent-emerald-600 rounded"><span>Nama Lengkap</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="jenis_kelamin" checked class="accent-emerald-600 rounded"><span>Jenis Kelamin</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="tempat_lahir" checked class="accent-emerald-600 rounded"><span>Tempat Lahir</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="tanggal_lahir" checked class="accent-emerald-600 rounded"><span>Tanggal Lahir</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="desa" checked class="accent-emerald-600 rounded"><span>Desa</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="kelompok" checked class="accent-emerald-600 rounded"><span>Kelompok</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="kategori_usia" checked class="accent-emerald-600 rounded"><span>Kategori Usia</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="kelas_formal" checked class="accent-emerald-600 rounded"><span>Kelas Formal</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="nomor_hp" checked class="accent-emerald-600 rounded"><span>Nomor HP</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="mengajar_usia" checked class="accent-emerald-600 rounded"><span>Mengajar Usia</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="created_at" class="accent-emerald-600 rounded"><span>Waktu Dibuat</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOMBOL AKSI SIMETRIS (TOMBOL CSV DIUBAH MENJADI BIRU) -->
+            <div class="flex flex-col sm:flex-row gap-2.5 mt-6">
+                <button type="button" onclick="closeCsvModal()" class="flex-1 py-3.5 px-3 bg-white border border-slate-200 text-slate-700 text-xs font-extrabold rounded-xl hover:bg-slate-50 transition-colors shadow-sm cursor-pointer text-center">
+                    Batal
+                </button>
+                <button type="button" id="btnDownloadCsvSubmit" onclick="processCustomCsvDownload()" class="flex-1 py-3.5 px-3 bg-blue-600 text-white text-xs font-extrabold rounded-xl hover:bg-blue-700 shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                    <span>Unduh CSV</span>
+                </button>
+                <button type="button" id="btnDownloadExcelSubmit" onclick="processCustomExcelDownload()" class="flex-1 py-3.5 px-3 bg-emerald-600 text-white text-xs font-extrabold rounded-xl hover:bg-emerald-700 shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Unduh Excel</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPT JAVASCRIPT -->
     <script>
         // EFEK DENYUT SMOOTH OTOMATIS SAAT SETIAP TOMBOL DIKLIK
@@ -911,6 +1001,12 @@
             const centerPicker = document.getElementById('centerPickerModal');
             if (centerPicker && !centerPicker.classList.contains('hidden')) {
                 closeCenterPicker(false);
+                return;
+            }
+
+            const csvModal = document.getElementById('modalExportCsv');
+            if (csvModal && !csvModal.classList.contains('hidden')) {
+                closeCsvModal(false);
                 return;
             }
 
@@ -1967,43 +2063,134 @@
             }
         };
 
-        async function exportToCSV() {
+        /* -------------------------------------------------------------
+         * FITUR: MODAL DENGAN FILTER & CHECKBOX EKSPOR CSV & EXCEL
+         * ------------------------------------------------------------- */
+        function exportToCSV() {
+            const csvFilterDesa = document.getElementById('csvFilterDesa');
+            csvFilterDesa.innerHTML = '<option value="">-- Pilih Desa --</option>';
+            
+            Object.keys(dataWilayah).forEach(desa => {
+                csvFilterDesa.add(new Option(desa, desa));
+            });
+
+            document.getElementById('csvScopeType').value = "ALL";
+            handleCsvScopeChange();
+
+            openModalAnimation('modalExportCsv');
+        }
+
+        function closeCsvModal(backHistory = true) {
+            closeModalAnimation('modalExportCsv', backHistory);
+        }
+
+        function handleCsvScopeChange() {
+            const scope = document.getElementById('csvScopeType').value;
+            const desaBox = document.getElementById('csvDesaContainer');
+            const kelompokBox = document.getElementById('csvKelompokContainer');
+
+            if (scope === 'ALL') {
+                desaBox.classList.add('hidden');
+                kelompokBox.classList.add('hidden');
+            } else if (scope === 'DESA') {
+                desaBox.classList.remove('hidden');
+                kelompokBox.classList.add('hidden');
+            } else if (scope === 'KELOMPOK') {
+                desaBox.classList.remove('hidden');
+                kelompokBox.classList.remove('hidden');
+            }
+        }
+
+        function handleCsvDesaSelectChange() {
+            const desaVal = document.getElementById('csvFilterDesa').value;
+            const klpSelect = document.getElementById('csvFilterKelompok');
+            updateKelompokDropdown(desaVal, "", klpSelect, "-- Pilih Kelompok --");
+        }
+
+        function toggleAllCsvColumns(selectState) {
+            const checkboxes = document.querySelectorAll('input[name="csvCol"]');
+            checkboxes.forEach(cb => cb.checked = selectState);
+        }
+
+        // FUNGSI HELPER UNTUK MENGAMBIL DATA DARI SUPABASE SESUAI FILTER
+        async function fetchExportDataFromSupabase() {
+            const scope = document.getElementById('csvScopeType').value;
+            const selectedDesa = document.getElementById('csvFilterDesa').value;
+            const selectedKelompok = document.getElementById('csvFilterKelompok').value;
+
+            if (scope === 'DESA' && !selectedDesa) {
+                alert("Silakan pilih Desa terlebih dahulu!");
+                return null;
+            }
+            if (scope === 'KELOMPOK' && (!selectedDesa || !selectedKelompok)) {
+                alert("Silakan pilih Desa dan Kelompok terlebih dahulu!");
+                return null;
+            }
+
+            const checkedBoxes = document.querySelectorAll('input[name="csvCol"]:checked');
+            if (checkedBoxes.length === 0) {
+                alert("Pilih minimal satu kolom untuk diekspor!");
+                return null;
+            }
+
+            const selectedColumns = Array.from(checkedBoxes).map(cb => cb.value);
+
+            let query = supabaseClient.from('data_generus').select('*');
+
+            if (scope === 'DESA') {
+                query = query.eq('desa', selectedDesa);
+            } else if (scope === 'KELOMPOK') {
+                query = query.eq('desa', selectedDesa).eq('kelompok', selectedKelompok);
+            }
+
+            let data = [];
+            let page = 0;
+            const pageSize = 1000;
+            let hasMore = true;
+
+            while (hasMore) {
+                const { data: pageData, error } = await query
+                    .order('created_at', { ascending: true })
+                    .range(page * pageSize, (page + 1) * pageSize - 1);
+
+                if (error) throw error;
+
+                data = data.concat(pageData);
+
+                if (pageData.length < pageSize) {
+                    hasMore = false;
+                } else {
+                    page++;
+                }
+            }
+
+            if (!data || data.length === 0) {
+                alert("Tidak ada data ditemukan untuk kriteria filter ini!");
+                return null;
+            }
+
+            let filenameScope = scope === 'ALL' ? 'semua' : (scope === 'DESA' ? selectedDesa : `${selectedDesa}_${selectedKelompok}`);
+            let baseFilename = `data_generus_${filenameScope.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${new Date().toISOString().slice(0,10)}`;
+
+            return { data, selectedColumns, baseFilename };
+        }
+
+        async function processCustomCsvDownload() {
+            const btnSubmit = document.getElementById('btnDownloadCsvSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = "⏳ Mengunduh...";
+
             try {
-                let data = [];
-                let page = 0;
-                const pageSize = 1000;
-                let hasMore = true;
+                const res = await fetchExportDataFromSupabase();
+                if (!res) return;
 
-                while (hasMore) {
-                    const { data: pageData, error } = await supabaseClient
-                        .from('data_generus')
-                        .select('*')
-                        .order('created_at', { ascending: true })
-                        .range(page * pageSize, (page + 1) * pageSize - 1);
-
-                    if (error) throw error;
-
-                    data = data.concat(pageData);
-
-                    if (pageData.length < pageSize) {
-                        hasMore = false;
-                    } else {
-                        page++;
-                    }
-                }
-
-                if (!data || data.length === 0) {
-                    alert("Tidak ada data untuk diekspor!");
-                    return;
-                }
-
-                const headers = Object.keys(data[0]);
+                const { data, selectedColumns, baseFilename } = res;
 
                 let csvRows = [];
-                csvRows.push(headers.join(","));
+                csvRows.push(selectedColumns.join(","));
 
                 data.forEach(item => {
-                    const row = headers.map(header => {
+                    const row = selectedColumns.map(header => {
                         let val = item[header];
 
                         if (val === null || val === undefined) {
@@ -2028,14 +2215,93 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `data_generus_supabase_${new Date().toISOString().slice(0,10)}.csv`;
+                a.download = `${baseFilename}.csv`;
+                
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
+
+                closeCsvModal();
             } catch (err) {
-                console.error("Gagal ekspor CSV:", err);
+                console.error("Gagal ekspor CSV kustom:", err);
                 alert("Gagal melakukan ekspor data: " + err.message);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg><span>Unduh CSV</span>`;
+            }
+        }
+
+        async function processCustomExcelDownload() {
+            const btnSubmit = document.getElementById('btnDownloadExcelSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = "⏳ Mengunduh...";
+
+            try {
+                const res = await fetchExportDataFromSupabase();
+                if (!res) return;
+
+                const { data, selectedColumns, baseFilename } = res;
+
+                // Pemetaan Header yang Ramah Dibaca
+                const columnLabels = {
+                    id: "ID",
+                    nama: "Nama Lengkap",
+                    jenis_kelamin: "Jenis Kelamin",
+                    tempat_lahir: "Tempat Lahir",
+                    tanggal_lahir: "Tanggal Lahir",
+                    desa: "Desa",
+                    kelompok: "Kelompok",
+                    kategori_usia: "Kategori Usia",
+                    kelas_formal: "Kelas Formal",
+                    nomor_hp: "Nomor HP",
+                    mengajar_usia: "Mengajar Usia",
+                    created_at: "Waktu Dibuat"
+                };
+
+                // Siapkan data berformat Objek JSON sesuai pilihan kolom
+                const excelData = data.map(item => {
+                    let formattedItem = {};
+                    selectedColumns.forEach(header => {
+                        let label = columnLabels[header] || header;
+                        let val = item[header];
+
+                        if (val === null || val === undefined) {
+                            val = "";
+                        } else if (Array.isArray(val)) {
+                            val = val.join(', ');
+                        } else if (typeof val === 'object') {
+                            val = JSON.stringify(val);
+                        }
+
+                        formattedItem[label] = val;
+                    });
+                    return formattedItem;
+                });
+
+                // Buat Worksheet & Workbook menggunakan SheetJS
+                const worksheet = XLSX.utils.json_to_sheet(excelData);
+                
+                // Set lebar kolom otomatis agar rapi
+                const max_cols = selectedColumns.map(header => {
+                    const label = columnLabels[header] || header;
+                    return { wch: Math.max(label.length + 5, 15) };
+                });
+                worksheet['!cols'] = max_cols;
+
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Data Generus");
+
+                // Unduh Berkas Excel (.xlsx)
+                XLSX.writeFile(workbook, `${baseFilename}.xlsx`);
+
+                closeCsvModal();
+            } catch (err) {
+                console.error("Gagal ekspor Excel kustom:", err);
+                alert("Gagal melakukan ekspor data Excel: " + err.message);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>Unduh Excel</span>`;
             }
         }
 
