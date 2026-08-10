@@ -1097,6 +1097,11 @@
 			if (!val) return "";
 			let formatted = toTitleCase(val.trim());
 			
+            // Otomatis ubah kata PENGANGGURAN menjadi BELUM KERJA
+            if (formatted.toUpperCase() === "PENGANGGURAN") {
+                return "BELUM KERJA";
+            }
+
 			formatted = formatted.replace(/\bPaud\b/gi, 'PAUD')
 								 .replace(/\bTk\b/gi, 'TK')
 								 .replace(/\bSd\b/gi, 'SD')
@@ -1175,7 +1180,7 @@
                 } else if (kat === "Remaja") {
                     for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMA/SMK">${i} SMA/SMK</option>`;
                 } else if (kat === "Usia Mandiri") {
-                    selectOptions += `<option value="KULIAH">KULIAH</option><option value="KERJA">KERJA</option><option value="PENGANGGURAN">PENGANGGURAN</option>`;
+                    selectOptions += `<option value="KULIAH">KULIAH</option><option value="KERJA">KERJA</option><option value="BELUM KERJA">BELUM KERJA</option>`;
                 } else {
                     containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA/SMK, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
                     return;
@@ -1513,7 +1518,11 @@
             } else {
                 wrapperKelasFormal.classList.remove('hidden');
                 const elKelas = document.getElementById('kelas_formal');
-                if(elKelas) elKelas.value = match.kelas_formal ? match.kelas_formal.trim().toUpperCase() : "";
+                if(elKelas) {
+                    let valKelas = match.kelas_formal ? match.kelas_formal.trim().toUpperCase() : "";
+                    if (valKelas === "PENGANGGURAN") valKelas = "BELUM KERJA";
+                    elKelas.value = valKelas;
+                }
             }
 
             showElementSmooth(formGenerus);
@@ -1723,6 +1732,9 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-white/80 transition-colors duration-150 row-Generus backdrop-blur-sm text-xs";
                     
+                    // Format kelas formal untuk mengantisipasi data lama bertuliskan PENGANGGURAN
+                    const displayKelasFormal = formatKelasFormal(item.kelas_formal);
+
                     const safeItem = JSON.stringify(item).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
 
                     let umurText = '';
@@ -1761,7 +1773,7 @@
                         </td>
                         <td class="p-3 text-center font-extrabold ${item.jenis_kelamin === 'L' ? 'text-blue-600' : 'text-pink-600'}">${item.jenis_kelamin}</td>
                         <td class="p-3 text-slate-700 font-semibold">${item.kategori_usia}</td>
-                        <td class="p-3 text-slate-600 font-medium">${item.kelas_formal || '-'}</td>
+                        <td class="p-3 text-slate-600 font-medium">${displayKelasFormal || '-'}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -1875,7 +1887,10 @@
                 data.forEach(item => {
                     const jk = item.jenis_kelamin;
                     const usia = item.kategori_usia;
+                    
+                    // Format kelas formal & konversi otomatis jika masih bertuliskan PENGANGGURAN
                     const kelas = item.kelas_formal ? formatKelasFormal(item.kelas_formal.trim()) : "Tidak Diisi/Pengajar";
+                    
                     const dsa = item.desa || "Tanpa Desa";
                     const klp = item.kelompok || "Tanpa Kelompok";
                     const klpKey = `${dsa} - ${klp}`;
@@ -1938,7 +1953,7 @@
 					"1 SMK", "2 SMK", "3 SMK",
 					"1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK",
 					"1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK",
-					"KULIAH", "KERJA", "PENGANGGURAN"
+					"KULIAH", "KERJA", "BELUM KERJA"
 				];
 
                 const sortedKelas = Object.keys(rekapKelas)
@@ -2191,6 +2206,10 @@
                     const row = selectedColumns.map(header => {
                         let val = item[header];
 
+                        if (header === 'kelas_formal' && val) {
+                            val = formatKelasFormal(val);
+                        }
+
                         if (val === null || val === undefined) {
                             return '""';
                         }
@@ -2263,6 +2282,10 @@
                     selectedColumns.forEach(header => {
                         let label = columnLabels[header] || header;
                         let val = item[header];
+
+                        if (header === 'kelas_formal' && val) {
+                            val = formatKelasFormal(val);
+                        }
 
                         if (val === null || val === undefined) {
                             val = "";
