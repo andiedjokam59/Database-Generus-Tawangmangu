@@ -3,60 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="expires" content="0">
     
     <title>Formulir Mandiri Generus</title>
-	<!-- Hubungkan file manifest -->
 	<link rel="icon" type="image/jpeg" href="logo ppg.png">
 	<link rel="manifest" href="manifest.json">
-
-	<!-- Warna tema browser untuk menyesuaikan tampilan HP -->
 	<meta name="theme-color" content="#ffffff">
-
-	<!-- Khusus untuk iOS / iPhone -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="apple-mobile-web-app-title" content="Data PPG">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Library SheetJS untuk Ekspor Excel (.xlsx) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 0;
-            color: #1e293b;
+            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') center/cover fixed;
+            margin: 0; padding: 0; color: #1e293b;
         }
 
         body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            content: ''; position: fixed; inset: 0;
             background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(240,245,250,0.6) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: -1;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: -1;
         }
 
         .glass-container {
             background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(28px) saturate(200%);
-            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            backdrop-filter: blur(28px) saturate(200%); -webkit-backdrop-filter: blur(28px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.05);
             will-change: transform, opacity;
@@ -71,196 +52,93 @@
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); 
         }
         .glass-input:focus {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: #10b981;
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
-            outline: none;
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.95); border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2); outline: none; transform: translateY(-2px);
         }
 
 		.fade-transition {
-			transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-						transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 			will-change: opacity, transform;
 		}
 
-		.fade-hidden {
-			opacity: 0 !important;
-			transform: translateY(12px) scale(0.98) !important;
-			pointer-events: none !important;
-			display: none !important;
-		}
+		.fade-hidden { opacity: 0 !important; transform: translateY(12px) scale(0.98) !important; pointer-events: none !important; display: none !important; }
+		.fade-visible { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: auto !important; display: block !important; }
+		#mainDashboard.fade-visible { display: grid !important; }
 
-		.fade-visible {
-			opacity: 1 !important;
-			transform: translateY(0) scale(1) !important;
-			pointer-events: auto !important;
-			display: block !important;
-		}
-
-		#mainDashboard.fade-visible {
-			display: grid !important;
-		}
-
-        /* ANIMASI EFEK DENYUT SMOOTH (SOFT PULSE) */
         @keyframes buttonPulseSmooth {
-            0% { transform: scale(1); }
+            0%, 100% { transform: scale(1); }
             40% { transform: scale(0.96); }
             70% { transform: scale(1.02); }
-            100% { transform: scale(1); }
         }
+        .animate-bounce-click { animation: buttonPulseSmooth 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important; }
 
-        .animate-bounce-click {
-            animation: buttonPulseSmooth 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
-        }
-
-        @keyframes menuCascadeIn {
-            0% { opacity: 0; transform: translateY(-16px) scale(0.96); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        #mainDashboard.fade-visible .menu-btn-smooth {
-            animation: menuCascadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-            will-change: transform, opacity;
-            backface-visibility: hidden;
-        }
-
+        @keyframes menuCascadeIn { 0% { opacity: 0; transform: translateY(-16px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        #mainDashboard.fade-visible .menu-btn-smooth { animation: menuCascadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; will-change: transform, opacity; backface-visibility: hidden; }
         #mainDashboard.fade-visible .menu-btn-smooth:nth-child(1) { animation-delay: 0.03s; }
         #mainDashboard.fade-visible .menu-btn-smooth:nth-child(2) { animation-delay: 0.08s; }
         #mainDashboard.fade-visible .menu-btn-smooth:nth-child(3) { animation-delay: 0.13s; }
 
-        @keyframes fieldFadeIn {
-            0% { opacity: 0; transform: translateY(8px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        #formGenerus.fade-visible > div {
-            animation: fieldFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-            will-change: transform, opacity;
-        }
-
-        .animate-field-in {
-            animation: fieldFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-        }
+        @keyframes fieldFadeIn { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+        #formGenerus.fade-visible > div, .animate-field-in { animation: fieldFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both !important; will-change: transform, opacity; }
 
         .menu-btn-smooth {
-            background: rgba(255, 255, 255, 0.55);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.85);
-            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), 
-                        background-color 0.2s ease, 
-                        box-shadow 0.2s ease;
-            touch-action: manipulation;
-            will-change: transform;
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+            touch-action: manipulation; will-change: transform;
         }
-        .menu-btn-smooth:hover {
-            background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
-        }
-        .menu-btn-smooth:active {
-            transform: scale(0.97) !important;
-        }
+        .menu-btn-smooth:hover { background: rgba(255, 255, 255, 0.95); transform: translateY(-2px) scale(1.01); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08); }
+        .menu-btn-smooth:active { transform: scale(0.97) !important; }
         
-        .icon-box-smooth {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-                        box-shadow 0.3s ease;
-            will-change: transform;
-        }
-        .menu-btn-smooth:hover .icon-box-smooth {
-            transform: scale(1.06);
-            box-shadow: 0 6px 16px -2px rgba(16, 185, 129, 0.3);
-        }
-
+        .icon-box-smooth { background: linear-gradient(135deg, #10b981 0%, #047857 100%); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease; will-change: transform; }
+        .menu-btn-smooth:hover .icon-box-smooth { transform: scale(1.06); box-shadow: 0 6px 16px -2px rgba(16, 185, 129, 0.3); }
         .icon-update { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); }
         .menu-btn-smooth:hover .icon-update { box-shadow: 0 6px 16px -2px rgba(59, 130, 246, 0.3); }
-        
         .icon-rekap { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%); }
         .menu-btn-smooth:hover .icon-rekap { box-shadow: 0 6px 16px -2px rgba(139, 92, 246, 0.3); }
 
-        .smooth-select {
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .smooth-select { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
         
-        #customModal, #modalExportCsv {
+        #customModal, #modalExportCsv, #centerPickerModal {
             transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            will-change: opacity;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); will-change: opacity;
         }
-        #customModal > div, #modalExportCsv > div {
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
-                        opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: transform, opacity;
-        }
+        #customModal > div, #modalExportCsv > div { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform, opacity; }
 
-        /* POPUP OPTION PICKER GLASSMORPHISM DI TENGAH LAYAR */
-        #centerPickerModal {
-            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            will-change: opacity;
-        }
+        #centerPickerModal { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         #centerPickerModal > div {
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(28px) saturate(200%);
-            -webkit-backdrop-filter: blur(28px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            will-change: transform, opacity;
+            background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(28px) saturate(200%); -webkit-backdrop-filter: blur(28px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); will-change: transform, opacity;
         }
-        .picker-option-item {
-            transition: background-color 0.15s ease, color 0.15s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-            touch-action: manipulation;
-        }
-        .picker-option-item:hover, .picker-option-item:active {
-            background: rgba(16, 185, 129, 0.12);
-            color: #047857;
-            transform: scale(1.01);
-        }
-        .picker-option-item.active-selected {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-            color: #ffffff;
-            font-weight: 800;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
+        .picker-option-item { transition: background-color 0.15s ease, color 0.15s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); touch-action: manipulation; }
+        .picker-option-item:hover, .picker-option-item:active { background: rgba(16, 185, 129, 0.12); color: #047857; transform: scale(1.01); }
+        .picker-option-item.active-selected { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: #ffffff; font-weight: 800; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 
-        /* KHUSUS UNTUK TAMPILAN PRINT / PDF */
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
             body { background: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important; }
-            body::before { display: none !important; }
-            #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #centerPickerModal, #modalExportCsv, #rekapLoader, .print\:hidden, button { display: none !important; }
+            body::before, #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #centerPickerModal, #modalExportCsv, #rekapLoader, .print\:hidden, button { display: none !important; }
             .glass-container { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
             #rekapSection, #rekapContent { display: block !important; opacity: 1 !important; transform: none !important; max-height: none !important; overflow: visible !important; }
             table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important; font-size: 10pt !important; }
             th, td { border: 1px solid #333 !important; padding: 6px 8px !important; color: #000000 !important; }
             th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold !important; }
-            tfoot tr, tfoot td { 
-                background-color: #e2e8f0 !important; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
-                font-weight: 900 !important; 
-                color: #000000 !important;
-                border-top: 2px solid #000000 !important;
-            }
-            .total-cell-highlight {
-                background-color: #cbd5e1 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-                font-weight: 900 !important;
-                color: #000000 !important;
-            }
+            tfoot tr, tfoot td { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: 900 !important; color: #000000 !important; border-top: 2px solid #000000 !important; }
+            .total-cell-highlight { background-color: #cbd5e1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: 900 !important; color: #000000 !important; }
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-3 sm:p-6 antialiased">
 
-    <!-- ANIMASI LOADING SAAT MASUK APLIKASI (SPLASH SCREEN) -->
+    <!-- REUSABLE SVG SYMBOLS -->
+    <svg class="hidden">
+        <symbol id="icon-wa" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+        </symbol>
+    </svg>
+
+    <!-- SPLASH SCREEN LOADING -->
     <div id="appLoadingScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-opacity duration-500 ease-out">
         <div class="relative flex items-center justify-center mb-6">
             <div class="w-20 h-20 border-[3px] border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
@@ -269,7 +147,7 @@
         <p class="text-[10px] font-extrabold text-emerald-800 tracking-[0.2em] uppercase animate-pulse">Memuat Aplikasi...</p>
     </div>
 
-    <!-- MAIN CONTAINER RESPONSIVE DENGAN GLASSMORPHISM -->
+    <!-- MAIN CONTAINER RESPONSIVE -->
     <div class="glass-container p-5 sm:p-10 rounded-[2rem] w-full max-w-2xl my-4 relative overflow-hidden transition-all duration-300">
         
         <!-- HEADER APPS -->
@@ -278,7 +156,7 @@
                 <div class="p-4 bg-white/60 rounded-3xl shadow-[0_8px_16px_rgba(0,0,0,0.06)] border border-white/80 backdrop-blur-md inline-block">
                     <img src="logo ppg.png" alt="Logo" class="h-16 sm:h-20 w-auto object-contain block drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
                     <div id="fallback-icon" class="hidden items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-50 text-emerald-600 shadow-inner">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 sm:w-7 sm:h-7">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                         </svg>
                     </div>
@@ -289,11 +167,11 @@
             <div class="w-16 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 mx-auto mt-4 rounded-full shadow-sm"></div>
         </div>
 
-        <!-- MENU UTAMA DENGAN ICON (DATABASE, UPDATE, REKAP) -->
+        <!-- MENU UTAMA -->
         <div id="mainDashboard" class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 my-6 sm:my-8 fade-transition fade-visible relative z-10">
             <button type="button" onclick="openMenu('DATABASE')" class="menu-btn-smooth flex flex-col items-center justify-center p-6 rounded-[1.5rem] group cursor-pointer">
                 <div class="icon-box-smooth w-14 h-14 bg-emerald-600 text-white rounded-2xl flex items-center justify-center mb-3 shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 5.625c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
                     </svg>
                 </div>
@@ -303,7 +181,7 @@
 
             <button type="button" onclick="openMenu('UPDATE')" class="menu-btn-smooth flex flex-col items-center justify-center p-6 rounded-[1.5rem] group cursor-pointer">
                 <div class="icon-box-smooth icon-update w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-3 shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                     </svg>
                 </div>
@@ -313,7 +191,7 @@
 
             <button type="button" onclick="openMenu('REKAP')" class="menu-btn-smooth flex flex-col items-center justify-center p-6 rounded-[1.5rem] group cursor-pointer">
                 <div class="icon-box-smooth icon-rekap w-14 h-14 bg-purple-600 text-white rounded-2xl flex items-center justify-center mb-3 shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-7 h-7">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
                     </svg>
                 </div>
@@ -322,10 +200,10 @@
             </button>
         </div>
 
-        <!-- TOMBOL KEMBALI KETIKA DALAM SUB-MENU -->
+        <!-- TOMBOL KEMBALI SUB-MENU -->
         <div id="backToHomeBtn" class="fade-transition fade-hidden mb-5 sm:mb-8">
             <button type="button" onclick="showMainDashboard()" class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 bg-white/70 backdrop-blur-sm border border-white hover:bg-white/90 px-4 py-2.5 rounded-xl transition-all duration-200 shadow-sm hover:shadow cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transition-transform group-hover:-translate-x-1">
+                <svg class="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                 </svg>
                 Kembali ke Menu Utama
@@ -337,7 +215,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/60 pb-4 gap-3">
                 <div class="flex items-center gap-3">
                     <div class="p-2.5 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-xl shadow-md shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
                         </svg>
                     </div>
@@ -349,24 +227,21 @@
                 <span class="self-start sm:self-auto text-[10px] sm:text-xs px-3 py-1.5 bg-white/80 text-emerald-700 font-extrabold rounded-full shadow-sm border border-emerald-100" id="rekapTotalData">Total: 0</span>
             </div>
 
-            <!-- BARIS TOMBOL AKSI DIPINDAHKAN KE ATAS REKAP -->
+            <!-- AKSI REKAP -->
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sm:justify-end gap-2.5 pb-3 print:hidden">
                 <button type="button" onclick="openPjPengajarModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-white/80 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl hover:bg-white transition-all duration-200 shadow-sm hover:shadow cursor-pointer">
-					<svg class="w-4 h-4 shrink-0 fill-current text-indigo-500" viewBox="0 0 24 24">
-						<path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-					</svg>
+					<svg class="w-4 h-4 shrink-0 fill-current text-indigo-500"><use href="#icon-wa"/></svg>
 					<span>Kontak PJ & Pengajar</span>
 				</button>
                 <div class="grid grid-cols-2 gap-2.5 w-full sm:w-auto">
                     <button type="button" onclick="exportToCSV()" class="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
                         Ekspor Data
                     </button>
-                    <!-- TOMBOL CETAK -->
                     <button type="button" onclick="cetakRekapitulasiData()" class="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md hover:bg-slate-900 transition-all duration-200 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.89l-2.1 2.1m0 0l-2.1-2.1m2.1 2.1V6.11M16.5 9V5.25A2.25 2.25 0 0014.25 3h-4.5A2.25 2.25 0 007.5 5.25V9m9 0H18a2.25 2.25 0 012.25 2.25v6.75A2.25 2.25 0 0118 20.25h-1.5M16.5 9V5.25M9 16.5h.008v.008H9V16.5zm3 0h.008v.008H12V16.5zm3 0h.008v.008H15V16.5zM7.5 16.5H5.25A2.25 2.25 0 003 18.75V21h18v-2.25A2.25 2.25 0 0018.75 16.5H16.5" />
                         </svg>
                         Cetak Rekap
@@ -394,11 +269,9 @@
                                     <th class="p-3 sm:p-4 text-center bg-slate-200/50 tracking-wide">Total</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableUsiaBody" class="divide-y divide-slate-100/50 text-slate-700 bg-white/50">
-                            </tbody>
+                            <tbody id="tableUsiaBody" class="divide-y divide-slate-100/50 text-slate-700 bg-white/50"></tbody>
                             <tfoot class="bg-white/80 font-extrabold text-slate-900 border-t-2 border-slate-200/60">
-                                <tr id="tableUsiaFoot">
-                                </tr>
+                                <tr id="tableUsiaFoot"></tr>
                             </tfoot>
                         </table>
                     </div>
@@ -418,11 +291,9 @@
                                     <th class="p-3 sm:p-4 text-center bg-slate-200/50 tracking-wide">Total</th>
                                 </tr>
                             </thead>
-                            <tbody id="tableKelasBody" class="divide-y divide-slate-100/50 text-slate-700 bg-white/50">
-                            </tbody>
+                            <tbody id="tableKelasBody" class="divide-y divide-slate-100/50 text-slate-700 bg-white/50"></tbody>
                             <tfoot class="bg-white/80 font-extrabold text-slate-900 border-t-2 border-slate-200/60">
-                                <tr id="tableKelasFoot">
-                                </tr>
+                                <tr id="tableKelasFoot"></tr>
                             </tfoot>
                         </table>
                     </div>
@@ -430,7 +301,7 @@
             </div>
         </div>
 
-        <!-- AREA MENU UPDATE DATA -->
+        <!-- MENU UPDATE DATA -->
         <div id="searchSection" class="fade-transition fade-hidden space-y-4 sm:space-y-6">
             <div class="space-y-4">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -480,7 +351,7 @@
             </div>
         </div>
         
-        <!-- FORM INPUT / DAFTAR / UPDATE -->
+        <!-- FORM INPUT / UPDATE -->
         <form id="formGenerus" class="fade-transition fade-hidden space-y-5 sm:space-y-6 pt-4 sm:pt-6 mt-6 sm:mt-8 border-t border-slate-300/50 relative">
             <div id="formTitleHeader" class="hidden mb-4 bg-white/60 p-4 rounded-2xl border border-white/80 shadow-sm">
                 <h3 class="text-xs sm:text-sm font-extrabold text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -516,24 +387,11 @@
                     </select>
                     <select id="dob_bulan" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">
                         <option value="">Bulan</option>
-                        <option value="01">Januari</option>
-                        <option value="02">Februari</option>
-                        <option value="03">Maret</option>
-                        <option value="04">April</option>
-                        <option value="05">Mei</option>
-                        <option value="06">Juni</option>
-                        <option value="07">Juli</option>
-                        <option value="08">Agustus</option>
-                        <option value="09">September</option>
-                        <option value="10">Oktober</option>
-                        <option value="11">November</option>
-                        <option value="12">Desember</option>
                     </select>
                     <select id="dob_tahun" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium text-center cursor-pointer">
                         <option value="">Tahun</option>
                     </select>
                 </div>
-                <!-- ELEMEN PENAMPIL UMUR OTOMATIS -->
                 <p id="infoUmurText" class="text-[11px] font-bold text-emerald-700 mt-2 ml-1 hidden bg-white/50 inline-block px-2 py-0.5 rounded-full border border-emerald-100 shadow-sm"></p>
             </div>
 
@@ -572,7 +430,6 @@
                 </select>
             </div>
 
-            <!-- INPUT TAMBAHAN UNTUK PENGAJAR / PJ KELOMPOK -->
             <div id="formTambahanKhusus" class="hidden space-y-4 border-l-[3px] border-emerald-500 pl-4 bg-white/40 p-4 rounded-r-2xl rounded-bl-sm transition-all duration-300 shadow-sm">
                 <div>
                     <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-emerald-900 mb-1.5">Nomor HP</label>
@@ -610,7 +467,6 @@
                 </div>
             </div>
 
-            <!-- WRAPPER KELAS FORMAL / STATUS (SEMBUNYI SECARA DEFAULT SAAT KATEGORI BELUM DIPILIH) -->
             <div id="wrapperKelasFormal" class="hidden">
                 <label class="block text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-700 mb-1.5 ml-1">Kelas Formal / Status</label>
                 <div id="containerKelasFormal">
@@ -626,8 +482,8 @@
         </form>
     </div>
 
-    <!-- MODAL REVIEW SIMPAN, SUKSES, DOKUMEN ERROR, SINGLE CONTACT WA, & POPUP LIST KONTAK PJ/PENGAJAR -->
-    <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden opacity-0">
+    <!-- MODAL CONTAINERS -->
+    <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden opacity-0">
         <div class="bg-white/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 max-w-lg w-full shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] border border-white transform scale-95 opacity-0 max-h-[85vh] overflow-y-auto">
 
             <!-- MODAL REVIEW SIMPAN -->
@@ -676,7 +532,7 @@
                 </button>
             </div>
 
-            <!-- MODAL GAGAL / DUPLIKAT -->
+            <!-- MODAL ERROR -->
             <div id="modalError" class="hidden text-center py-2">
                 <div id="errorIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 text-rose-600 mb-4 shadow-inner">
                     <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -693,12 +549,10 @@
                 </button>
             </div>
 
-            <!-- MODAL SINGLE KONTAK WHATSAPP (PJ & PENGAJAR) -->
+            <!-- MODAL SINGLE KONTAK WHATSAPP -->
             <div id="modalContact" class="hidden text-center py-2">
                 <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-tr from-emerald-400 to-teal-500 text-white mb-4 shadow-[0_8px_16px_rgba(16,185,129,0.3)]">
-                    <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                    </svg>
+                    <svg class="h-8 w-8 shrink-0 fill-current"><use href="#icon-wa"/></svg>
                 </div>
                 <h3 id="contactName" class="text-lg sm:text-xl font-extrabold text-slate-800 mb-1">Nama Kontak</h3>
                 <p id="contactRole" class="text-[11px] font-bold text-white bg-slate-800 py-1 px-3 rounded-md inline-block shadow-sm mb-4 tracking-wider uppercase">PJ Kelompok</p>
@@ -725,12 +579,12 @@
                 </div>
             </div>
 
-            <!-- MODAL POPUP LIST DAFTAR KONTAK PJ & PENGAJAR DENGAN PENCARIAN REALTIME -->
+            <!-- MODAL LIST KONTAK PJ/PENGAJAR -->
             <div id="modalPjPengajarList" class="hidden text-left space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-200/60 pb-4">
                     <div class="flex items-center gap-3">
                         <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shadow-sm border border-indigo-100 shrink-0">
-                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            <svg class="w-5 h-5 fill-current"><use href="#icon-wa"/></svg>
                         </div>
                         <div>
                             <h3 class="text-sm sm:text-base font-extrabold text-slate-800">Daftar Kontak PJ & Pengajar</h3>
@@ -742,7 +596,6 @@
                     </button>
                 </div>
 
-                <!-- INPUT SEARCH KHUSUS POPUP -->
                 <div class="relative">
                     <input type="text" id="searchPjPengajarInput" onkeyup="filterPjPengajarList()" placeholder="Cari nama, kelompok, atau peran..." class="w-full text-xs sm:text-sm p-3.5 pl-10 border border-slate-200/80 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 shadow-inner font-medium bg-slate-50/50">
                     <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -750,7 +603,6 @@
                     </svg>
                 </div>
 
-                <!-- CONTAINER BISA DI-SCROLL -->
                 <div id="pjPengajarContainer" class="max-h-[50vh] overflow-y-auto space-y-2.5 pr-1 scrollbar-hide">
                     <div class="flex flex-col items-center justify-center py-10">
                         <div class="w-6 h-6 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin mb-3"></div>
@@ -768,7 +620,7 @@
         </div>
     </div>
 
-    <!-- MODAL CUSTOM PICKER PILIHAN TEPAT DI TENGAH LAYAR (GLASSMORPHISM) -->
+    <!-- MODAL CUSTOM PICKER CENTER -->
     <div id="centerPickerModal" class="fixed inset-0 z-[150] flex items-center justify-center p-4 hidden opacity-0" onclick="closeCenterPicker()">
         <div class="rounded-[2rem] p-5 sm:p-6 max-w-sm w-full transform scale-90 opacity-0 max-h-[75vh] flex flex-col" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200/60 pb-3 mb-3 shrink-0">
@@ -777,19 +629,17 @@
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
-            <div id="centerPickerOptions" class="overflow-y-auto space-y-1.5 pr-1 scrollbar-hide flex-1">
-                <!-- Pilihan opsi akan dirender otomatis -->
-            </div>
+            <div id="centerPickerOptions" class="overflow-y-auto space-y-1.5 pr-1 scrollbar-hide flex-1"></div>
         </div>
     </div>
 
-    <!-- MODAL OPSI EXPORT DATA (CSV & EXCEL) -->
-    <div id="modalExportCsv" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md hidden opacity-0">
+    <!-- MODAL EXPORT CSV / EXCEL -->
+    <div id="modalExportCsv" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden opacity-0">
         <div class="bg-white/95 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white transform scale-95 opacity-0 max-h-[85vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-200/60 pb-4 mb-4">
                 <div class="flex items-center gap-2.5">
                     <div class="p-2 bg-emerald-100 text-emerald-600 rounded-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
                     </div>
@@ -801,7 +651,6 @@
             </div>
 
             <div class="space-y-4 text-xs">
-                <!-- 1. PILIHAN FILTER WILAYAH -->
                 <div>
                     <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Scope Data Filter</label>
                     <select id="csvScopeType" onchange="handleCsvScopeChange()" class="glass-input smooth-select w-full rounded-xl p-3 font-semibold text-slate-800">
@@ -811,7 +660,6 @@
                     </select>
                 </div>
 
-                <!-- CONTAINER DROPDOWN DESA / KELOMPOK -->
                 <div id="csvDesaContainer" class="hidden">
                     <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Pilih Desa</label>
                     <select id="csvFilterDesa" onchange="handleCsvDesaSelectChange()" class="glass-input smooth-select w-full rounded-xl p-3 font-medium text-slate-800">
@@ -826,7 +674,6 @@
                     </select>
                 </div>
 
-                <!-- 2. CHECKBOX PILIHAN KOLOM -->
                 <div class="border-t border-slate-200/80 pt-3">
                     <div class="flex items-center justify-between mb-2">
                         <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600">Pilih Kolom Yang Diinginkan</label>
@@ -852,7 +699,6 @@
                 </div>
             </div>
 
-            <!-- TOMBOL AKSI SIMETRIS (TOMBOL CSV DIUBAH MENJADI BIRU) -->
             <div class="flex flex-col sm:flex-row gap-2.5 mt-6">
                 <button type="button" onclick="closeCsvModal()" class="flex-1 py-3.5 px-3 bg-white border border-slate-200 text-slate-700 text-xs font-extrabold rounded-xl hover:bg-slate-50 transition-colors shadow-sm cursor-pointer text-center">
                     Batal
@@ -869,29 +715,22 @@
         </div>
     </div>
 
-    <!-- SCRIPT JAVASCRIPT -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // EFEK DENYUT SMOOTH OTOMATIS SAAT SETIAP TOMBOL DIKLIK
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('button, a.cursor-pointer, .picker-option-item');
             if (!btn) return;
-
             btn.classList.remove('animate-bounce-click');
-            void btn.offsetWidth; // Reflow trigger
+            void btn.offsetWidth;
             btn.classList.add('animate-bounce-click');
-
-            setTimeout(() => {
-                btn.classList.remove('animate-bounce-click');
-            }, 350);
+            setTimeout(() => btn.classList.remove('animate-bounce-click'), 350);
         });
 
         window.addEventListener('load', function() {
             const loader = document.getElementById('appLoadingScreen');
             if(loader) {
                 loader.classList.add('opacity-0');
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
+                setTimeout(() => loader.style.display = 'none', 500);
             }
         });
 
@@ -899,56 +738,40 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentMode = "DAFTAR";
-        let targetIdGenerus = null;
-        let payloadData = null;
-        let rawPjPengajarData = []; 
+        let currentMode = "DAFTAR", targetIdGenerus = null, payloadData = null, rawPjPengajarData = []; 
 
         const dobTanggal = document.getElementById('dob_tanggal');
         const dobBulan = document.getElementById('dob_bulan');
         const dobTahun = document.getElementById('dob_tahun');
 
-        for (let i = 1; i <= 31; i++) {
-            const val = i < 10 ? '0' + i : i;
-            dobTanggal.options[dobTanggal.options.length] = new Option(val, val);
-        }
+        for (let i = 1; i <= 31; i++) dobTanggal.add(new Option(i < 10 ? '0' + i : i, i < 10 ? '0' + i : i));
         
+        const namaBulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        namaBulan.forEach((bln, idx) => {
+            const val = (idx + 1 < 10 ? '0' : '') + (idx + 1);
+            dobBulan.add(new Option(bln, val));
+        });
+
         const tahunSekarang = new Date().getFullYear();
-        for (let i = tahunSekarang; i >= tahunSekarang - 100; i--) {
-            dobTahun.options[dobTahun.options.length] = new Option(i, i);
-        }
+        for (let i = tahunSekarang; i >= tahunSekarang - 100; i--) dobTahun.add(new Option(i, i));
 
         function hitungUmurOtomatis(thn, bln, tgl) {
             if (!thn || !bln || !tgl) return null;
-            const today = new Date();
-            const birthDate = new Date(thn, parseInt(bln) - 1, tgl);
+            const today = new Date(), birthDate = new Date(thn, parseInt(bln) - 1, tgl);
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
             return age >= 0 ? age : null;
         }
 
         function updateInfoUmurForm() {
-            const tgl = dobTanggal.value;
-            const bln = dobBulan.value;
-            const thn = dobTahun.value;
+            const umur = hitungUmurOtomatis(dobTahun.value, dobBulan.value, dobTanggal.value);
             const infoUmurEl = document.getElementById('infoUmurText');
-
-            const umur = hitungUmurOtomatis(thn, bln, tgl);
-            if (umur !== null) {
-                infoUmurEl.textContent = `💡 Umur saat ini: ${umur} tahun`;
-                infoUmurEl.classList.remove('hidden');
-            } else {
-                infoUmurEl.textContent = '';
-                infoUmurEl.classList.add('hidden');
-            }
+            infoUmurEl.textContent = umur !== null ? `💡 Umur saat ini: ${umur} tahun` : '';
+            infoUmurEl.classList.toggle('hidden', umur === null);
         }
 
-        dobTanggal.addEventListener('change', updateInfoUmurForm);
-        dobBulan.addEventListener('change', updateInfoUmurForm);
-        dobTahun.addEventListener('change', updateInfoUmurForm);
+        [dobTanggal, dobBulan, dobTahun].forEach(el => el.addEventListener('change', updateInfoUmurForm));
 
         const dataWilayah = {
             "Karanglo Selatan": ["Blimbing 1", "Blimbing 2", "Blimbing 3", "Pedan Selatan", "Pedan Utara", "Jabalkanil", "Karanglo"],
@@ -957,67 +780,28 @@
             "Krangean": ["Gondosuli", "Tawang 1", "Tawang 2", "Watusambang", "Somokado", "Gondang Boma", "Krangean Selatan", "Krangean Utara", "Nglegok Atas", "Nglegok Bawah", "Ngreso"]
         };
 
-        const desaSelect = document.getElementById('desa');
-        const kelompokSelect = document.getElementById('kelompok');
-        
-        const submitBtn = document.getElementById('submitBtn');
-        const confirmSaveBtn = document.getElementById('confirmSaveBtn');
-        const customModal = document.getElementById('customModal');
-        const modalReview = document.getElementById('modalReview');
-        const modalSuccess = document.getElementById('modalSuccess');
-        const modalError = document.getElementById('modalError');
-        const modalContact = document.getElementById('modalContact');
-        const modalPjPengajarList = document.getElementById('modalPjPengajarList');
-        const errorMessage = document.getElementById('errorMessage');
-        const optMenikah = document.getElementById('optMenikah');
+        const desaSelect = document.getElementById('desa'), kelompokSelect = document.getElementById('kelompok');
+        const submitBtn = document.getElementById('submitBtn'), confirmSaveBtn = document.getElementById('confirmSaveBtn');
+        const customModal = document.getElementById('customModal'), modalReview = document.getElementById('modalReview'), modalSuccess = document.getElementById('modalSuccess'), modalError = document.getElementById('modalError'), modalContact = document.getElementById('modalContact'), modalPjPengajarList = document.getElementById('modalPjPengajarList');
+        const errorMessage = document.getElementById('errorMessage'), optMenikah = document.getElementById('optMenikah');
+        const rekapSection = document.getElementById('rekapSection'), rekapLoader = document.getElementById('rekapLoader'), rekapContent = document.getElementById('rekapContent');
+        const tableUsiaBody = document.getElementById('tableUsiaBody'), tableUsiaFoot = document.getElementById('tableUsiaFoot'), tableKelasBody = document.getElementById('tableKelasBody'), tableKelasFoot = document.getElementById('tableKelasFoot'), rekapTotalData = document.getElementById('rekapTotalData');
+        const kategoriSelect = document.getElementById('kategori_usia'), formTambahanKhusus = document.getElementById('formTambahanKhusus'), nomorHpInput = document.getElementById('nomor_hp'), wrapperKelasFormal = document.getElementById('wrapperKelasFormal'), containerKelasFormal = document.getElementById('containerKelasFormal');
 
-        const rekapSection = document.getElementById('rekapSection');
-        const rekapLoader = document.getElementById('rekapLoader');
-        const rekapContent = document.getElementById('rekapContent');
-        const tableUsiaBody = document.getElementById('tableUsiaBody');
-        const tableUsiaFoot = document.getElementById('tableUsiaFoot');
-        const tableKelasBody = document.getElementById('tableKelasBody');
-        const tableKelasFoot = document.getElementById('tableKelasFoot');
-        const rekapTotalData = document.getElementById('rekapTotalData');
-
-        const kategoriSelect = document.getElementById('kategori_usia');
-        const formTambahanKhusus = document.getElementById('formTambahanKhusus');
-        const nomorHpInput = document.getElementById('nomor_hp');
-        const wrapperKelasFormal = document.getElementById('wrapperKelasFormal');
-        const containerKelasFormal = document.getElementById('containerKelasFormal');
-
-        /* -------------------------------------------------------------
-         * INTEGRASI NAVIGASI & SISTEM TOMBOL KEMBALI HP (ANDROID / IOS)
-         * ------------------------------------------------------------- */
         let activeMenuState = 'home';
 
-        window.addEventListener('DOMContentLoaded', () => {
-            history.replaceState({ menu: 'home' }, '', '#home');
-        });
+        window.addEventListener('DOMContentLoaded', () => history.replaceState({ menu: 'home' }, '', '#home'));
 
         window.addEventListener('popstate', (e) => {
             const centerPicker = document.getElementById('centerPickerModal');
-            if (centerPicker && !centerPicker.classList.contains('hidden')) {
-                closeCenterPicker(false);
-                return;
-            }
+            if (centerPicker && !centerPicker.classList.contains('hidden')) return closeCenterPicker(false);
 
             const csvModal = document.getElementById('modalExportCsv');
-            if (csvModal && !csvModal.classList.contains('hidden')) {
-                closeCsvModal(false);
-                return;
-            }
+            if (csvModal && !csvModal.classList.contains('hidden')) return closeCsvModal(false);
 
-            if (customModal && !customModal.classList.contains('hidden')) {
-                closeModalOnly(false);
-                return;
-            }
+            if (customModal && !customModal.classList.contains('hidden')) return closeModalOnly(false);
 
-            if (e.state && e.state.menu) {
-                switchMenuView(e.state.menu);
-            } else {
-                switchMenuView('home');
-            }
+            switchMenuView(e.state && e.state.menu ? e.state.menu : 'home');
         });
 
         function showElementSmooth(el) {
@@ -1035,28 +819,22 @@
         }
 
         function showMainDashboard(pushHistory = true) {
-            if (pushHistory) {
-                history.pushState({ menu: 'home' }, '', '#home');
-            }
+            if (pushHistory) history.pushState({ menu: 'home' }, '', '#home');
             switchMenuView('home');
         }
 
         function openMenu(menuType, pushHistory = true) {
-            if (pushHistory) {
-                history.pushState({ menu: menuType }, '', '#' + menuType);
-            }
+            if (pushHistory) history.pushState({ menu: menuType }, '', '#' + menuType);
             switchMenuView(menuType);
         }
 
         function switchMenuView(menuType) {
             activeMenuState = menuType;
-
             if (menuType === 'home') {
                 hideElementSmooth(document.getElementById('backToHomeBtn'));
                 hideElementSmooth(document.getElementById('formGenerus'));
                 hideElementSmooth(document.getElementById('searchSection'));
                 hideElementSmooth(document.getElementById('rekapSection'));
-                
                 setTimeout(() => {
                     showElementSmooth(document.getElementById('mainDashboard'));
                     document.getElementById('mainTitle').textContent = "PENDATAAN GENERUS";
@@ -1065,27 +843,17 @@
             } else {
                 hideElementSmooth(document.getElementById('mainDashboard'), () => {
                     showElementSmooth(document.getElementById('backToHomeBtn'));
-
-                    if (menuType === 'DATABASE') {
-                        switchMode('DAFTAR');
-                    } else if (menuType === 'UPDATE') {
-                        switchMode('UPDATE');
-                        initFilterDaftarNama();
-                    } else if (menuType === 'REKAP') {
-                        switchMode('REKAP');
-                        fetchAndBuildRekap();
-                    }
+                    if (menuType === 'DATABASE') switchMode('DAFTAR');
+                    else if (menuType === 'UPDATE') { switchMode('UPDATE'); initFilterDaftarNama(); }
+                    else if (menuType === 'REKAP') { switchMode('REKAP'); fetchAndBuildRekap(); }
                 });
             }
         }
 
         document.addEventListener('input', function(e) {
             if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'text') {
-                let cursorPosition = e.target.selectionStart;
-                let originalValue = e.target.value;
-                
-                let formattedValue = originalValue.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
-                
+                let cursorPosition = e.target.selectionStart, originalValue = e.target.value;
+                let formattedValue = toTitleCase(originalValue);
                 if (originalValue !== formattedValue) {
                     e.target.value = formattedValue;
                     e.target.setSelectionRange(cursorPosition, cursorPosition);
@@ -1096,38 +864,26 @@
         function formatKelasFormal(val) {
 			if (!val) return "";
 			let formatted = toTitleCase(val.trim());
-			
-            // Otomatis ubah kata PENGANGGURAN menjadi BELUM KERJA
-            if (formatted.toUpperCase() === "PENGANGGURAN") {
-                return "BELUM KERJA";
-            }
+            if (formatted.toUpperCase() === "PENGANGGURAN") return "BELUM KERJA";
 
-			formatted = formatted.replace(/\bPaud\b/gi, 'PAUD')
-								 .replace(/\bTk\b/gi, 'TK')
-								 .replace(/\bSd\b/gi, 'SD')
-								 .replace(/\bSmp\b/gi, 'SMP')
-								 .replace(/\bSma\b/gi, 'SMA')
-								 .replace(/\bSmk\b/gi, 'SMK');
-
-			formatted = formatted.replace(/SMA\/SMK\/Smk/gi, 'SMA/SMK')
-								 .replace(/SMA\/SMK\/SMK/gi, 'SMA/SMK');
-
-			return formatted;
+			return formatted.replace(/\bPaud\b/gi, 'PAUD')
+							.replace(/\bTk\b/gi, 'TK')
+							.replace(/\bSd\b/gi, 'SD')
+							.replace(/\bSmp\b/gi, 'SMP')
+							.replace(/\bSma\b/gi, 'SMA')
+							.replace(/\bSmk\b/gi, 'SMK')
+							.replace(/SMA\/SMK\/Smk/gi, 'SMA/SMK')
+							.replace(/SMA\/SMK\/SMK/gi, 'SMA/SMK');
 		}
 
-        function toTitleCase(str) { 
-            return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); 
-        }
+        function toTitleCase(str) { return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }
 
         kategoriSelect.addEventListener('change', function() {
             const kat = this.value;
-            
             if (!kat) {
                 wrapperKelasFormal.classList.add('hidden');
                 formTambahanKhusus.classList.add('hidden');
-                nomorHpInput.required = false;
-                nomorHpInput.value = "";
-                resetMengajarCheckboxes();
+                nomorHpInput.required = false; nomorHpInput.value = ""; resetMengajarCheckboxes();
                 return;
             }
 
@@ -1135,110 +891,58 @@
                 formTambahanKhusus.classList.remove('hidden');
                 formTambahanKhusus.classList.add('animate-field-in');
                 nomorHpInput.required = true;
-                
                 wrapperKelasFormal.classList.add('hidden');
                 containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
-            } 
-            else if (kat === "PAUD") {
+            } else if (kat === "PAUD" || kat === "Menikah/Boarding/Sambung Luar Daerah") {
                 formTambahanKhusus.classList.add('hidden');
-                formTambahanKhusus.classList.remove('animate-field-in');
-                nomorHpInput.required = false;
-                nomorHpInput.value = "";
-                resetMengajarCheckboxes();
-                
+                nomorHpInput.required = false; nomorHpInput.value = ""; resetMengajarCheckboxes();
                 wrapperKelasFormal.classList.add('hidden');
-                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="PAUD" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
-            } 
-            else if (kat === "Menikah/Boarding/Sambung Luar Daerah") {
+                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="${kat === 'PAUD' ? 'PAUD' : ''}" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
+            } else {
                 formTambahanKhusus.classList.add('hidden');
-                formTambahanKhusus.classList.remove('animate-field-in');
-                nomorHpInput.required = false;
-                nomorHpInput.value = "";
-                resetMengajarCheckboxes();
-                
-                wrapperKelasFormal.classList.add('hidden');
-                containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
-            }
-            else {
-                formTambahanKhusus.classList.add('hidden');
-                formTambahanKhusus.classList.remove('animate-field-in');
-                nomorHpInput.required = false;
-                nomorHpInput.value = "";
-                resetMengajarCheckboxes();
-                
+                nomorHpInput.required = false; nomorHpInput.value = ""; resetMengajarCheckboxes();
                 wrapperKelasFormal.classList.remove('hidden');
                 wrapperKelasFormal.classList.add('animate-field-in');
                 
                 let selectOptions = `<option value="">-- Pilih Kelas/Status --</option>`;
-                
-                if (kat === "TK") {
-                    selectOptions += `<option value="TK A">TK A</option><option value="TK B">TK B</option>`;
-                } else if (kat === "Caberawit") {
-                    for(let i=1; i<=6; i++) selectOptions += `<option value="${i} SD">${i} SD</option>`;
-                } else if (kat === "Pra Remaja") {
-                    for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMP">${i} SMP</option>`;
-                } else if (kat === "Remaja") {
-                    for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMA/SMK">${i} SMA/SMK</option>`;
-                } else if (kat === "Usia Mandiri") {
-                    selectOptions += `<option value="KULIAH">KULIAH</option><option value="KERJA">KERJA</option><option value="BELUM KERJA">BELUM KERJA</option>`;
-                } else {
+                if (kat === "TK") selectOptions += `<option value="TK A">TK A</option><option value="TK B">TK B</option>`;
+                else if (kat === "Caberawit") { for(let i=1; i<=6; i++) selectOptions += `<option value="${i} SD">${i} SD</option>`; }
+                else if (kat === "Pra Remaja") { for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMP">${i} SMP</option>`; }
+                else if (kat === "Remaja") { for(let i=1; i<=3; i++) selectOptions += `<option value="${i} SMA/SMK">${i} SMA/SMK</option>`; }
+                else if (kat === "Usia Mandiri") selectOptions += `<option value="KULIAH">KULIAH</option><option value="KERJA">KERJA</option><option value="BELUM KERJA">BELUM KERJA</option>`;
+                else {
                     containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA/SMK, Kuliah Sem 4, Kerja" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
                     return;
                 }
 
-                containerKelasFormal.innerHTML = `
-                    <select id="kelas_formal" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">
-                        ${selectOptions}
-                    </select>
-                `;
+                containerKelasFormal.innerHTML = `<select id="kelas_formal" required class="glass-input smooth-select block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium cursor-pointer">${selectOptions}</select>`;
             }
         });
 
         function resetMengajarCheckboxes() {
-            const checkboxes = document.querySelectorAll('input[name="mengajar_usia"]');
-            checkboxes.forEach(cb => cb.checked = false);
+            document.querySelectorAll('input[name="mengajar_usia"]').forEach(cb => cb.checked = false);
         }
 
         function getSelectedMengajarUsia() {
-            const checkboxes = document.querySelectorAll('input[name="mengajar_usia"]:checked');
-            let values = [];
-            checkboxes.forEach(cb => values.push(cb.value));
-            return values;
+            return Array.from(document.querySelectorAll('input[name="mengajar_usia"]:checked')).map(cb => cb.value);
         }
 
-        desaSelect.addEventListener('change', function() {
-            updateKelompokDropdown(this.value, "", kelompokSelect);
-        });
+        desaSelect.addEventListener('change', function() { updateKelompokDropdown(this.value, "", kelompokSelect); });
 
         function triggerPopupModal(title, msg, type = 'error') {
-            const errorTitle = document.getElementById('errorTitle');
-            const errorIconContainer = document.getElementById('errorIconContainer');
-            
-            errorTitle.textContent = title;
-            errorMessage.textContent = msg;
+            const errorTitle = document.getElementById('errorTitle'), errorIconContainer = document.getElementById('errorIconContainer');
+            errorTitle.textContent = title; errorMessage.textContent = msg;
 
             if(type === 'warning') {
                 errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 text-amber-600 mb-4 shadow-inner";
-                errorIconContainer.innerHTML = `
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                `;
+                errorIconContainer.innerHTML = `<svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>`;
             } else {
                 errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 text-rose-600 mb-4 shadow-inner";
-                errorIconContainer.innerHTML = `
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                `;
+                errorIconContainer.innerHTML = `<svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
             }
 
-            modalReview.classList.add('hidden');
-            modalSuccess.classList.add('hidden');
-            modalContact.classList.add('hidden');
-            modalPjPengajarList.classList.add('hidden');
+            modalReview.classList.add('hidden'); modalSuccess.classList.add('hidden'); modalContact.classList.add('hidden'); modalPjPengajarList.classList.add('hidden');
             modalError.classList.remove('hidden');
-            
             openModalAnimation('customModal');
         }
 
@@ -1251,60 +955,38 @@
             const btnWa = document.getElementById('btnWaDirect');
             if (noHp) {
                 let cleanPhone = noHp.replace(/[^0-9]/g, '');
-                if (cleanPhone.startsWith('0')) {
-                    cleanPhone = '62' + cleanPhone.slice(1);
-                }
+                if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1);
                 const msgText = encodeURIComponent(`Assalamu'alaikum Wr. Wb. Halo ${peran} ${nama}, saya menghubungi dari SIM Data Generus.`);
                 btnWa.href = `https://wa.me/${cleanPhone}?text=${msgText}`;
                 btnWa.classList.remove('opacity-50', 'pointer-events-none');
             } else {
-                btnWa.href = "#";
-                btnWa.classList.add('opacity-50', 'pointer-events-none');
+                btnWa.href = "#"; btnWa.classList.add('opacity-50', 'pointer-events-none');
             }
 
-            modalReview.classList.add('hidden');
-            modalSuccess.classList.add('hidden');
-            modalError.classList.add('hidden');
-            modalPjPengajarList.classList.add('hidden');
+            modalReview.classList.add('hidden'); modalSuccess.classList.add('hidden'); modalError.classList.add('hidden'); modalPjPengajarList.classList.add('hidden');
             modalContact.classList.remove('hidden');
-
             openModalAnimation('customModal');
         }
 
         async function openPjPengajarModal() {
             const container = document.getElementById('pjPengajarContainer');
-            const searchInput = document.getElementById('searchPjPengajarInput');
-            searchInput.value = "";
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center py-10">
-                    <div class="w-6 h-6 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin mb-3"></div>
-                    <p class="text-xs text-slate-500 font-semibold">⏳ Memuat daftar kontak...</p>
-                </div>
-            `;
+            document.getElementById('searchPjPengajarInput').value = "";
+            container.innerHTML = `<div class="flex flex-col items-center justify-center py-10"><div class="w-6 h-6 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin mb-3"></div><p class="text-xs text-slate-500 font-semibold">⏳ Memuat daftar kontak...</p></div>`;
 
-            modalReview.classList.add('hidden');
-            modalSuccess.classList.add('hidden');
-            modalError.classList.add('hidden');
-            modalContact.classList.add('hidden');
+            modalReview.classList.add('hidden'); modalSuccess.classList.add('hidden'); modalError.classList.add('hidden'); modalContact.classList.add('hidden');
             modalPjPengajarList.classList.remove('hidden');
-
             openModalAnimation('customModal');
 
             try {
                 const { data, error } = await supabaseClient
-                    .from('data_generus')
-                    .select('id, nama, kategori_usia, desa, kelompok, nomor_hp, mengajar_usia')
+                    .from('data_generus').select('id, nama, kategori_usia, desa, kelompok, nomor_hp, mengajar_usia')
                     .in('kategori_usia', ['PJ Kelompok', 'Pengajar'])
-                    .order('kategori_usia', { ascending: false })
-                    .order('nama', { ascending: true });
+                    .order('kategori_usia', { ascending: false }).order('nama', { ascending: true });
 
                 if (error) throw error;
-
                 rawPjPengajarData = data || [];
                 renderPjPengajarList(rawPjPengajarData);
-
             } catch (err) {
-                console.error("Gagal mengambil data PJ & Pengajar:", err);
                 container.innerHTML = `<p class="text-center text-xs text-rose-500 font-bold py-6">⚠️ Terjadi gangguan koneksi: ${err.message}</p>`;
             }
         }
@@ -1321,9 +1003,7 @@
                 const itemDiv = document.createElement('div');
                 itemDiv.className = "p-3 bg-white hover:bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between gap-3 transition-colors shadow-sm";
 
-                const isPj = item.kategori_usia === 'PJ Kelompok';
-                const badgeColor = isPj ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-orange-100 text-orange-700 border-orange-200';
-
+                const badgeColor = item.kategori_usia === 'PJ Kelompok' ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-orange-100 text-orange-700 border-orange-200';
                 let cleanPhone = (item.nomor_hp || '').replace(/[^0-9]/g, '');
                 if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1);
 
@@ -1347,13 +1027,7 @@
                         ${extraInfo}
                     </div>
                     <div class="shrink-0">
-                        ${cleanPhone ? `
-                            <a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl transition-all border border-emerald-200 shadow-sm" title="Hubungi WA">
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                            </a>
-                        ` : `
-                            <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">No HP (-)</span>
-                        `}
+                        ${cleanPhone ? `<a href="${waUrl}" target="_blank" class="inline-flex items-center justify-center p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl transition-all border border-emerald-200 shadow-sm" title="Hubungi WA"><svg class="w-4 h-4 fill-current"><use href="#icon-wa"/></svg></a>` : `<span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">No HP (-)</span>`}
                     </div>
                 `;
                 container.appendChild(itemDiv);
@@ -1363,12 +1037,11 @@
         function filterPjPengajarList() {
             const query = document.getElementById('searchPjPengajarInput').value.toLowerCase();
             const filtered = rawPjPengajarData.filter(item => {
-                const name = (item.nama || '').toLowerCase();
-                const role = (item.kategori_usia || '').toLowerCase();
-                const desa = (item.desa || '').toLowerCase();
-                const kelompok = (item.kelompok || '').toLowerCase();
-                const phone = (item.nomor_hp || '').toLowerCase();
-                return name.includes(query) || role.includes(query) || desa.includes(query) || kelompok.includes(query) || phone.includes(query);
+                return (item.nama || '').toLowerCase().includes(query) || 
+                       (item.kategori_usia || '').toLowerCase().includes(query) || 
+                       (item.desa || '').toLowerCase().includes(query) || 
+                       (item.kelompok || '').toLowerCase().includes(query) || 
+                       (item.nomor_hp || '').toLowerCase().includes(query);
             });
             renderPjPengajarList(filtered);
         }
@@ -1376,9 +1049,7 @@
         function openModalAnimation(modalId = 'customModal', pushHistory = true) {
             const modal = document.getElementById(modalId);
             if (!modal) return;
-            if (pushHistory) {
-                history.pushState({ modal: modalId, menu: activeMenuState }, '', '#' + modalId);
-            }
+            if (pushHistory) history.pushState({ modal: modalId, menu: activeMenuState }, '', '#' + modalId);
             const modalBox = modal.querySelector('div');
             modal.classList.remove('hidden');
             void modal.offsetWidth;
@@ -1430,47 +1101,26 @@
 
         function switchMode(selectedMode) {
             currentMode = selectedMode;
-            const searchSection = document.getElementById('searchSection');
-            const formGenerus = document.getElementById('formGenerus');
-            const formTitleHeader = document.getElementById('formTitleHeader');
-            const mainTitle = document.getElementById('mainTitle');
-            const mainSubtitle = document.getElementById('mainSubtitle');
+            const searchSection = document.getElementById('searchSection'), formGenerus = document.getElementById('formGenerus');
+            const formTitleHeader = document.getElementById('formTitleHeader'), mainTitle = document.getElementById('mainTitle'), mainSubtitle = document.getElementById('mainSubtitle');
 
-            formGenerus.reset();
-            updateInfoUmurForm();
-            formTambahanKhusus.classList.add('hidden');
-            
+            formGenerus.reset(); updateInfoUmurForm(); formTambahanKhusus.classList.add('hidden');
             wrapperKelasFormal.classList.add('hidden');
             containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
             
-            nomorHpInput.required = false;
-            updateKelompokDropdown("", "", kelompokSelect);
-            targetIdGenerus = null;
+            nomorHpInput.required = false; updateKelompokDropdown("", "", kelompokSelect); targetIdGenerus = null;
 
             if (currentMode === "UPDATE") {
-                mainTitle.textContent = "UPDATE DATA GENERUS";
-                mainSubtitle.textContent = "Pilih kelompok dan klik nama generus yang ingin diperbarui";
-                showElementSmooth(searchSection);
-                hideElementSmooth(formGenerus);
-                hideElementSmooth(rekapSection);
-                formTitleHeader.classList.remove('hidden');
-                submitBtn.textContent = "Perbarui Data";
-                optMenikah.classList.remove('hidden');
+                mainTitle.textContent = "UPDATE DATA GENERUS"; mainSubtitle.textContent = "Pilih kelompok dan klik nama generus yang ingin diperbarui";
+                showElementSmooth(searchSection); hideElementSmooth(formGenerus); hideElementSmooth(rekapSection);
+                formTitleHeader.classList.remove('hidden'); submitBtn.textContent = "Perbarui Data"; optMenikah.classList.remove('hidden');
             } else if (currentMode === "REKAP") {
-                mainTitle.textContent = "REKAP DATA GENERUS";
-                mainSubtitle.textContent = "Statistik serta ringkasan akumulasi seluruh data";
-                hideElementSmooth(searchSection);
-                hideElementSmooth(formGenerus);
-                showElementSmooth(rekapSection);
+                mainTitle.textContent = "REKAP DATA GENERUS"; mainSubtitle.textContent = "Statistik serta ringkasan akumulasi seluruh data";
+                hideElementSmooth(searchSection); hideElementSmooth(formGenerus); showElementSmooth(rekapSection);
             } else {
-                mainTitle.textContent = "PENDATAAN GENERUS";
-                mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
-                hideElementSmooth(searchSection);
-                hideElementSmooth(rekapSection);
-                showElementSmooth(formGenerus);
-                formTitleHeader.classList.add('hidden');
-                submitBtn.textContent = "Kirim Data";
-                optMenikah.classList.add('hidden');
+                mainTitle.textContent = "PENDATAAN GENERUS"; mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
+                hideElementSmooth(searchSection); hideElementSmooth(rekapSection); showElementSmooth(formGenerus);
+                formTitleHeader.classList.add('hidden'); submitBtn.textContent = "Kirim Data"; optMenikah.classList.add('hidden');
             }
         }
 
@@ -1502,10 +1152,8 @@
             
             if (match.kategori_usia === "Pengajar" || match.kategori_usia === "PJ Kelompok") {
                 formTambahanKhusus.classList.remove('hidden');
-                nomorHpInput.required = true;
-                nomorHpInput.value = match.nomor_hp || "";
-                wrapperKelasFormal.classList.add('hidden');
-                resetMengajarCheckboxes();
+                nomorHpInput.required = true; nomorHpInput.value = match.nomor_hp || "";
+                wrapperKelasFormal.classList.add('hidden'); resetMengajarCheckboxes();
                 if (match.mengajar_usia) {
                     let muArray = Array.isArray(match.mengajar_usia) ? match.mengajar_usia : match.mengajar_usia.split(',');
                     muArray.forEach(val => {
@@ -1526,10 +1174,7 @@
             }
 
             showElementSmooth(formGenerus);
-            
-            setTimeout(() => {
-                formGenerus.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 250);
+            setTimeout(() => formGenerus.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250);
         }
 
         document.getElementById('formGenerus').addEventListener('submit', function(e) {
@@ -1546,21 +1191,14 @@
             const kelas = formatKelasFormal(document.getElementById('kelas_formal').value.trim());
 
             payloadData = { 
-                nama, 
-                jenis_kelamin: jk, 
-                tempat_lahir: tempat, 
-                tanggal_lahir: `${thn}-${bln}-${tgl}`, 
-                desa, 
-                kelompok, 
-                kategori_usia: kategori, 
-                kelas_formal: (kategori === "Pengajar" || kategori === "PJ Kelompok" || kategori === "PAUD" || kategori === "Menikah/Boarding/Sambung Luar Daerah") ? null : kelas,
+                nama, jenis_kelamin: jk, tempat_lahir: tempat, tanggal_lahir: `${thn}-${bln}-${tgl}`, 
+                desa, kelompok, kategori_usia: kategori, 
+                kelas_formal: (["Pengajar", "PJ Kelompok", "PAUD", "Menikah/Boarding/Sambung Luar Daerah"].includes(kategori)) ? null : kelas,
                 nomor_hp: (kategori === "Pengajar" || kategori === "PJ Kelompok") ? nomorHpInput.value.trim() : null,
                 mengajar_usia: (kategori === "Pengajar" || kategori === "PJ Kelompok") ? getSelectedMengajarUsia() : null
             };
 
-            const revTitle = document.getElementById('reviewTitle');
-            const revSubtitle = document.getElementById('reviewSubtitle');
-            const confirmBtn = document.getElementById('confirmSaveBtn');
+            const revTitle = document.getElementById('reviewTitle'), revSubtitle = document.getElementById('reviewSubtitle'), confirmBtn = document.getElementById('confirmSaveBtn');
 
             if (currentMode === "UPDATE" && kategori === "Menikah/Boarding/Sambung Luar Daerah") {
                 revTitle.textContent = "⚠️ Konfirmasi Hapus Generus";
@@ -1577,38 +1215,27 @@
             }
 
             const umur = hitungUmurOtomatis(thn, bln, tgl);
-            const teksUmur = umur !== null ? ` (${umur} thn)` : '';
-
             document.getElementById('revNama').textContent = nama;
             document.getElementById('revJK').textContent = jk === "L" ? "Laki-laki" : "Perempuan";
-            document.getElementById('revTTL').textContent = `${tempat}, ${tgl}-${bln}-${thn}${teksUmur}`;
+            document.getElementById('revTTL').textContent = `${tempat}, ${tgl}-${bln}-${thn}${umur !== null ? ` (${umur} thn)` : ''}`;
             document.getElementById('revDesa').textContent = desa;
             document.getElementById('revKelompok').textContent = kelompok;
             document.getElementById('revUsia').textContent = kategori;
 
-            const revKhususContainer = document.getElementById('revKhususContainer');
-            const revKelasContainer = document.getElementById('revKelasContainer');
+            const revKhususContainer = document.getElementById('revKhususContainer'), revKelasContainer = document.getElementById('revKelasContainer');
 
             if (kategori === "Pengajar" || kategori === "PJ Kelompok") {
-                revKhususContainer.classList.remove('hidden');
-                revKelasContainer.classList.add('hidden');
+                revKhususContainer.classList.remove('hidden'); revKelasContainer.classList.add('hidden');
                 document.getElementById('revNoHP').textContent = payloadData.nomor_hp || "-";
                 document.getElementById('revMengajar').textContent = (payloadData.mengajar_usia && payloadData.mengajar_usia.length > 0) ? payloadData.mengajar_usia.join(', ') : "Tidak memilih";
             } else if (kategori === "PAUD" || kategori === "Menikah/Boarding/Sambung Luar Daerah") {
-                revKhususContainer.classList.add('hidden');
-                revKelasContainer.classList.add('hidden');
+                revKhususContainer.classList.add('hidden'); revKelasContainer.classList.add('hidden');
             } else {
-                revKhususContainer.classList.add('hidden');
-                revKelasContainer.classList.remove('hidden');
+                revKhususContainer.classList.add('hidden'); revKelasContainer.classList.remove('hidden');
                 document.getElementById('revKelas').textContent = kelas || "-";
             }
 
-            modalReview.classList.remove('hidden');
-            modalSuccess.classList.add('hidden');
-            modalError.classList.add('hidden');
-            modalContact.classList.add('hidden');
-            modalPjPengajarList.classList.add('hidden');
-            
+            modalReview.classList.remove('hidden'); modalSuccess.classList.add('hidden'); modalError.classList.add('hidden'); modalContact.classList.add('hidden'); modalPjPengajarList.classList.add('hidden');
             openModalAnimation('customModal');
         });
 
@@ -1624,29 +1251,20 @@
 
                 if (currentMode === "UPDATE" && targetIdGenerus && isMenikah) {
                     btn.innerHTML = "Menghapus...";
-                    const { error } = await supabaseClient
-                        .from('data_generus')
-                        .delete()
-                        .eq('id', targetIdGenerus);
+                    const { error } = await supabaseClient.from('data_generus').delete().eq('id', targetIdGenerus);
                     resultError = error;
                     if (!resultError) {
                         document.getElementById('successTitle').textContent = "Berhasil Dihapus";
                         document.getElementById('successMessage').textContent = `Data generus atas nama ${payloadData.nama} telah resmi dihapus dari database aktif.`;
                         document.getElementById('successIcon').className = "mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-slate-100 text-slate-500 mb-5 shadow-inner";
                     }
-                } 
-                else {
+                } else {
                     btn.innerHTML = "Menyimpan...";
                     if (currentMode === "UPDATE" && targetIdGenerus) {
-                        const { error } = await supabaseClient
-                            .from('data_generus')
-                            .update(payloadData)
-                            .eq('id', targetIdGenerus);
+                        const { error } = await supabaseClient.from('data_generus').update(payloadData).eq('id', targetIdGenerus);
                         resultError = error;
                     } else {
-                        const { error } = await supabaseClient
-                            .from('data_generus')
-                            .insert([payloadData]);
+                        const { error } = await supabaseClient.from('data_generus').insert([payloadData]);
                         resultError = error;
                     }
                     if (!resultError) {
@@ -1657,14 +1275,10 @@
                 }
 
                 if (resultError) throw resultError;
-
-                modalReview.classList.add('hidden');
-                modalSuccess.classList.remove('hidden');
+                modalReview.classList.add('hidden'); modalSuccess.classList.remove('hidden');
 
             } catch (err) {
-                console.error(err);
                 modalReview.classList.add('hidden');
-                
                 if (err.message && err.message.toLowerCase().includes('duplicate')) {
                     document.getElementById('errorMessage').classList.add('hidden');
                     triggerPopupModal("Data Sudah Ada", "Nama generus ini sudah terdaftar.", "error");
@@ -1674,8 +1288,7 @@
                     triggerPopupModal("Gagal Menyimpan", "Gagal menghubungi server basis data. Silakan coba sesaat lagi.", "error");
                 }
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
+                btn.disabled = false; btn.innerHTML = originalText;
             }
         }
 
@@ -1683,15 +1296,11 @@
             const dsaSelect = document.getElementById('listFilterDesa');
             if(!dsaSelect) return;
             dsaSelect.innerHTML = '<option value="">-- Pilih Desa --</option>';
-            Object.keys(dataWilayah).forEach(desa => {
-                dsaSelect.add(new Option(desa, desa));
-            });
+            Object.keys(dataWilayah).forEach(desa => dsaSelect.add(new Option(desa, desa)));
         }
 
         function updateFilterKelompokDaftar() {
-            const desaVal = document.getElementById('listFilterDesa').value;
-            const klpSelect = document.getElementById('listFilterKelompok');
-            updateKelompokDropdown(desaVal, "", klpSelect, "-- Pilih Kelompok --");
+            updateKelompokDropdown(document.getElementById('listFilterDesa').value, "", document.getElementById('listFilterKelompok'), "-- Pilih Kelompok --");
             document.getElementById('tableGenerusBody').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500 italic font-medium text-xs">Belum ada kelompok yang dipilih.</td></tr>`;
             document.getElementById('labelTotalGenerus').textContent = "Pilih kelompok untuk lihat data";
             document.getElementById('searchNamaInList').classList.add('hidden');
@@ -1700,27 +1309,17 @@
         async function loadNamaGenerusKelompok() {
             const desa = document.getElementById('listFilterDesa').value;
             const kelompok = document.getElementById('listFilterKelompok').value;
-            const tbody = document.getElementById('tableGenerusBody');
-            const labelTotal = document.getElementById('labelTotalGenerus');
-            const searchInput = document.getElementById('searchNamaInList');
+            const tbody = document.getElementById('tableGenerusBody'), labelTotal = document.getElementById('labelTotalGenerus'), searchInput = document.getElementById('searchNamaInList');
 
             if (!desa || !kelompok) return;
-
             tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-indigo-500 font-bold text-xs"><span class="animate-pulse">⏳ Mengambil data Generus...</span></td></tr>`;
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('data_generus')
-                    .select('*')
-                    .eq('desa', desa)
-                    .eq('kelompok', kelompok)
-                    .order('nama', { ascending: true });
-
+                const { data, error } = await supabaseClient.from('data_generus').select('*').eq('desa', desa).eq('kelompok', kelompok).order('nama', { ascending: true });
                 if (error) throw error;
 
                 labelTotal.textContent = `Total: ${data.length} Generus (${kelompok})`;
-                searchInput.classList.remove('hidden');
-                searchInput.value = "";
+                searchInput.classList.remove('hidden'); searchInput.value = "";
 
                 if (data.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold text-xs">Belum ada Generus yang terdaftar di kelompok ini.</td></tr>`;
@@ -1732,11 +1331,7 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-white/80 transition-colors duration-150 row-Generus backdrop-blur-sm text-xs";
                     
-                    // Format kelas formal untuk mengantisipasi data lama bertuliskan PENGANGGURAN
-                    const displayKelasFormal = formatKelasFormal(item.kelas_formal);
-
                     const safeItem = JSON.stringify(item).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-
                     let umurText = '';
                     if (item.tanggal_lahir) {
                         const parts = item.tanggal_lahir.split('-');
@@ -1748,17 +1343,8 @@
 
                     let waButtonHtml = '';
                     if ((item.kategori_usia === 'PJ Kelompok' || item.kategori_usia === 'Pengajar') && item.nomor_hp) {
-                        const escapedNama = item.nama.replace(/'/g, "\\'");
-                        const escapedKategori = item.kategori_usia.replace(/'/g, "\\'");
-                        const escapedDesa = item.desa.replace(/'/g, "\\'");
-                        const escapedKelompok = item.kelompok.replace(/'/g, "\\'");
-                        const escapedHp = item.nomor_hp.replace(/'/g, "\\'");
-
-                        waButtonHtml = `
-                            <button type="button" onclick="event.stopPropagation(); showContactModal('${escapedNama}', '${escapedKategori}', '${escapedDesa}', '${escapedKelompok}', '${escapedHp}')" title="Hubungi WA ${item.nama}" class="ml-2 inline-flex items-center justify-center p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-100 shadow-sm">
-                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                            </button>
-                        `;
+                        const escapedNama = item.nama.replace(/'/g, "\\'"), escapedKategori = item.kategori_usia.replace(/'/g, "\\'"), escapedDesa = item.desa.replace(/'/g, "\\'"), escapedKelompok = item.kelompok.replace(/'/g, "\\'"), escapedHp = item.nomor_hp.replace(/'/g, "\\'");
+                        waButtonHtml = `<button type="button" onclick="event.stopPropagation(); showContactModal('${escapedNama}', '${escapedKategori}', '${escapedDesa}', '${escapedKelompok}', '${escapedHp}')" title="Hubungi WA ${item.nama}" class="ml-2 inline-flex items-center justify-center p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-100 shadow-sm"><svg class="w-3.5 h-3.5 fill-current"><use href="#icon-wa"/></svg></button>`;
                     }
 
                     tr.innerHTML = `
@@ -1773,40 +1359,39 @@
                         </td>
                         <td class="p-3 text-center font-extrabold ${item.jenis_kelamin === 'L' ? 'text-blue-600' : 'text-pink-600'}">${item.jenis_kelamin}</td>
                         <td class="p-3 text-slate-700 font-semibold">${item.kategori_usia}</td>
-                        <td class="p-3 text-slate-600 font-medium">${displayKelasFormal || '-'}</td>
+                        <td class="p-3 text-slate-600 font-medium">${formatKelasFormal(item.kelas_formal) || '-'}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             } catch (err) {
-                console.error(err);
                 tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold text-xs">Gagal memuat data: ${err.message}</td></tr>`;
             }
         }
 
-        function selectGenerusForUpdate(item) {
-            fillFormForUpdate(item);
-        }
+        function selectGenerusForUpdate(item) { fillFormForUpdate(item); }
 
         function filterNamaGenerusTable() {
             const filter = document.getElementById('searchNamaInList').value.toLowerCase();
-            const rows = document.querySelectorAll('.row-Generus');
-            
-            rows.forEach(row => {
+            document.querySelectorAll('.row-Generus').forEach(row => {
                 const namaCell = row.querySelector('.cell-nama');
-                if (namaCell) {
-                    const namaText = namaCell.textContent.toLowerCase();
-                    row.style.display = namaText.includes(filter) ? '' : 'none';
-                }
+                if (namaCell) row.style.display = namaCell.textContent.toLowerCase().includes(filter) ? '' : 'none';
             });
         }
 
+        async function fetchAllSupabaseData(tableName, selectColumns = '*') {
+            let data = [], page = 0; const pageSize = 1000; let hasMore = true;
+            while (hasMore) {
+                const { data: pageData, error } = await supabaseClient.from(tableName).select(selectColumns).range(page * pageSize, (page + 1) * pageSize - 1);
+                if (error) throw error;
+                data = data.concat(pageData);
+                if (pageData.length < pageSize) hasMore = false; else page++;
+            }
+            return data;
+        }
+
         async function fetchAndBuildRekap() {
-            rekapLoader.classList.remove('hidden');
-            rekapContent.classList.add('hidden');
-            tableUsiaBody.innerHTML = "";
-            tableUsiaFoot.innerHTML = "";
-            tableKelasBody.innerHTML = "";
-            tableKelasFoot.innerHTML = "";
+            rekapLoader.classList.remove('hidden'); rekapContent.classList.add('hidden');
+            tableUsiaBody.innerHTML = ""; tableUsiaFoot.innerHTML = ""; tableKelasBody.innerHTML = ""; tableKelasFoot.innerHTML = "";
 
             let sectionKelompok = document.getElementById('sectionRekapKelompok');
             if(!sectionKelompok) {
@@ -1824,9 +1409,7 @@
                                     <th class="p-3 sm:p-4">
                                         <div class="flex items-center gap-2">
                                             <div class="relative flex items-center bg-white/80 border border-slate-200 rounded-lg px-2 py-1.5 hover:border-indigo-400 transition shadow-sm focus-within:border-indigo-500 cursor-pointer print:hidden">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                                </svg>
+                                                <svg class="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                                                 <select id="filterDesaKelompok" onchange="applyFilterKelompok(this.value)" class="text-[10px] font-extrabold bg-transparent text-indigo-700 outline-none cursor-pointer pl-1.5 appearance-none smooth-select">
                                                     <option value="ALL">Filter Semua</option>
                                                 </select>
@@ -1850,74 +1433,32 @@
             tableKelompokBody.innerHTML = "";
 
             try {
-                let data = [];
-                let page = 0;
-                const pageSize = 1000;
-                let hasMore = true;
+                const data = await fetchAllSupabaseData('data_generus', 'jenis_kelamin, kategori_usia, kelas_formal, desa, kelompok');
 
-                while (hasMore) {
-                    const { data: pageData, error } = await supabaseClient
-                        .from('data_generus')
-                        .select('jenis_kelamin, kategori_usia, kelas_formal, desa, kelompok')
-                        .range(page * pageSize, (page + 1) * pageSize - 1);
-
-                    if (error) throw error;
-
-                    data = data.concat(pageData);
-
-                    if (pageData.length < pageSize) {
-                        hasMore = false;
-                    } else {
-                        page++;
-                    }
-                }
-
-                const rekapUsia = {
-                    "PAUD": { L: 0, P: 0 }, "TK": { L: 0, P: 0 }, "Caberawit": { L: 0, P: 0 },
-                    "Pra Remaja": { L: 0, P: 0 }, "Remaja": { L: 0, P: 0 }, "Usia Mandiri": { L: 0, P: 0 },
-                    "Pengajar": { L: 0, P: 0 }, "PJ Kelompok": { L: 0, P: 0 }
-                };
-                const rekapKelas = {};
-                const rekapKlp = {}; 
+                const rekapUsia = { "PAUD": { L: 0, P: 0 }, "TK": { L: 0, P: 0 }, "Caberawit": { L: 0, P: 0 }, "Pra Remaja": { L: 0, P: 0 }, "Remaja": { L: 0, P: 0 }, "Usia Mandiri": { L: 0, P: 0 }, "Pengajar": { L: 0, P: 0 }, "PJ Kelompok": { L: 0, P: 0 } };
+                const rekapKelas = {}, rekapKlp = {}; 
 
                 let countGenerusOnly = 0, countPengajarOnly = 0, countPJOnly = 0;
                 let totalUsiaL = 0, totalUsiaP = 0, totalUsiaSemua = 0;
                 let totalKelasL = 0, totalKelasP = 0, totalKelasSemua = 0;
 
                 data.forEach(item => {
-                    const jk = item.jenis_kelamin;
-                    const usia = item.kategori_usia;
-                    
-                    // Format kelas formal & konversi otomatis jika masih bertuliskan PENGANGGURAN
+                    const jk = item.jenis_kelamin, usia = item.kategori_usia;
                     const kelas = item.kelas_formal ? formatKelasFormal(item.kelas_formal.trim()) : "Tidak Diisi/Pengajar";
-                    
-                    const dsa = item.desa || "Tanpa Desa";
-                    const klp = item.kelompok || "Tanpa Kelompok";
-                    const klpKey = `${dsa} - ${klp}`;
+                    const dsa = item.desa || "Tanpa Desa", klp = item.kelompok || "Tanpa Kelompok", klpKey = `${dsa} - ${klp}`;
 
-                    if(!rekapKlp[klpKey]) {
-                        rekapKlp[klpKey] = { jml_generus: 0, L: 0, P: 0, jml_pengajar: 0, jml_pj: 0 };
-                    }
+                    if(!rekapKlp[klpKey]) rekapKlp[klpKey] = { jml_generus: 0, L: 0, P: 0, jml_pengajar: 0, jml_pj: 0 };
 
                     if(rekapUsia[usia]) {
                         if(jk === 'L' || jk === 'P') rekapUsia[usia][jk]++;
                         if (["PAUD", "TK", "Caberawit", "Pra Remaja", "Remaja", "Usia Mandiri"].includes(usia)) {
-                            countGenerusOnly++;
-                            rekapKlp[klpKey].jml_generus++;
-                            if(jk === 'L') rekapKlp[klpKey].L++;
-                            if(jk === 'P') rekapKlp[klpKey].P++;
-                        } else if (usia === "Pengajar") {
-                            countPengajarOnly++;
-                            rekapKlp[klpKey].jml_pengajar++;
-                        } else if (usia === "PJ Kelompok") {
-                            countPJOnly++;
-                            rekapKlp[klpKey].jml_pj++;
-                        }
+                            countGenerusOnly++; rekapKlp[klpKey].jml_generus++;
+                            if(jk === 'L') rekapKlp[klpKey].L++; if(jk === 'P') rekapKlp[klpKey].P++;
+                        } else if (usia === "Pengajar") { countPengajarOnly++; rekapKlp[klpKey].jml_pengajar++; }
+                        else if (usia === "PJ Kelompok") { countPJOnly++; rekapKlp[klpKey].jml_pj++; }
                     }
 
-                    if(!rekapKelas[kelas]) {
-                        rekapKelas[kelas] = { L: 0, P: 0 };
-                    }
+                    if(!rekapKelas[kelas]) rekapKelas[kelas] = { L: 0, P: 0 };
                     if(jk === 'L' || jk === 'P') rekapKelas[kelas][jk]++;
                 });
 
@@ -1930,37 +1471,17 @@
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-white/70 transition-colors duration-150 text-xs";
-                    tr.innerHTML = `
-                        <td class="p-3 sm:p-4 font-bold text-slate-800">${key}</td>
-                        <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
-                        <td class="p-3 sm:p-4 text-center font-medium">${val.P}</td>
-                        <td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800 total-cell-highlight">${totalRow}</td>
-                    `;
+                    tr.innerHTML = `<td class="p-3 sm:p-4 font-bold text-slate-800">${key}</td><td class="p-3 sm:p-4 text-center font-medium">${val.L}</td><td class="p-3 sm:p-4 text-center font-medium">${val.P}</td><td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800 total-cell-highlight">${totalRow}</td>`;
                     tableUsiaBody.appendChild(tr);
                 }
-                tableUsiaFoot.innerHTML = `
-                    <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td>
-                    <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalUsiaL}</td>
-                    <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalUsiaP}</td>
-                    <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalUsiaSemua}</td>
-                `;
+                tableUsiaFoot.innerHTML = `<td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td><td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalUsiaL}</td><td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalUsiaP}</td><td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalUsiaSemua}</td>`;
 
-                const urutanKustom = [
-					"PAUD", "TK A", "TK B",
-					"1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD",
-					"1 SMP", "2 SMP", "3 SMP",
-					"1 SMA", "2 SMA", "3 SMA",
-					"1 SMK", "2 SMK", "3 SMK",
-					"1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK",
-					"1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK",
-					"KULIAH", "KERJA", "BELUM KERJA"
-				];
+                const urutanKustom = ["PAUD", "TK A", "TK B", "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD", "1 SMP", "2 SMP", "3 SMP", "1 SMA", "2 SMA", "3 SMA", "1 SMK", "2 SMK", "3 SMK", "1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK", "1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK", "KULIAH", "KERJA", "BELUM KERJA"];
 
                 const sortedKelas = Object.keys(rekapKelas)
                     .filter(kelasKey => kelasKey !== "Tidak Diisi/Pengajar")
                     .sort((a, b) => {
-                        const indexA = urutanKustom.indexOf(a.toUpperCase());
-                        const indexB = urutanKustom.indexOf(b.toUpperCase());
+                        const indexA = urutanKustom.indexOf(a.toUpperCase()), indexB = urutanKustom.indexOf(b.toUpperCase());
                         if (indexA !== -1 && indexB !== -1) return indexA - indexB;
                         if (indexA !== -1) return -1;
                         if (indexB !== -1) return 1;
@@ -1971,26 +1492,15 @@
                     tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium text-xs">Belum ada data kelas formal.</td></tr>`;
                 } else {
                     sortedKelas.forEach((kelasKey) => {
-                        const val = rekapKelas[kelasKey];
-                        const totalRow = val.L + val.P;
+                        const val = rekapKelas[kelasKey], totalRow = val.L + val.P;
                         totalKelasL += val.L; totalKelasP += val.P; totalKelasSemua += totalRow;
 
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-white/70 transition-colors duration-150 text-xs";
-                        tr.innerHTML = `
-                            <td class="p-3 sm:p-4 font-bold text-slate-800">${kelasKey}</td>
-                            <td class="p-3 sm:p-4 text-center font-medium">${val.L}</td>
-                            <td class="p-3 sm:p-4 text-center font-medium">${val.P}</td>
-                            <td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800 total-cell-highlight">${totalRow}</td>
-                        `;
+                        tr.innerHTML = `<td class="p-3 sm:p-4 font-bold text-slate-800">${kelasKey}</td><td class="p-3 sm:p-4 text-center font-medium">${val.L}</td><td class="p-3 sm:p-4 text-center font-medium">${val.P}</td><td class="p-3 sm:p-4 text-center font-extrabold bg-slate-100/50 text-slate-800 total-cell-highlight">${totalRow}</td>`;
                         tableKelasBody.appendChild(tr);
                     });
-                    tableKelasFoot.innerHTML = `
-                        <td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td>
-                        <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalKelasL}</td>
-                        <td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalKelasP}</td>
-                        <td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalKelasSemua}</td>
-                    `;
+                    tableKelasFoot.innerHTML = `<td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td><td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalKelasL}</td><td class="p-3 sm:p-4 text-center text-blue-700 font-extrabold text-xs">${totalKelasP}</td><td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalKelasSemua}</td>`;
                 }
 
                 window.globalRekapKlp = rekapKlp;
@@ -2001,38 +1511,27 @@
 					const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
 					const optgroupDesa = document.createElement('optgroup');
 					optgroupDesa.label = "PER DESA";
-					uniqueDesa.forEach(desa => {
-						optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`;
-					});
+					uniqueDesa.forEach(desa => optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`);
 					filterSelect.appendChild(optgroupDesa);
 
 					const optgroupKlp = document.createElement('optgroup');
 					optgroupKlp.label = "PER KELOMPOK";
-					const sortedKlpKeys = Object.keys(rekapKlp).sort();
-					sortedKlpKeys.forEach(key => {
-						const shortName = key.includes(" - ") ? key.split(" - ")[1] : key;
-						optgroupKlp.innerHTML += `<option value="KLP:${key}">${shortName}</option>`;
+					Object.keys(rekapKlp).sort().forEach(key => {
+						optgroupKlp.innerHTML += `<option value="KLP:${key}">${key.includes(" - ") ? key.split(" - ")[1] : key}</option>`;
 					});
 					filterSelect.appendChild(optgroupKlp);
 				}
 
-                if (window.applyFilterKelompok) {
-                    window.applyFilterKelompok("ALL");
-                }
+                if (window.applyFilterKelompok) window.applyFilterKelompok("ALL");
 
-                rekapLoader.classList.add('hidden');
-                rekapContent.classList.remove('hidden');
-
+                rekapLoader.classList.add('hidden'); rekapContent.classList.remove('hidden');
             } catch (err) {
-                console.error(err);
                 rekapLoader.innerHTML = `<span class="text-rose-600 font-bold text-xs">⚠️ Gagal mengambil rekap data: ${err.message}</span>`;
             }
         }
 
         async function cetakRekapitulasiData() {
-            if (rekapContent.classList.contains('hidden')) {
-                await fetchAndBuildRekap();
-            }
+            if (rekapContent.classList.contains('hidden')) await fetchAndBuildRekap();
             window.print();
         }
 
@@ -2048,11 +1547,9 @@
             
             if (filterVal !== "ALL") {
                 if (filterVal.startsWith("DESA:")) {
-                    const searchDesa = filterVal.split("DESA:")[1];
-                    filteredKeys = sortedKlp.filter(k => k.startsWith(searchDesa + " - "));
+                    filteredKeys = sortedKlp.filter(k => k.startsWith(filterVal.split("DESA:")[1] + " - "));
                 } else if (filterVal.startsWith("KLP:")) {
-                    const searchKlp = filterVal.split("KLP:")[1];
-                    filteredKeys = sortedKlp.filter(k => k === searchKlp);
+                    filteredKeys = sortedKlp.filter(k => k === filterVal.split("KLP:")[1]);
                 }
             }
 
@@ -2063,124 +1560,64 @@
                     const row = rekapKlp[key];
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-white/70 transition-colors duration-150 font-medium text-slate-800 text-xs";
-                    tr.innerHTML = `
-                        <td class="p-3 sm:p-4 font-bold text-slate-700">${key}</td>
-                        <td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-800 total-cell-highlight">${row.jml_generus}</td>
-                        <td class="p-3 sm:p-4 text-center text-indigo-600 font-bold">${row.L}</td>
-                        <td class="p-3 sm:p-4 text-center text-pink-600 font-bold">${row.P}</td>
-                        <td class="p-3 sm:p-4 text-center bg-orange-50/50 font-extrabold text-orange-800">${row.jml_pengajar}</td>
-                        <td class="p-3 sm:p-4 text-center bg-purple-50/50 font-extrabold text-purple-800">${row.jml_pj}</td>
-                    `;
+                    tr.innerHTML = `<td class="p-3 sm:p-4 font-bold text-slate-700">${key}</td><td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-800 total-cell-highlight">${row.jml_generus}</td><td class="p-3 sm:p-4 text-center text-indigo-600 font-bold">${row.L}</td><td class="p-3 sm:p-4 text-center text-pink-600 font-bold">${row.P}</td><td class="p-3 sm:p-4 text-center bg-orange-50/50 font-extrabold text-orange-800">${row.jml_pengajar}</td><td class="p-3 sm:p-4 text-center bg-purple-50/50 font-extrabold text-purple-800">${row.jml_pj}</td>`;
                     tableKelompokBody.appendChild(tr);
                 });
             }
         };
 
-        /* -------------------------------------------------------------
-         * FITUR: MODAL DENGAN FILTER & CHECKBOX EKSPOR CSV & EXCEL
-         * ------------------------------------------------------------- */
         function exportToCSV() {
             const csvFilterDesa = document.getElementById('csvFilterDesa');
             csvFilterDesa.innerHTML = '<option value="">-- Pilih Desa --</option>';
-            
-            Object.keys(dataWilayah).forEach(desa => {
-                csvFilterDesa.add(new Option(desa, desa));
-            });
+            Object.keys(dataWilayah).forEach(desa => csvFilterDesa.add(new Option(desa, desa)));
 
             document.getElementById('csvScopeType').value = "ALL";
             handleCsvScopeChange();
-
             openModalAnimation('modalExportCsv');
         }
 
-        function closeCsvModal(backHistory = true) {
-            closeModalAnimation('modalExportCsv', backHistory);
-        }
+        function closeCsvModal(backHistory = true) { closeModalAnimation('modalExportCsv', backHistory); }
 
         function handleCsvScopeChange() {
             const scope = document.getElementById('csvScopeType').value;
-            const desaBox = document.getElementById('csvDesaContainer');
-            const kelompokBox = document.getElementById('csvKelompokContainer');
-
-            if (scope === 'ALL') {
-                desaBox.classList.add('hidden');
-                kelompokBox.classList.add('hidden');
-            } else if (scope === 'DESA') {
-                desaBox.classList.remove('hidden');
-                kelompokBox.classList.add('hidden');
-            } else if (scope === 'KELOMPOK') {
-                desaBox.classList.remove('hidden');
-                kelompokBox.classList.remove('hidden');
-            }
+            document.getElementById('csvDesaContainer').classList.toggle('hidden', scope === 'ALL');
+            document.getElementById('csvKelompokContainer').classList.toggle('hidden', scope !== 'KELOMPOK');
         }
 
         function handleCsvDesaSelectChange() {
-            const desaVal = document.getElementById('csvFilterDesa').value;
-            const klpSelect = document.getElementById('csvFilterKelompok');
-            updateKelompokDropdown(desaVal, "", klpSelect, "-- Pilih Kelompok --");
+            updateKelompokDropdown(document.getElementById('csvFilterDesa').value, "", document.getElementById('csvFilterKelompok'), "-- Pilih Kelompok --");
         }
 
         function toggleAllCsvColumns(selectState) {
-            const checkboxes = document.querySelectorAll('input[name="csvCol"]');
-            checkboxes.forEach(cb => cb.checked = selectState);
+            document.querySelectorAll('input[name="csvCol"]').forEach(cb => cb.checked = selectState);
         }
 
-        // FUNGSI HELPER UNTUK MENGAMBIL DATA DARI SUPABASE SESUAI FILTER
         async function fetchExportDataFromSupabase() {
             const scope = document.getElementById('csvScopeType').value;
             const selectedDesa = document.getElementById('csvFilterDesa').value;
             const selectedKelompok = document.getElementById('csvFilterKelompok').value;
 
-            if (scope === 'DESA' && !selectedDesa) {
-                alert("Silakan pilih Desa terlebih dahulu!");
-                return null;
-            }
-            if (scope === 'KELOMPOK' && (!selectedDesa || !selectedKelompok)) {
-                alert("Silakan pilih Desa dan Kelompok terlebih dahulu!");
-                return null;
-            }
+            if (scope === 'DESA' && !selectedDesa) return alert("Silakan pilih Desa terlebih dahulu!");
+            if (scope === 'KELOMPOK' && (!selectedDesa || !selectedKelompok)) return alert("Silakan pilih Desa dan Kelompok terlebih dahulu!");
 
             const checkedBoxes = document.querySelectorAll('input[name="csvCol"]:checked');
-            if (checkedBoxes.length === 0) {
-                alert("Pilih minimal satu kolom untuk diekspor!");
-                return null;
-            }
+            if (checkedBoxes.length === 0) return alert("Pilih minimal satu kolom untuk diekspor!");
 
             const selectedColumns = Array.from(checkedBoxes).map(cb => cb.value);
-
             let query = supabaseClient.from('data_generus').select('*');
 
-            if (scope === 'DESA') {
-                query = query.eq('desa', selectedDesa);
-            } else if (scope === 'KELOMPOK') {
-                query = query.eq('desa', selectedDesa).eq('kelompok', selectedKelompok);
-            }
+            if (scope === 'DESA') query = query.eq('desa', selectedDesa);
+            else if (scope === 'KELOMPOK') query = query.eq('desa', selectedDesa).eq('kelompok', selectedKelompok);
 
-            let data = [];
-            let page = 0;
-            const pageSize = 1000;
-            let hasMore = true;
-
+            let data = [], page = 0; const pageSize = 1000; let hasMore = true;
             while (hasMore) {
-                const { data: pageData, error } = await query
-                    .order('created_at', { ascending: true })
-                    .range(page * pageSize, (page + 1) * pageSize - 1);
-
+                const { data: pageData, error } = await query.order('created_at', { ascending: true }).range(page * pageSize, (page + 1) * pageSize - 1);
                 if (error) throw error;
-
                 data = data.concat(pageData);
-
-                if (pageData.length < pageSize) {
-                    hasMore = false;
-                } else {
-                    page++;
-                }
+                if (pageData.length < pageSize) hasMore = false; else page++;
             }
 
-            if (!data || data.length === 0) {
-                alert("Tidak ada data ditemukan untuk kriteria filter ini!");
-                return null;
-            }
+            if (!data || data.length === 0) return alert("Tidak ada data ditemukan untuk kriteria filter ini!");
 
             let filenameScope = scope === 'ALL' ? 'semua' : (scope === 'DESA' ? selectedDesa : `${selectedDesa}_${selectedKelompok}`);
             let baseFilename = `data_generus_${filenameScope.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${new Date().toISOString().slice(0,10)}`;
@@ -2190,58 +1627,32 @@
 
         async function processCustomCsvDownload() {
             const btnSubmit = document.getElementById('btnDownloadCsvSubmit');
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = "⏳ Mengunduh...";
+            btnSubmit.disabled = true; btnSubmit.innerHTML = "⏳ Mengunduh...";
 
             try {
                 const res = await fetchExportDataFromSupabase();
                 if (!res) return;
-
                 const { data, selectedColumns, baseFilename } = res;
 
-                let csvRows = [];
-                csvRows.push(selectedColumns.join(","));
-
+                let csvRows = [selectedColumns.join(",")];
                 data.forEach(item => {
                     const row = selectedColumns.map(header => {
                         let val = item[header];
-
-                        if (header === 'kelas_formal' && val) {
-                            val = formatKelasFormal(val);
-                        }
-
-                        if (val === null || val === undefined) {
-                            return '""';
-                        }
-
-                        if (Array.isArray(val)) {
-                            val = val.join('; ');
-                        } else if (typeof val === 'object') {
-                            val = JSON.stringify(val);
-                        }
-
-                        val = String(val).replace(/"/g, '""');
-                        return `"${val}"`;
+                        if (header === 'kelas_formal' && val) val = formatKelasFormal(val);
+                        if (val === null || val === undefined) return '""';
+                        if (Array.isArray(val)) val = val.join('; ');
+                        else if (typeof val === 'object') val = JSON.stringify(val);
+                        return `"${String(val).replace(/"/g, '""')}"`;
                     });
-
                     csvRows.push(row.join(","));
                 });
 
-                const csvContent = "\uFEFF" + csvRows.join("\n");
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${baseFilename}.csv`;
-                
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
+                const blob = new Blob(["\uFEFF" + csvRows.join("\n")], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob), a = document.createElement('a');
+                a.href = url; a.download = `${baseFilename}.csv`;
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
                 closeCsvModal();
             } catch (err) {
-                console.error("Gagal ekspor CSV kustom:", err);
                 alert("Gagal melakukan ekspor data: " + err.message);
             } finally {
                 btnSubmit.disabled = false;
@@ -2251,74 +1662,36 @@
 
         async function processCustomExcelDownload() {
             const btnSubmit = document.getElementById('btnDownloadExcelSubmit');
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = "⏳ Mengunduh...";
+            btnSubmit.disabled = true; btnSubmit.innerHTML = "⏳ Mengunduh...";
 
             try {
                 const res = await fetchExportDataFromSupabase();
                 if (!res) return;
-
                 const { data, selectedColumns, baseFilename } = res;
 
-                // Pemetaan Header yang Ramah Dibaca
-                const columnLabels = {
-                    id: "ID",
-                    nama: "Nama Lengkap",
-                    jenis_kelamin: "Jenis Kelamin",
-                    tempat_lahir: "Tempat Lahir",
-                    tanggal_lahir: "Tanggal Lahir",
-                    desa: "Desa",
-                    kelompok: "Kelompok",
-                    kategori_usia: "Kategori Usia",
-                    kelas_formal: "Kelas Formal",
-                    nomor_hp: "Nomor HP",
-                    mengajar_usia: "Mengajar Usia",
-                    created_at: "Waktu Dibuat"
-                };
+                const columnLabels = { id: "ID", nama: "Nama Lengkap", jenis_kelamin: "Jenis Kelamin", tempat_lahir: "Tempat Lahir", tanggal_lahir: "Tanggal Lahir", desa: "Desa", kelompok: "Kelompok", kategori_usia: "Kategori Usia", kelas_formal: "Kelas Formal", nomor_hp: "Nomor HP", mengajar_usia: "Mengajar Usia", created_at: "Waktu Dibuat" };
 
-                // Siapkan data berformat Objek JSON sesuai pilihan kolom
                 const excelData = data.map(item => {
                     let formattedItem = {};
                     selectedColumns.forEach(header => {
-                        let label = columnLabels[header] || header;
-                        let val = item[header];
-
-                        if (header === 'kelas_formal' && val) {
-                            val = formatKelasFormal(val);
-                        }
-
-                        if (val === null || val === undefined) {
-                            val = "";
-                        } else if (Array.isArray(val)) {
-                            val = val.join(', ');
-                        } else if (typeof val === 'object') {
-                            val = JSON.stringify(val);
-                        }
-
+                        let label = columnLabels[header] || header, val = item[header];
+                        if (header === 'kelas_formal' && val) val = formatKelasFormal(val);
+                        if (val === null || val === undefined) val = "";
+                        else if (Array.isArray(val)) val = val.join(', ');
+                        else if (typeof val === 'object') val = JSON.stringify(val);
                         formattedItem[label] = val;
                     });
                     return formattedItem;
                 });
 
-                // Buat Worksheet & Workbook menggunakan SheetJS
                 const worksheet = XLSX.utils.json_to_sheet(excelData);
-                
-                // Set lebar kolom otomatis agar rapi
-                const max_cols = selectedColumns.map(header => {
-                    const label = columnLabels[header] || header;
-                    return { wch: Math.max(label.length + 5, 15) };
-                });
-                worksheet['!cols'] = max_cols;
+                worksheet['!cols'] = selectedColumns.map(header => ({ wch: Math.max((columnLabels[header] || header).length + 5, 15) }));
 
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Data Generus");
-
-                // Unduh Berkas Excel (.xlsx)
                 XLSX.writeFile(workbook, `${baseFilename}.xlsx`);
-
                 closeCsvModal();
             } catch (err) {
-                console.error("Gagal ekspor Excel kustom:", err);
                 alert("Gagal melakukan ekspor data Excel: " + err.message);
             } finally {
                 btnSubmit.disabled = false;
@@ -2326,143 +1699,82 @@
             }
         }
 
-        function closeModalOnly(backHistory = true) {
-            closeModalAnimation('customModal', backHistory);
-        }
+        function closeModalOnly(backHistory = true) { closeModalAnimation('customModal', backHistory); }
 
         function finalResetAndClose() {
             closeModalAnimation('customModal', true, () => {
                 if (currentMode === "UPDATE") {
-                    loadNamaGenerusKelompok();
-                    hideElementSmooth(document.getElementById('formGenerus'));
-                } else {
-                    switchMode("DAFTAR");
-                }
+                    loadNamaGenerusKelompok(); hideElementSmooth(document.getElementById('formGenerus'));
+                } else switchMode("DAFTAR");
             });
         }
 		
 		if ('serviceWorker' in navigator) {
 			window.addEventListener('load', () => {
-				navigator.serviceWorker.register('./service-worker.js')
-					.then((reg) => console.log('Service Worker berhasil didaftarkan:', reg.scope))
-					.catch((err) => console.error('Gagal mendaftarkan Service Worker:', err));
+				navigator.serviceWorker.register('./service-worker.js').catch(err => console.error(err));
 			});
 		}
 
-        /* -------------------------------------------------------------
-		 * INTERCEPTOR POPUP OPTION PICKER DI TENGAH LAYAR
-		 * ------------------------------------------------------------- */
-		let activeSelectTarget = null;
+		/* INTERCEPTOR POPUP PICKER CENTER */
+		let activeSelectTarget = null, touchStartY = 0, touchStartX = 0, isSwiping = false;
 
-		let touchStartY = 0;
-		let touchStartX = 0;
-		let isSwiping = false;
-
-		document.addEventListener('mousedown', interceptSelectMouseDown, { capture: true });
-
-		document.addEventListener('touchstart', interceptSelectTouchStart, { capture: true, passive: true });
-		document.addEventListener('touchmove', interceptSelectTouchMove, { capture: true, passive: true });
-		document.addEventListener('touchend', interceptSelectTouchEnd, { capture: true });
-
-		function interceptSelectMouseDown(e) {
+		document.addEventListener('mousedown', interceptSelect, { capture: true });
+		document.addEventListener('touchstart', e => {
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
+			isSwiping = false; touchStartY = e.touches[0].clientY; touchStartX = e.touches[0].clientX;
+		}, { capture: true, passive: true });
 
-			e.preventDefault();
-			e.stopPropagation();
-
-			activeSelectTarget = select;
-			openCenterPicker(select);
-		}
-
-		function interceptSelectTouchStart(e) {
-			const select = e.target.closest('select');
-			if (!select || select.disabled) return;
-
-			isSwiping = false;
-			touchStartY = e.touches[0].clientY;
-			touchStartX = e.touches[0].clientX;
-		}
-
-		function interceptSelectTouchMove(e) {
+		document.addEventListener('touchmove', e => {
 			if (!touchStartY) return;
+			if (Math.abs(e.touches[0].clientY - touchStartY) > 6 || Math.abs(e.touches[0].clientX - touchStartX) > 6) isSwiping = true;
+		}, { capture: true, passive: true });
 
-			const diffY = Math.abs(e.touches[0].clientY - touchStartY);
-			const diffX = Math.abs(e.touches[0].clientX - touchStartX);
+		document.addEventListener('touchend', e => {
+			if (!isSwiping) interceptSelect(e);
+			isSwiping = false; touchStartY = 0; touchStartX = 0;
+		}, { capture: true });
 
-			if (diffY > 6 || diffX > 6) {
-				isSwiping = true;
-			}
-		}
-
-		function interceptSelectTouchEnd(e) {
+		function interceptSelect(e) {
 			const select = e.target.closest('select');
 			if (!select || select.disabled) return;
-
-			if (!isSwiping) {
-				e.preventDefault();
-				e.stopPropagation();
-				
-				activeSelectTarget = select;
-				openCenterPicker(select);
-			}
-
-			isSwiping = false;
-			touchStartY = 0;
-			touchStartX = 0;
+			e.preventDefault(); e.stopPropagation();
+			activeSelectTarget = select; openCenterPicker(select);
 		}
 
         function openCenterPicker(select, pushHistory = true) {
-            const modal = document.getElementById('centerPickerModal');
-            const modalContent = modal.querySelector('div');
-            const titleEl = document.getElementById('centerPickerTitle');
-            const optionsContainer = document.getElementById('centerPickerOptions');
+            const modal = document.getElementById('centerPickerModal'), modalContent = modal.querySelector('div');
+            const titleEl = document.getElementById('centerPickerTitle'), optionsContainer = document.getElementById('centerPickerOptions');
 
-            if (pushHistory) {
-                history.pushState({ modal: 'centerPickerModal', menu: activeMenuState }, '', '#centerPickerModal');
-            }
+            if (pushHistory) history.pushState({ modal: 'centerPickerModal', menu: activeMenuState }, '', '#centerPickerModal');
 
             let labelText = "Pilih Opsi";
             const parent = select.closest('div');
-            if (parent) {
-                const label = parent.querySelector('label');
-                if (label) labelText = label.textContent;
-            }
+            if (parent && parent.querySelector('label')) labelText = parent.querySelector('label').textContent;
             titleEl.textContent = labelText;
 
             optionsContainer.innerHTML = '';
-
             const hasOptGroup = select.querySelectorAll('optgroup').length > 0;
 
             if (hasOptGroup) {
-                Array.from(select.children).forEach((child) => {
-                    if (child.tagName.toLowerCase() === 'option') {
-                        if (child.disabled) return;
-                        appendPickerOptionItem(optionsContainer, child, select);
-                    } else if (child.tagName.toLowerCase() === 'optgroup') {
+                Array.from(select.children).forEach(child => {
+                    if (child.tagName.toLowerCase() === 'option' && !child.disabled) appendPickerOptionItem(optionsContainer, child, select);
+                    else if (child.tagName.toLowerCase() === 'optgroup') {
                         const groupDivider = document.createElement('div');
                         groupDivider.className = "pt-3 pb-1 px-1 border-t border-slate-200/80 mt-2 first:mt-0 first:border-0";
                         groupDivider.innerHTML = `<span class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-md inline-block border border-indigo-100/80 shadow-2xs">${child.label}</span>`;
                         optionsContainer.appendChild(groupDivider);
-
-                        Array.from(child.children).forEach((opt) => {
-                            if (opt.disabled) return;
-                            appendPickerOptionItem(optionsContainer, opt, select);
-                        });
+                        Array.from(child.children).forEach(opt => { if (!opt.disabled) appendPickerOptionItem(optionsContainer, opt, select); });
                     }
                 });
             } else {
-                Array.from(select.options).forEach((opt) => {
-                    if (opt.disabled || opt.classList.contains('hidden')) return;
-                    appendPickerOptionItem(optionsContainer, opt, select);
+                Array.from(select.options).forEach(opt => {
+                    if (!opt.disabled && !opt.classList.contains('hidden')) appendPickerOptionItem(optionsContainer, opt, select);
                 });
             }
 
-            modal.classList.remove('hidden');
-            void modal.offsetWidth;
-            modal.classList.remove('opacity-0');
-            modalContent.classList.remove('scale-90', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
+            modal.classList.remove('hidden'); void modal.offsetWidth; modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-90', 'opacity-0'); modalContent.classList.add('scale-100', 'opacity-100');
         }
 
         function appendPickerOptionItem(container, opt, select) {
@@ -2470,11 +1782,7 @@
             item.type = "button";
             const isSelected = (opt.value === select.value);
             item.className = `w-full text-left p-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between cursor-pointer picker-option-item ${isSelected ? 'active-selected' : 'text-slate-700 bg-white/40 border border-white/60'}`;
-            
-            item.innerHTML = `
-                <span>${opt.text}</span>
-                ${isSelected ? `<svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>` : ''}
-            `;
+            item.innerHTML = `<span>${opt.text}</span>${isSelected ? `<svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>` : ''}`;
 
             item.addEventListener('click', (ev) => {
                 ev.stopPropagation();
@@ -2492,13 +1800,9 @@
 
             const modalContent = modal.querySelector('div');
             modal.classList.add('opacity-0');
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-90', 'opacity-0');
+            modalContent.classList.remove('scale-100', 'opacity-100'); modalContent.classList.add('scale-90', 'opacity-0');
 
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                activeSelectTarget = null;
-            }, 250);
+            setTimeout(() => { modal.classList.add('hidden'); activeSelectTarget = null; }, 250);
 
             if (backHistory && window.history.state && window.history.state.modal === 'centerPickerModal') {
                 window.history.back();
