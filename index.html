@@ -150,26 +150,22 @@
     <!-- MAIN CONTAINER RESPONSIVE -->
     <div class="glass-container p-5 sm:p-10 rounded-[2rem] w-full max-w-2xl my-4 relative overflow-hidden transition-all duration-300">
         
-        <!-- TOMBOL MONITORING POJOK KANAN ATAS (STATUS COMING SOON) -->
-        <div class="absolute top-4 right-4 z-20">
-            <button type="button" onclick="showMonitoringComingSoon()" class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-slate-800/80 hover:bg-slate-900 text-amber-300 text-[11px] sm:text-xs font-extrabold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border border-amber-400/30 backdrop-blur-md">
-                <span class="relative flex h-2 w-2">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                </span>
-                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+        <!-- TOMBOL COMING SOON POJOK KANAN ATAS (PRESISI, COMPACT, TIDAK MENABRAK LOGO) -->
+        <div class="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-20">
+            <button type="button" onclick="showComingSoonNotice()" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 bg-white/70 hover:bg-white/90 text-slate-700 text-[11px] sm:text-xs font-extrabold rounded-xl shadow-sm hover:shadow transition-all duration-200 cursor-pointer border border-white/80 backdrop-blur-md">
+                <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
                 <span>Monitoring</span>
-                <span class="bg-amber-400/20 text-amber-300 text-[9px] px-1.5 py-0.5 rounded-md uppercase font-black border border-amber-400/30">Soon</span>
+                <span class="ml-0.5 px-1.5 py-0.2 text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white rounded-md shadow-xs">Soon</span>
             </button>
         </div>
 
         <!-- HEADER APPS -->
         <div class="text-center mb-8 sm:mb-10 relative">
             <div class="flex justify-center mb-4 sm:mb-5">
-                <div class="p-4 bg-white/60 rounded-3xl shadow-[0_8px_16px_rgba(0,0,0,0.06)] border border-white/80 backdrop-blur-md inline-block">
-                    <img src="logo ppg.png" alt="Logo" class="h-16 sm:h-20 w-auto object-contain block drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
+                <div class="p-3.5 sm:p-4 bg-white/60 rounded-3xl shadow-[0_8px_16px_rgba(0,0,0,0.06)] border border-white/80 backdrop-blur-md inline-block">
+                    <img src="logo ppg.png" alt="Logo" class="h-14 sm:h-20 w-auto object-contain block drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
                     <div id="fallback-icon" class="hidden items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-50 text-emerald-600 shadow-inner">
                         <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
@@ -225,7 +221,7 @@
             </button>
         </div>
 
-        <!-- AREA JADWAL MONITORING (HIDDEN UNTUK PRESENTASI) -->
+        <!-- AREA JADWAL MONITORING (AKTIF 100% - CONTINUOUS ROLLING) -->
         <div id="monitoringSection" class="fade-transition fade-hidden space-y-4 sm:space-y-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/60 pb-4 gap-3">
                 <div class="flex items-center gap-3">
@@ -236,16 +232,16 @@
                     </div>
                     <div>
                         <h3 class="text-sm sm:text-lg font-extrabold text-slate-800">Jadwal Monitoring Musyawarah 5 Unsur</h3>
-                        <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">38 Pemonitoring | 1-to-1 per Kelompok | Rolling per 3 Bulan</p>
+                        <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">38 Pemonitoring | Continuous Rolling Berkelanjutan</p>
                     </div>
                 </div>
             </div>
 
             <!-- PILIH BULAN JADWAL -->
             <div class="bg-white/40 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-white/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wide">Pilih Bulan:</span>
-                    <select id="monSelectBulan" onchange="renderJadwalMonitoringBulan(parseInt(this.value))" class="glass-input smooth-select rounded-xl p-2.5 text-xs font-bold text-amber-900 border-amber-200 cursor-pointer">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wide">Pilih Periode:</span>
+                    <select id="monSelectBulan" class="glass-input smooth-select rounded-xl p-2.5 text-xs font-bold text-amber-900 border-amber-200 cursor-pointer">
                         <option value="0">Januari (Triwulan 1)</option>
                         <option value="1">Februari (Triwulan 1)</option>
                         <option value="2">Maret (Triwulan 1)</option>
@@ -261,7 +257,7 @@
                     </select>
                 </div>
                 <span id="monLabelTriwulan" class="text-[11px] font-extrabold text-amber-800 bg-amber-100/80 px-3 py-1 rounded-full border border-amber-200 self-start sm:self-auto">
-                    Bulan Ini: Agustus
+                    Periode Terpilih
                 </span>
             </div>
 
@@ -269,7 +265,7 @@
             <div class="overflow-hidden border border-white/60 rounded-2xl shadow-lg bg-white/50 backdrop-blur-md p-4">
                 <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3 flex items-center justify-between">
                     <span>Daftar Pemonitoring & Kelompok Tugas</span>
-                    <span class="text-[10px] text-slate-400 font-normal">Berurutan 1-to-1</span>
+                    <span class="text-[10px] text-slate-400 font-normal">Siklus Berkelanjutan</span>
                 </h4>
                 <div class="max-h-96 overflow-y-auto">
                     <table class="min-w-full divide-y divide-slate-200/50 text-xs">
@@ -277,7 +273,7 @@
                             <tr>
                                 <th class="p-3 text-center w-8">No</th>
                                 <th class="p-3 text-left">Nama Pemonitoring</th>
-                                <th class="p-3 text-left">Kelompok Tugas Bulan Ini</th>
+                                <th class="p-3 text-left">Kelompok Tugas Periode Ini</th>
                                 <th class="p-3 text-left">Rolling Selanjutnya</th>
                             </tr>
                         </thead>
@@ -610,7 +606,7 @@
                 </button>
             </div>
 
-            <!-- MODAL ERROR / COMING SOON -->
+            <!-- MODAL ERROR -->
             <div id="modalError" class="hidden text-center py-2">
                 <div id="errorIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 text-rose-600 mb-4 shadow-inner">
                     <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -869,7 +865,7 @@
             "Blimbing 1", "Blimbing 2", "Blimbing 3"
         ];
 
-        /* DAFTAR PRESISI 38 NAMA PEMONITORING (1-TO-1 SESUAI GAMBAR) */
+        /* DAFTAR PRESISI 38 NAMA PEMONITORING */
         const daftarPemonitoringLengkap = [
             { nama: "Slamet Abdullah", baseKlp: "Gondosuli" },
             { nama: "Paryanto", baseKlp: "Tawang 1" },
@@ -959,6 +955,10 @@
             switchMenuView(menuType);
         }
 
+        function showComingSoonNotice() {
+            triggerPopupModal("Fitur Segera Hadir!", "Jadwal Monitoring Musyawarah 5 Unsur sedang dalam proses dan menunggu hasil musyawarah dulu. Alkhamdulillah Jaza Kumullahu Khoiro", "warning");
+        }
+
         function switchMenuView(menuType) {
             activeMenuState = menuType;
             if (menuType === 'home') {
@@ -983,26 +983,6 @@
             }
         }
 
-        /* FUNGSIONAL POPUP COMING SOON UNTUK MONITORING */
-        function showMonitoringComingSoon() {
-            const errorTitle = document.getElementById('errorTitle'), errorIconContainer = document.getElementById('errorIconContainer');
-            const errorSubHelp = document.getElementById('errorSubHelp');
-            
-            errorTitle.textContent = "🚀 Segera Hadir";
-            errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 text-amber-600 mb-4 shadow-inner";
-            errorIconContainer.innerHTML = `<svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-
-            errorSubHelp.className = "text-[11px] sm:text-xs text-amber-800 font-bold mb-3 bg-amber-50 p-3 rounded-xl border border-amber-200/80 text-center";
-            errorSubHelp.textContent = "⏳ Fitur Jadwal Monitoring Musyawarah 5 Unsur sedang disiapkan";
-
-            errorMessage.className = "text-xs text-slate-600 mt-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200/70 text-center font-medium leading-relaxed";
-            errorMessage.textContent = "Fitur ini akan segera diaktifkan secara penuh setelah proses koordinasi dan persetujuan selesai. Alkhamdulillah Jaza Kummullahu Khoiro";
-
-            modalReview.classList.add('hidden'); modalSuccess.classList.add('hidden'); modalContact.classList.add('hidden'); modalPjPengajarList.classList.add('hidden');
-            modalError.classList.remove('hidden');
-            openModalAnimation('customModal');
-        }
-
         document.addEventListener('input', function(e) {
             if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'text') {
                 let cursorPosition = e.target.selectionStart, originalValue = e.target.value;
@@ -1015,19 +995,19 @@
         });
 
         function formatKelasFormal(val) {
-			if (!val) return "";
-			let formatted = toTitleCase(val.trim());
+            if (!val) return "";
+            let formatted = toTitleCase(val.trim());
             if (formatted.toUpperCase() === "PENGANGGURAN") return "BELUM KERJA";
 
-			return formatted.replace(/\bPaud\b/gi, 'PAUD')
-							.replace(/\bTk\b/gi, 'TK')
-							.replace(/\bSd\b/gi, 'SD')
-							.replace(/\bSmp\b/gi, 'SMP')
-							.replace(/\bSma\b/gi, 'SMA')
-							.replace(/\bSmk\b/gi, 'SMK')
-							.replace(/SMA\/SMK\/Smk/gi, 'SMA/SMK')
-							.replace(/SMA\/SMK\/SMK/gi, 'SMA/SMK');
-		}
+            return formatted.replace(/\bPaud\b/gi, 'PAUD')
+                            .replace(/\bTk\b/gi, 'TK')
+                            .replace(/\bSd\b/gi, 'SD')
+                            .replace(/\bSmp\b/gi, 'SMP')
+                            .replace(/\bSma\b/gi, 'SMA')
+                            .replace(/\bSmk\b/gi, 'SMK')
+                            .replace(/SMA\/SMK\/Smk/gi, 'SMA/SMK')
+                            .replace(/SMA\/SMK\/SMK/gi, 'SMA/SMK');
+        }
 
         function toTitleCase(str) { return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase()); }
 
@@ -1087,14 +1067,15 @@
             const errorSubHelp = document.getElementById('errorSubHelp');
             
             errorTitle.textContent = title; errorMessage.textContent = msg;
-            errorSubHelp.className = "text-[11px] sm:text-xs text-rose-700 font-bold mb-3 bg-rose-50 p-3 rounded-xl border border-rose-100";
-            errorSubHelp.textContent = "💡 Pengertian: Nama generus ini terdeteksi sudah terdaftar sebelumnya atau terjadi duplikasi data di database kelompok Anda.";
-            errorMessage.className = "text-xs text-slate-600 mt-2 bg-slate-100/50 p-3 rounded-xl border border-slate-200 break-words text-left font-mono";
-
+            
             if(type === 'warning') {
+                errorSubHelp.className = "text-[11px] sm:text-xs text-amber-800 font-bold mb-3 bg-amber-50 p-3 rounded-xl border border-amber-100";
+                errorSubHelp.textContent = "💡 Fitur Ini Dalam Pengembangan";
                 errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 text-amber-600 mb-4 shadow-inner";
                 errorIconContainer.innerHTML = `<svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>`;
             } else {
+                errorSubHelp.className = "text-[11px] sm:text-xs text-rose-700 font-bold mb-3 bg-rose-50 p-3 rounded-xl border border-rose-100";
+                errorSubHelp.textContent = "💡 Pengertian: Nama generus ini terdeteksi sudah terdaftar sebelumnya atau terjadi duplikasi data di database kelompok Anda.";
                 errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 text-rose-600 mb-4 shadow-inner";
                 errorIconContainer.innerHTML = `<svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
             }
@@ -1276,7 +1257,7 @@
                 mainTitle.textContent = "REKAP DATA GENERUS"; mainSubtitle.textContent = "Statistik serta ringkasan akumulasi seluruh data";
                 hideElementSmooth(searchSection); hideElementSmooth(formGenerus); showElementSmooth(rekapSection); hideElementSmooth(monitoringSection);
             } else if (currentMode === "MONITORING") {
-                mainTitle.textContent = "JADWAL MONITORING"; mainSubtitle.textContent = "Jadwal pemonitoring per kelompok dengan rolling per 3 bulan";
+                mainTitle.textContent = "JADWAL MONITORING"; mainSubtitle.textContent = "Jadwal pemonitoring per kelompok dengan continuous rolling";
                 hideElementSmooth(searchSection); hideElementSmooth(formGenerus); hideElementSmooth(rekapSection); showElementSmooth(monitoringSection);
             } else {
                 mainTitle.textContent = "PENDATAAN GENERUS"; mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
@@ -1285,12 +1266,22 @@
             }
         }
 
-        /* LOGIKA MONITORING */
+        /* LOGIKA MONITORING CONTINUOUS ROLLING (OTOMATIS BERDASARKAN TAHUN BERJALAN) */
+        const TAHUN_PATOKAN = 2026;
+
         function initMonitoringSection() {
-            const bulanSekarang = new Date().getMonth();
+            const today = new Date();
+            const currentMonth = today.getMonth();
+
             const selBulan = document.getElementById('monSelectBulan');
-            if (selBulan) selBulan.value = bulanSekarang;
-            renderJadwalMonitoringBulan(bulanSekarang);
+            if (selBulan) {
+                selBulan.value = currentMonth;
+                selBulan.onchange = function() {
+                    renderJadwalMonitoringBulan(parseInt(this.value));
+                };
+            }
+
+            renderJadwalMonitoringBulan(currentMonth);
         }
 
         function renderJadwalMonitoringBulan(bulanIdx) {
@@ -1298,11 +1289,17 @@
             const labelTriwulan = document.getElementById('monLabelTriwulan');
             if (!tbody) return;
 
-            const triwulanIndex = Math.floor(bulanIdx / 3);
-            const nextTriwulanIndex = (triwulanIndex + 1) % 4;
+            const tahunSelected = new Date().getFullYear();
+            const triwulanTahunIni = Math.floor(bulanIdx / 3);
+            const selisihTahun = tahunSelected - TAHUN_PATOKAN;
+            
+            const totalTriwulanBerlalu = (selisihTahun * 4) + triwulanTahunIni;
+            const totalTriwulanSelanjutnya = totalTriwulanBerlalu + 1;
 
-            labelTriwulan.textContent = `Bulan: ${namaBulan[bulanIdx]} (Triwulan ${triwulanIndex + 1})`;
+            labelTriwulan.textContent = `${namaBulan[bulanIdx]} ${tahunSelected} (Triwulan ${(triwulanTahunIni + 1)})`;
             tbody.innerHTML = "";
+
+            const totalKelompok = urutanKelompokPeta.length;
 
             daftarPemonitoringLengkap.forEach((pem, idx) => {
                 const baseKlpIdx = urutanKelompokPeta.indexOf(pem.baseKlp);
@@ -1310,8 +1307,11 @@
                 let nextKlpNama = "-";
 
                 if (baseKlpIdx !== -1) {
-                    const currentKlpIdx = (baseKlpIdx + triwulanIndex) % urutanKelompokPeta.length;
-                    const nextKlpIdx = (baseKlpIdx + nextTriwulanIndex) % urutanKelompokPeta.length;
+                    let currentKlpIdx = (baseKlpIdx + totalTriwulanBerlalu) % totalKelompok;
+                    let nextKlpIdx = (baseKlpIdx + totalTriwulanSelanjutnya) % totalKelompok;
+
+                    if (currentKlpIdx < 0) currentKlpIdx = (currentKlpIdx % totalKelompok + totalKelompok) % totalKelompok;
+                    if (nextKlpIdx < 0) nextKlpIdx = (nextKlpIdx % totalKelompok + totalKelompok) % totalKelompok;
 
                     targetKlpNama = urutanKelompokPeta[currentKlpIdx];
                     nextKlpNama = urutanKelompokPeta[nextKlpIdx];
@@ -1711,21 +1711,21 @@
                 window.globalRekapKlp = rekapKlp;
 
                 const filterSelect = document.getElementById('filterDesaKelompok');
-				if (filterSelect) {
-					filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
-					const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
-					const optgroupDesa = document.createElement('optgroup');
-					optgroupDesa.label = "PER DESA";
-					uniqueDesa.forEach(desa => optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`);
-					filterSelect.appendChild(optgroupDesa);
+                if (filterSelect) {
+                    filterSelect.innerHTML = '<option value="ALL">Filter Semua</option>';
+                    const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
+                    const optgroupDesa = document.createElement('optgroup');
+                    optgroupDesa.label = "PER DESA";
+                    uniqueDesa.forEach(desa => optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`);
+                    filterSelect.appendChild(optgroupDesa);
 
-					const optgroupKlp = document.createElement('optgroup');
-					optgroupKlp.label = "PER KELOMPOK";
-					Object.keys(rekapKlp).sort().forEach(key => {
-						optgroupKlp.innerHTML += `<option value="KLP:${key}">${key.includes(" - ") ? key.split(" - ")[1] : key}</option>`;
-					});
-					filterSelect.appendChild(optgroupKlp);
-				}
+                    const optgroupKlp = document.createElement('optgroup');
+                    optgroupKlp.label = "PER KELOMPOK";
+                    Object.keys(rekapKlp).sort().forEach(key => {
+                        optgroupKlp.innerHTML += `<option value="KLP:${key}">${key.includes(" - ") ? key.split(" - ")[1] : key}</option>`;
+                    });
+                    filterSelect.appendChild(optgroupKlp);
+                }
 
                 if (window.applyFilterKelompok) window.applyFilterKelompok("ALL");
 
@@ -1913,39 +1913,39 @@
                 } else switchMode("DAFTAR");
             });
         }
-		
-		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', () => {
-				navigator.serviceWorker.register('./service-worker.js').catch(err => console.error(err));
-			});
-		}
+        
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js').catch(err => console.error(err));
+            });
+        }
 
-		/* INTERCEPTOR POPUP PICKER CENTER */
-		let activeSelectTarget = null, touchStartY = 0, touchStartX = 0, isSwiping = false;
+        /* INTERCEPTOR POPUP PICKER CENTER */
+        let activeSelectTarget = null, touchStartY = 0, touchStartX = 0, isSwiping = false;
 
-		document.addEventListener('mousedown', interceptSelect, { capture: true });
-		document.addEventListener('touchstart', e => {
-			const select = e.target.closest('select');
-			if (!select || select.disabled) return;
-			isSwiping = false; touchStartY = e.touches[0].clientY; touchStartX = e.touches[0].clientX;
-		}, { capture: true, passive: true });
+        document.addEventListener('mousedown', interceptSelect, { capture: true });
+        document.addEventListener('touchstart', e => {
+            const select = e.target.closest('select');
+            if (!select || select.disabled) return;
+            isSwiping = false; touchStartY = e.touches[0].clientY; touchStartX = e.touches[0].clientX;
+        }, { capture: true, passive: true });
 
-		document.addEventListener('touchmove', e => {
-			if (!touchStartY) return;
-			if (Math.abs(e.touches[0].clientY - touchStartY) > 6 || Math.abs(e.touches[0].clientX - touchStartX) > 6) isSwiping = true;
-		}, { capture: true, passive: true });
+        document.addEventListener('touchmove', e => {
+            if (!touchStartY) return;
+            if (Math.abs(e.touches[0].clientY - touchStartY) > 6 || Math.abs(e.touches[0].clientX - touchStartX) > 6) isSwiping = true;
+        }, { capture: true, passive: true });
 
-		document.addEventListener('touchend', e => {
-			if (!isSwiping) interceptSelect(e);
-			isSwiping = false; touchStartY = 0; touchStartX = 0;
-		}, { capture: true });
+        document.addEventListener('touchend', e => {
+            if (!isSwiping) interceptSelect(e);
+            isSwiping = false; touchStartY = 0; touchStartX = 0;
+        }, { capture: true });
 
-		function interceptSelect(e) {
-			const select = e.target.closest('select');
-			if (!select || select.disabled) return;
-			e.preventDefault(); e.stopPropagation();
-			activeSelectTarget = select; openCenterPicker(select);
-		}
+        function interceptSelect(e) {
+            const select = e.target.closest('select');
+            if (!select || select.disabled) return;
+            e.preventDefault(); e.stopPropagation();
+            activeSelectTarget = select; openCenterPicker(select);
+        }
 
         function openCenterPicker(select, pushHistory = true) {
             const modal = document.getElementById('centerPickerModal'), modalContent = modal.querySelector('div');
@@ -2013,6 +2013,6 @@
                 window.history.back();
             }
         }
-	</script>
+    </script>
 </body>
 </html>
