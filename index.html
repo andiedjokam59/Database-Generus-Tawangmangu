@@ -150,32 +150,36 @@
     <!-- MAIN CONTAINER RESPONSIVE -->
     <div class="glass-container p-5 sm:p-10 rounded-[2rem] w-full max-w-2xl my-4 relative overflow-hidden transition-all duration-300">
         
-        <!-- TOMBOL COMING SOON POJOK KANAN ATAS (PRESISI, COMPACT, TIDAK MENABRAK LOGO) -->
-        <div class="absolute top-3.5 right-3.5 sm:top-5 sm:right-5 z-20">
-            <button type="button" onclick="showComingSoonNotice()" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-2 bg-white/70 hover:bg-white/90 text-slate-700 text-[11px] sm:text-xs font-extrabold rounded-xl shadow-sm hover:shadow transition-all duration-200 cursor-pointer border border-white/80 backdrop-blur-md">
-                <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                </svg>
-                <span>Monitoring</span>
-                <span class="ml-0.5 px-1.5 py-0.2 text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white rounded-md shadow-xs">Soon</span>
-            </button>
-        </div>
+        <!-- HEADER LOGO DAN TOP ACTION BAR (TIDAK TABRAKAN DI HP) -->
+        <div class="relative pt-1 mb-6 sm:mb-8">
+            
+            <!-- TOMBOL MONITORING POJOK KANAN (POSISI AMAN DALAM DOKUMEN) -->
+            <div class="flex justify-end mb-2 sm:mb-4">
+                <button type="button" onclick="showComingSoonNotice()" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white/80 hover:bg-white text-slate-700 text-[11px] sm:text-xs font-extrabold rounded-xl shadow-xs hover:shadow transition-all duration-200 cursor-pointer border border-white backdrop-blur-md">
+                    <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                    </svg>
+                    <span>Monitoring</span>
+                    <span class="px-1.5 py-0.2 text-[9px] font-black uppercase tracking-wider bg-amber-500 text-white rounded-md shadow-xs">Soon</span>
+                </button>
+            </div>
 
-        <!-- HEADER APPS -->
-        <div class="text-center mb-8 sm:mb-10 relative">
-            <div class="flex justify-center mb-4 sm:mb-5">
-                <div class="p-3.5 sm:p-4 bg-white/60 rounded-3xl shadow-[0_8px_16px_rgba(0,0,0,0.06)] border border-white/80 backdrop-blur-md inline-block">
-                    <img src="logo ppg.png" alt="Logo" class="h-14 sm:h-20 w-auto object-contain block drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
-                    <div id="fallback-icon" class="hidden items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-50 text-emerald-600 shadow-inner">
-                        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                        </svg>
+            <!-- LOGO DAN JUDUL UTAMA -->
+            <div class="text-center">
+                <div class="flex justify-center mb-4 sm:mb-5">
+                    <div class="p-3.5 sm:p-4 bg-white/60 rounded-3xl shadow-[0_8px_16px_rgba(0,0,0,0.06)] border border-white/80 backdrop-blur-md inline-block">
+                        <img src="logo ppg.png" alt="Logo" class="h-14 sm:h-20 w-auto object-contain block drop-shadow-sm" onerror="this.style.display='none'; document.getElementById('fallback-icon').style.display='inline-flex';">
+                        <div id="fallback-icon" class="hidden items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-50 text-emerald-600 shadow-inner">
+                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
+                <h2 id="mainTitle" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-800 transition-all duration-300 drop-shadow-sm">PENDATAAN GENERUS</h2>
+                <p id="mainSubtitle" class="text-xs sm:text-sm text-slate-600 mt-2 font-medium transition-all duration-300">Pilih menu di bawah untuk melanjutkan</p>
+                <div class="w-16 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 mx-auto mt-4 rounded-full shadow-sm"></div>
             </div>
-            <h2 id="mainTitle" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-800 transition-all duration-300 drop-shadow-sm">PENDATAAN GENERUS</h2>
-            <p id="mainSubtitle" class="text-xs sm:text-sm text-slate-600 mt-2 font-medium transition-all duration-300">Pilih menu di bawah untuk melanjutkan</p>
-            <div class="w-16 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 mx-auto mt-4 rounded-full shadow-sm"></div>
         </div>
 
         <!-- MENU UTAMA -->
@@ -221,7 +225,7 @@
             </button>
         </div>
 
-        <!-- AREA JADWAL MONITORING (AKTIF 100% - CONTINUOUS ROLLING) -->
+        <!-- AREA JADWAL MONITORING (CONTINUOUS ROLLING) -->
         <div id="monitoringSection" class="fade-transition fade-hidden space-y-4 sm:space-y-6">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/60 pb-4 gap-3">
                 <div class="flex items-center gap-3">
@@ -698,7 +702,7 @@
     <div id="centerPickerModal" class="fixed inset-0 z-[150] flex items-center justify-center p-4 hidden opacity-0" onclick="closeCenterPicker()">
         <div class="rounded-[2rem] p-5 sm:p-6 max-w-sm w-full transform scale-90 opacity-0 max-h-[75vh] flex flex-col" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200/60 pb-3 mb-3 shrink-0">
-                <span id="centerPickerTitle" class="text-xs font-extrabold uppercase tracking-widest text-emerald-800">Pilih Opsi</span>
+                <span id="centerPickerTitle" class="text-xs font-extrabold uppercase tracking-widest text-emerald-800">Pilih Ospi</span>
                 <button type="button" onclick="closeCenterPicker()" class="p-1.5 text-slate-400 hover:text-slate-800 bg-slate-100/80 rounded-full transition-colors">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
@@ -956,7 +960,7 @@
         }
 
         function showComingSoonNotice() {
-            triggerPopupModal("Fitur Segera Hadir!", "Jadwal Monitoring Musyawarah 5 Unsur sedang dalam proses dan menunggu hasil musyawarah dulu. Alkhamdulillah Jaza Kumullahu Khoiro", "warning");
+            triggerPopupModal("Fitur Segera Hadir!", "Jadwal Monitoring Musyawarah 5 Unsur menunggu hasil musyawarah dulu. Alkahmdulillah Jaza Kumullahu Khoiro", "warning");
         }
 
         function switchMenuView(menuType) {
