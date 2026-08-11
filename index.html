@@ -150,6 +150,21 @@
     <!-- MAIN CONTAINER RESPONSIVE -->
     <div class="glass-container p-5 sm:p-10 rounded-[2rem] w-full max-w-2xl my-4 relative overflow-hidden transition-all duration-300">
         
+        <!-- TOMBOL MONITORING POJOK KANAN ATAS (STATUS COMING SOON) -->
+        <div class="absolute top-4 right-4 z-20">
+            <button type="button" onclick="showMonitoringComingSoon()" class="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-slate-800/80 hover:bg-slate-900 text-amber-300 text-[11px] sm:text-xs font-extrabold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border border-amber-400/30 backdrop-blur-md">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                </span>
+                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                </svg>
+                <span>Monitoring</span>
+                <span class="bg-amber-400/20 text-amber-300 text-[9px] px-1.5 py-0.5 rounded-md uppercase font-black border border-amber-400/30">Soon</span>
+            </button>
+        </div>
+
         <!-- HEADER APPS -->
         <div class="text-center mb-8 sm:mb-10 relative">
             <div class="flex justify-center mb-4 sm:mb-5">
@@ -208,6 +223,69 @@
                 </svg>
                 Kembali ke Menu Utama
             </button>
+        </div>
+
+        <!-- AREA JADWAL MONITORING (HIDDEN UNTUK PRESENTASI) -->
+        <div id="monitoringSection" class="fade-transition fade-hidden space-y-4 sm:space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/60 pb-4 gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-xl shadow-md shrink-0">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-lg font-extrabold text-slate-800">Jadwal Monitoring Musyawarah 5 Unsur</h3>
+                        <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">38 Pemonitoring | 1-to-1 per Kelompok | Rolling per 3 Bulan</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PILIH BULAN JADWAL -->
+            <div class="bg-white/40 backdrop-blur-md p-3 sm:p-4 rounded-2xl border border-white/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wide">Pilih Bulan:</span>
+                    <select id="monSelectBulan" onchange="renderJadwalMonitoringBulan(parseInt(this.value))" class="glass-input smooth-select rounded-xl p-2.5 text-xs font-bold text-amber-900 border-amber-200 cursor-pointer">
+                        <option value="0">Januari (Triwulan 1)</option>
+                        <option value="1">Februari (Triwulan 1)</option>
+                        <option value="2">Maret (Triwulan 1)</option>
+                        <option value="3">April (Triwulan 2)</option>
+                        <option value="4">Mei (Triwulan 2)</option>
+                        <option value="5">Juni (Triwulan 2)</option>
+                        <option value="6">Juli (Triwulan 3)</option>
+                        <option value="7">Agustus (Triwulan 3)</option>
+                        <option value="8">September (Triwulan 3)</option>
+                        <option value="9">Oktober (Triwulan 4)</option>
+                        <option value="10">November (Triwulan 4)</option>
+                        <option value="11">Desember (Triwulan 4)</option>
+                    </select>
+                </div>
+                <span id="monLabelTriwulan" class="text-[11px] font-extrabold text-amber-800 bg-amber-100/80 px-3 py-1 rounded-full border border-amber-200 self-start sm:self-auto">
+                    Bulan Ini: Agustus
+                </span>
+            </div>
+
+            <!-- TABEL JADWAL -->
+            <div class="overflow-hidden border border-white/60 rounded-2xl shadow-lg bg-white/50 backdrop-blur-md p-4">
+                <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest mb-3 flex items-center justify-between">
+                    <span>Daftar Pemonitoring & Kelompok Tugas</span>
+                    <span class="text-[10px] text-slate-400 font-normal">Berurutan 1-to-1</span>
+                </h4>
+                <div class="max-h-96 overflow-y-auto">
+                    <table class="min-w-full divide-y divide-slate-200/50 text-xs">
+                        <thead class="bg-slate-100/70 font-extrabold text-slate-600 sticky top-0 z-10">
+                            <tr>
+                                <th class="p-3 text-center w-8">No</th>
+                                <th class="p-3 text-left">Nama Pemonitoring</th>
+                                <th class="p-3 text-left">Kelompok Tugas Bulan Ini</th>
+                                <th class="p-3 text-left">Rolling Selanjutnya</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monJadwalBody" class="divide-y divide-slate-100/50 text-slate-700 bg-white/30">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- AREA REKAP DATA -->
@@ -532,7 +610,7 @@
                 </button>
             </div>
 
-            <!-- MODAL ERROR -->
+            <!-- MODAL ERROR / COMING SOON -->
             <div id="modalError" class="hidden text-center py-2">
                 <div id="errorIconContainer" class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-rose-100 text-rose-600 mb-4 shadow-inner">
                     <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
@@ -540,12 +618,12 @@
                     </svg>
                 </div>
                 <h3 id="errorTitle" class="text-xl font-extrabold text-slate-800 mb-2">Gagal Terkirim</h3>
-                <p class="text-[11px] sm:text-xs text-rose-700 font-bold mb-3 bg-rose-50 p-3 rounded-xl border border-rose-100">
+                <p id="errorSubHelp" class="text-[11px] sm:text-xs text-rose-700 font-bold mb-3 bg-rose-50 p-3 rounded-xl border border-rose-100">
                     💡 Pengertian: Nama generus ini terdeteksi sudah terdaftar sebelumnya atau terjadi duplikasi data di database kelompok Anda.
                 </p>
                 <p id="errorMessage" class="text-xs text-slate-600 mt-2 bg-slate-100/50 p-3 rounded-xl border border-slate-200 break-words text-left font-mono"></p>
                 <button type="button" onclick="closeModalOnly()" class="mt-6 w-full py-3 px-4 bg-slate-800 text-white text-sm font-extrabold rounded-xl hover:bg-slate-900 transition-colors duration-200 cursor-pointer shadow-md">
-                    Kembali
+                    Tutup
                 </button>
             </div>
 
@@ -592,7 +670,7 @@
                         </div>
                     </div>
                     <button type="button" onclick="closeModalOnly()" class="text-slate-400 hover:text-slate-800 p-2 bg-slate-50 rounded-full transition-colors border border-slate-100">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
@@ -626,7 +704,7 @@
             <div class="flex items-center justify-between border-b border-slate-200/60 pb-3 mb-3 shrink-0">
                 <span id="centerPickerTitle" class="text-xs font-extrabold uppercase tracking-widest text-emerald-800">Pilih Opsi</span>
                 <button type="button" onclick="closeCenterPicker()" class="p-1.5 text-slate-400 hover:text-slate-800 bg-slate-100/80 rounded-full transition-colors">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             <div id="centerPickerOptions" class="overflow-y-auto space-y-1.5 pr-1 scrollbar-hide flex-1"></div>
@@ -646,7 +724,7 @@
                     <h3 class="text-base sm:text-lg font-extrabold text-slate-800">Opsi Ekspor Data</h3>
                 </div>
                 <button type="button" onclick="closeCsvModal()" class="text-slate-400 hover:text-slate-800 p-1 bg-slate-100 rounded-full transition-colors">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
 
@@ -780,6 +858,59 @@
             "Krangean": ["Gondosuli", "Tawang 1", "Tawang 2", "Watusambang", "Somokado", "Gondang Boma", "Krangean Selatan", "Krangean Utara", "Nglegok Atas", "Nglegok Bawah", "Ngreso"]
         };
 
+        /* URUTAN 38 KELOMPOK PETA */
+        const urutanKelompokPeta = [
+            "Gondosuli", "Tawang 1", "Tawang 2", "Gondang Boma", "Nglegok Atas", "Nglegok Bawah", 
+            "Krangean Selatan", "Krangean Utara", "Ngreso", "Somokado", "Watusambang", "Pelas Timur", 
+            "Pelas Barat", "Gamping", "Ngasem", "BD Timur", "BD Barat", "Gondang Timur", 
+            "Gondang Tengah", "Gondang Barat", "Dawung Atas", "Dawung Tengah", "Dawung Bawah", 
+            "Plombokan", "Cepogo", "Sekuwung", "Sadakan Kidul 1", "Sadakan Kidul 2", "Sadakan Lor", 
+            "Pandeyan", "Dukuh", "Pedan Utara", "Pedan Selatan", "Karanglo", "Jabalkanil",
+            "Blimbing 1", "Blimbing 2", "Blimbing 3"
+        ];
+
+        /* DAFTAR PRESISI 38 NAMA PEMONITORING (1-TO-1 SESUAI GAMBAR) */
+        const daftarPemonitoringLengkap = [
+            { nama: "Slamet Abdullah", baseKlp: "Gondosuli" },
+            { nama: "Paryanto", baseKlp: "Tawang 1" },
+            { nama: "Fakhrudin, S.Pd. I.", baseKlp: "Tawang 2" },
+            { nama: "H. Sukimin, S.Pd.", baseKlp: "Gondang Boma" },
+            { nama: "Khoirul Agung", baseKlp: "Nglegok Atas" },
+            { nama: "H Pandoyo, A.Md.", baseKlp: "Nglegok Bawah" },
+            { nama: "Andi Rosady", baseKlp: "Krangean Selatan" },
+            { nama: "Sri Samiyati, S.Pd.", baseKlp: "Krangean Utara" },
+            { nama: "Wainem, S.Pd.", baseKlp: "Ngreso" },
+            { nama: "Salamun", baseKlp: "Somokado" },
+            { nama: "Warsono", baseKlp: "Watusambang" },
+            { nama: "Eko Prasetyo", baseKlp: "Pelas Timur" },
+            { nama: "Triyono", baseKlp: "Pelas Barat" },
+            { nama: "Aditya Darma, S.Pd", baseKlp: "Gamping" },
+            { nama: "Bekti Sunyoto, S.Pd", baseKlp: "Ngasem" },
+            { nama: "H.Riyanto", baseKlp: "BD Timur" },
+            { nama: "Budi priyanto, S.Pd.I", baseKlp: "BD Barat" },
+            { nama: "Candra Kurniawan", baseKlp: "Gondang Timur" },
+            { nama: "Anwar", baseKlp: "Gondang Tengah" },
+            { nama: "Priyanto", baseKlp: "Gondang Barat" },
+            { nama: "Muh. Ichsan", baseKlp: "Dawung Atas" },
+            { nama: "Anas Mustakim", baseKlp: "Dawung Tengah" },
+            { nama: "H Tommy Arjanto, A.Md.", baseKlp: "Dawung Bawah" },
+            { nama: "Wagiyanto", baseKlp: "Plombokan" },
+            { nama: "Anik Supriyanti, S.Pd.", baseKlp: "Cepogo" },
+            { nama: "Ivone Riska Budiyanti", baseKlp: "Sekuwung" },
+            { nama: "H. Abdul Latief Sutarno", baseKlp: "Sadakan Kidul 1" },
+            { nama: "Wahyu Hidayati Prasetyaningsih AMK", baseKlp: "Sadakan Kidul 2" },
+            { nama: "Aditya Hamida, S.Kom", baseKlp: "Sadakan Lor" },
+            { nama: "Made Hanif Sasongko, S. E.", baseKlp: "Pandeyan" },
+            { nama: "Sufyan", baseKlp: "Dukuh" },
+            { nama: "Hendri", baseKlp: "Pedan Utara" },
+            { nama: "Sakri Syaifuddin", baseKlp: "Pedan Selatan" },
+            { nama: "Sritanto", baseKlp: "Karanglo" },
+            { nama: "Nurjiyanto", baseKlp: "Jabalkanil" },
+            { nama: "Ahmad Nur Alfi", baseKlp: "Blimbing 1" },
+            { nama: "Aziz purwanto", baseKlp: "Blimbing 2" },
+            { nama: "Sugiyatno", baseKlp: "Blimbing 3" }
+        ];
+
         const desaSelect = document.getElementById('desa'), kelompokSelect = document.getElementById('kelompok');
         const submitBtn = document.getElementById('submitBtn'), confirmSaveBtn = document.getElementById('confirmSaveBtn');
         const customModal = document.getElementById('customModal'), modalReview = document.getElementById('modalReview'), modalSuccess = document.getElementById('modalSuccess'), modalError = document.getElementById('modalError'), modalContact = document.getElementById('modalContact'), modalPjPengajarList = document.getElementById('modalPjPengajarList');
@@ -835,6 +966,7 @@
                 hideElementSmooth(document.getElementById('formGenerus'));
                 hideElementSmooth(document.getElementById('searchSection'));
                 hideElementSmooth(document.getElementById('rekapSection'));
+                hideElementSmooth(document.getElementById('monitoringSection'));
                 setTimeout(() => {
                     showElementSmooth(document.getElementById('mainDashboard'));
                     document.getElementById('mainTitle').textContent = "PENDATAAN GENERUS";
@@ -846,8 +978,29 @@
                     if (menuType === 'DATABASE') switchMode('DAFTAR');
                     else if (menuType === 'UPDATE') { switchMode('UPDATE'); initFilterDaftarNama(); }
                     else if (menuType === 'REKAP') { switchMode('REKAP'); fetchAndBuildRekap(); }
+                    else if (menuType === 'MONITORING') { switchMode('MONITORING'); initMonitoringSection(); }
                 });
             }
+        }
+
+        /* FUNGSIONAL POPUP COMING SOON UNTUK MONITORING */
+        function showMonitoringComingSoon() {
+            const errorTitle = document.getElementById('errorTitle'), errorIconContainer = document.getElementById('errorIconContainer');
+            const errorSubHelp = document.getElementById('errorSubHelp');
+            
+            errorTitle.textContent = "🚀 Segera Hadir";
+            errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 text-amber-600 mb-4 shadow-inner";
+            errorIconContainer.innerHTML = `<svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+
+            errorSubHelp.className = "text-[11px] sm:text-xs text-amber-800 font-bold mb-3 bg-amber-50 p-3 rounded-xl border border-amber-200/80 text-center";
+            errorSubHelp.textContent = "⏳ Fitur Jadwal Monitoring Musyawarah 5 Unsur sedang disiapkan";
+
+            errorMessage.className = "text-xs text-slate-600 mt-2 bg-slate-50 p-3.5 rounded-xl border border-slate-200/70 text-center font-medium leading-relaxed";
+            errorMessage.textContent = "Fitur ini akan segera diaktifkan secara penuh setelah proses koordinasi dan persetujuan selesai. Alkhamdulillah Jaza Kummullahu Khoiro";
+
+            modalReview.classList.add('hidden'); modalSuccess.classList.add('hidden'); modalContact.classList.add('hidden'); modalPjPengajarList.classList.add('hidden');
+            modalError.classList.remove('hidden');
+            openModalAnimation('customModal');
         }
 
         document.addEventListener('input', function(e) {
@@ -931,7 +1084,12 @@
 
         function triggerPopupModal(title, msg, type = 'error') {
             const errorTitle = document.getElementById('errorTitle'), errorIconContainer = document.getElementById('errorIconContainer');
+            const errorSubHelp = document.getElementById('errorSubHelp');
+            
             errorTitle.textContent = title; errorMessage.textContent = msg;
+            errorSubHelp.className = "text-[11px] sm:text-xs text-rose-700 font-bold mb-3 bg-rose-50 p-3 rounded-xl border border-rose-100";
+            errorSubHelp.textContent = "💡 Pengertian: Nama generus ini terdeteksi sudah terdaftar sebelumnya atau terjadi duplikasi data di database kelompok Anda.";
+            errorMessage.className = "text-xs text-slate-600 mt-2 bg-slate-100/50 p-3 rounded-xl border border-slate-200 break-words text-left font-mono";
 
             if(type === 'warning') {
                 errorIconContainer.className = "mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-amber-100 text-amber-600 mb-4 shadow-inner";
@@ -1101,7 +1259,7 @@
 
         function switchMode(selectedMode) {
             currentMode = selectedMode;
-            const searchSection = document.getElementById('searchSection'), formGenerus = document.getElementById('formGenerus');
+            const searchSection = document.getElementById('searchSection'), formGenerus = document.getElementById('formGenerus'), monitoringSection = document.getElementById('monitoringSection');
             const formTitleHeader = document.getElementById('formTitleHeader'), mainTitle = document.getElementById('mainTitle'), mainSubtitle = document.getElementById('mainSubtitle');
 
             formGenerus.reset(); updateInfoUmurForm(); formTambahanKhusus.classList.add('hidden');
@@ -1112,16 +1270,63 @@
 
             if (currentMode === "UPDATE") {
                 mainTitle.textContent = "UPDATE DATA GENERUS"; mainSubtitle.textContent = "Pilih kelompok dan klik nama generus yang ingin diperbarui";
-                showElementSmooth(searchSection); hideElementSmooth(formGenerus); hideElementSmooth(rekapSection);
+                showElementSmooth(searchSection); hideElementSmooth(formGenerus); hideElementSmooth(rekapSection); hideElementSmooth(monitoringSection);
                 formTitleHeader.classList.remove('hidden'); submitBtn.textContent = "Perbarui Data"; optMenikah.classList.remove('hidden');
             } else if (currentMode === "REKAP") {
                 mainTitle.textContent = "REKAP DATA GENERUS"; mainSubtitle.textContent = "Statistik serta ringkasan akumulasi seluruh data";
-                hideElementSmooth(searchSection); hideElementSmooth(formGenerus); showElementSmooth(rekapSection);
+                hideElementSmooth(searchSection); hideElementSmooth(formGenerus); showElementSmooth(rekapSection); hideElementSmooth(monitoringSection);
+            } else if (currentMode === "MONITORING") {
+                mainTitle.textContent = "JADWAL MONITORING"; mainSubtitle.textContent = "Jadwal pemonitoring per kelompok dengan rolling per 3 bulan";
+                hideElementSmooth(searchSection); hideElementSmooth(formGenerus); hideElementSmooth(rekapSection); showElementSmooth(monitoringSection);
             } else {
                 mainTitle.textContent = "PENDATAAN GENERUS"; mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
-                hideElementSmooth(searchSection); hideElementSmooth(rekapSection); showElementSmooth(formGenerus);
+                hideElementSmooth(searchSection); hideElementSmooth(rekapSection); hideElementSmooth(monitoringSection); showElementSmooth(formGenerus);
                 formTitleHeader.classList.add('hidden'); submitBtn.textContent = "Kirim Data"; optMenikah.classList.add('hidden');
             }
+        }
+
+        /* LOGIKA MONITORING */
+        function initMonitoringSection() {
+            const bulanSekarang = new Date().getMonth();
+            const selBulan = document.getElementById('monSelectBulan');
+            if (selBulan) selBulan.value = bulanSekarang;
+            renderJadwalMonitoringBulan(bulanSekarang);
+        }
+
+        function renderJadwalMonitoringBulan(bulanIdx) {
+            const tbody = document.getElementById('monJadwalBody');
+            const labelTriwulan = document.getElementById('monLabelTriwulan');
+            if (!tbody) return;
+
+            const triwulanIndex = Math.floor(bulanIdx / 3);
+            const nextTriwulanIndex = (triwulanIndex + 1) % 4;
+
+            labelTriwulan.textContent = `Bulan: ${namaBulan[bulanIdx]} (Triwulan ${triwulanIndex + 1})`;
+            tbody.innerHTML = "";
+
+            daftarPemonitoringLengkap.forEach((pem, idx) => {
+                const baseKlpIdx = urutanKelompokPeta.indexOf(pem.baseKlp);
+                let targetKlpNama = "-";
+                let nextKlpNama = "-";
+
+                if (baseKlpIdx !== -1) {
+                    const currentKlpIdx = (baseKlpIdx + triwulanIndex) % urutanKelompokPeta.length;
+                    const nextKlpIdx = (baseKlpIdx + nextTriwulanIndex) % urutanKelompokPeta.length;
+
+                    targetKlpNama = urutanKelompokPeta[currentKlpIdx];
+                    nextKlpNama = urutanKelompokPeta[nextKlpIdx];
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/80 transition-colors duration-150 text-xs";
+                tr.innerHTML = `
+                    <td class="p-3 text-center font-bold text-slate-400">${idx + 1}</td>
+                    <td class="p-3 font-extrabold text-slate-800">${pem.nama}</td>
+                    <td class="p-3 font-bold text-amber-700 bg-amber-50/50 rounded-lg">${targetKlpNama}</td>
+                    <td class="p-3 font-semibold text-slate-500">${nextKlpNama}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         function fillFormForUpdate(match) {
@@ -1748,7 +1953,7 @@
 
             if (pushHistory) history.pushState({ modal: 'centerPickerModal', menu: activeMenuState }, '', '#centerPickerModal');
 
-            let labelText = "Pilih Opsi";
+            let labelText = "Pilih Ospi";
             const parent = select.closest('div');
             if (parent && parent.querySelector('label')) labelText = parent.querySelector('label').textContent;
             titleEl.textContent = labelText;
