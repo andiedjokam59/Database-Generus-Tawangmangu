@@ -1455,7 +1455,7 @@
             payloadData = { 
                 nama, jenis_kelamin: jk, tempat_lahir: tempat, tanggal_lahir: `${thn}-${bln}-${tgl}`, 
                 desa, kelompok, kategori_usia: kategori, 
-                kelas_formal: (["Pengajar", "PJ Kelompok", "PAUD", "Menikah/Boarding/Sambung Luar Daerah"].includes(kategori)) ? null : kelas,
+                kelas_formal: (["Pengajar", "PJ Kelompok", "Menikah/Boarding/Sambung Luar Daerah"].includes(kategori)) ? null : kelas,
                 nomor_hp: (kategori === "Pengajar" || kategori === "PJ Kelompok") ? nomorHpInput.value.trim() : null,
                 mengajar_usia: (kategori === "Pengajar" || kategori === "PJ Kelompok") ? getSelectedMengajarUsia() : null
             };
