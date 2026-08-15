@@ -1770,7 +1770,7 @@
             }
         }
 
-        // TABLE 3: PER KELOMPOK (KOLOM 1 TEKS HITAM NETRAL)
+        // TABLE 3: PER KELOMPOK (KOLOM 1 TEKS HITAM NETRAL & NAMA DESA DISIMPANKAN/DIHILANGKAN DARI TAMPILAN)
         window.applyFilterKelompok = function(filterVal) {
             const tableKelompokBody = document.getElementById('tableKelompokBody');
             if(!tableKelompokBody) return;
@@ -1795,8 +1795,9 @@
                     tr.className = "hover:bg-slate-100/70 transition-colors cursor-pointer font-medium text-slate-800 text-xs clickable-row group";
                     tr.onclick = () => showDetailRekapNamaGenerus(row.dsa, row.klp);
 
+                    // MENAMPILKAN HANYA NAMA KELOMPOK (NAMA DESA DIHILANGKAN DARIPADA DITAMPILKAN DI KOLOM 1)
                     tr.innerHTML = `
-                        <td class="p-3 sm:p-4 font-extrabold text-slate-900 group-hover:underline">${key}</td>
+                        <td class="p-3 sm:p-4 font-extrabold text-slate-900 group-hover:underline">${row.klp}</td>
                         <td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-900 total-cell-highlight">${row.jml_generus}</td>
                         <td class="p-3 sm:p-4 text-center text-indigo-600 font-bold">${row.L}</td>
                         <td class="p-3 sm:p-4 text-center text-pink-600 font-bold">${row.P}</td>
