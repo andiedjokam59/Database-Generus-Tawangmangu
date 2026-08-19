@@ -848,8 +848,21 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC PERBAIKAN -->
+    <!-- JAVASCRIPT LOGIC DENGAN ONE-TIME FETCH & LOCAL CACHING -->
     <script>
+        // GLOBAL STATE & CACHE DATA
+        const appState = {
+            isLoaded: false,
+            allGenerus: [],       // Cache seluruh data generus
+            pjPengajarData: [],   // Cache khusus PJ/Pengajar
+        };
+
+        const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentMode = "DAFTAR", targetIdGenerus = null, payloadData = null;
+
         // EFEK BOUNCE MANTUL EMPUK 1 KALI SMOOTH
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('button, a.cursor-pointer, .picker-option-item, tr.clickable-row');
@@ -860,19 +873,53 @@
             setTimeout(() => btn.classList.remove('animate-bounce-click'), 420);
         });
 
-        window.addEventListener('load', function() {
+        // INISIALISASI APPLIKASI: FETCH SELURUH DATA HANYA 1 KALI SAAT SPLASH SCREEN
+        window.addEventListener('load', async function() {
             const loader = document.getElementById('appLoadingScreen');
-            if(loader) {
-                loader.classList.add('opacity-0');
-                setTimeout(() => loader.style.display = 'none', 500);
+            try {
+                await loadInitialData();
+            } catch (err) {
+                console.error("Gagal memuat data awal:", err);
+            } finally {
+                if(loader) {
+                    loader.classList.add('opacity-0');
+                    setTimeout(() => loader.style.display = 'none', 500);
+                }
             }
         });
 
-        const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhpamx5eWRmb2dia2NjdGx5Y3NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMzAxODYsImV4cCI6MjA5NzcwNjE4Nn0.JwqYXWEt2yiLioI1o9qZ3KRrak2rtzO1Tp0eN7AuAm4";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // FUNGSI UTAMA FETCH ALL DATA SUPABASE
+        async function loadInitialData() {
+            let data = [], page = 0; 
+            const pageSize = 1000; 
+            let hasMore = true;
 
-        let currentMode = "DAFTAR", targetIdGenerus = null, payloadData = null, rawPjPengajarData = [], globalRekapRawData = []; 
+            while (hasMore) {
+                const { data: pageData, error } = await supabaseClient
+                    .from('data_generus')
+                    .select('*')
+                    .range(page * pageSize, (page + 1) * pageSize - 1);
+                
+                if (error) throw error;
+                data = data.concat(pageData || []);
+                if (pageData.length < pageSize) hasMore = false; else page++;
+            }
+
+            appState.allGenerus = data;
+            appState.isLoaded = true;
+            updatePjPengajarCache();
+        }
+
+        function updatePjPengajarCache() {
+            appState.pjPengajarData = appState.allGenerus
+                .filter(item => ['PJ Kelompok', 'Pengajar'].includes(item.kategori_usia))
+                .sort((a, b) => {
+                    if (a.kategori_usia !== b.kategori_usia) {
+                        return b.kategori_usia.localeCompare(a.kategori_usia);
+                    }
+                    return (a.nama || '').localeCompare(b.nama || '');
+                });
+        }
 
         const dobTanggal = document.getElementById('dob_tanggal');
         const dobBulan = document.getElementById('dob_bulan');
@@ -1165,27 +1212,15 @@
             openModalAnimation('customModal');
         }
 
+        // AMBIL DARI MEMORI LOKAL TANPA FETCH
         async function openPjPengajarModal() {
-            const container = document.getElementById('pjPengajarContainer');
             document.getElementById('searchPjPengajarInput').value = "";
-            container.innerHTML = `<div class="flex flex-col items-center justify-center py-10"><div class="w-6 h-6 border-2 border-slate-200 border-t-indigo-500 rounded-full animate-spin mb-3"></div><p class="text-xs text-slate-500 font-semibold">⏳ Memuat daftar kontak...</p></div>`;
 
             modalReview.classList.add('hidden'); modalSuccess.classList.add('hidden'); modalError.classList.add('hidden'); modalContact.classList.add('hidden'); document.getElementById('modalDetailRekap').classList.add('hidden');
             modalPjPengajarList.classList.remove('hidden');
             openModalAnimation('customModal');
 
-            try {
-                const { data, error } = await supabaseClient
-                    .from('data_generus').select('id, nama, kategori_usia, desa, kelompok, nomor_hp, mengajar_usia')
-                    .in('kategori_usia', ['PJ Kelompok', 'Pengajar'])
-                    .order('kategori_usia', { ascending: false }).order('nama', { ascending: true });
-
-                if (error) throw error;
-                rawPjPengajarData = data || [];
-                renderPjPengajarList(rawPjPengajarData);
-            } catch (err) {
-                container.innerHTML = `<p class="text-center text-xs text-rose-500 font-bold py-6">⚠️ Terjadi gangguan koneksi: ${err.message}</p>`;
-            }
+            renderPjPengajarList(appState.pjPengajarData);
         }
 
         function renderPjPengajarList(items) {
@@ -1233,7 +1268,7 @@
 
         function filterPjPengajarList() {
             const query = document.getElementById('searchPjPengajarInput').value.toLowerCase();
-            const filtered = rawPjPengajarData.filter(item => {
+            const filtered = appState.pjPengajarData.filter(item => {
                 return (item.nama || '').toLowerCase().includes(query) || 
                        (item.kategori_usia || '').toLowerCase().includes(query) || 
                        (item.desa || '').toLowerCase().includes(query) || 
@@ -1501,6 +1536,7 @@
             openModalAnimation('customModal');
         });
 
+        // SIMPAN / UPDATE DENGAN PEMBARUAN MEMORI LOKAL INSTAN
         async function executeSaveToSupabase() {
             if(!payloadData) return;
             const btn = document.getElementById('confirmSaveBtn');
@@ -1516,6 +1552,8 @@
                     const { error } = await supabaseClient.from('data_generus').delete().eq('id', targetIdGenerus);
                     resultError = error;
                     if (!resultError) {
+                        // Hapus dari state lokal
+                        appState.allGenerus = appState.allGenerus.filter(i => i.id !== targetIdGenerus);
                         document.getElementById('successTitle').textContent = "Berhasil Dihapus";
                         document.getElementById('successMessage').textContent = `Data generus atas nama ${payloadData.nama} telah resmi dihapus dari database aktif.`;
                         document.getElementById('successIcon').className = "mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-slate-100 text-slate-500 mb-5 shadow-inner";
@@ -1523,11 +1561,20 @@
                 } else {
                     btn.innerHTML = "Menyimpan...";
                     if (currentMode === "UPDATE" && targetIdGenerus) {
-                        const { error } = await supabaseClient.from('data_generus').update(payloadData).eq('id', targetIdGenerus);
+                        const { data, error } = await supabaseClient.from('data_generus').update(payloadData).eq('id', targetIdGenerus).select();
                         resultError = error;
+                        if (!resultError && data && data.length > 0) {
+                            // Update item di state lokal
+                            const idx = appState.allGenerus.findIndex(i => i.id === targetIdGenerus);
+                            if (idx !== -1) appState.allGenerus[idx] = data[0];
+                        }
                     } else {
-                        const { error } = await supabaseClient.from('data_generus').insert([payloadData]);
+                        const { data, error } = await supabaseClient.from('data_generus').insert([payloadData]).select();
                         resultError = error;
+                        if (!resultError && data && data.length > 0) {
+                            // Tambah item ke state lokal
+                            appState.allGenerus.push(data[0]);
+                        }
                     }
                     if (!resultError) {
                         document.getElementById('successTitle').textContent = "Terima Kasih";
@@ -1537,6 +1584,10 @@
                 }
 
                 if (resultError) throw resultError;
+                
+                // Update cache PJ/Pengajar
+                updatePjPengajarCache();
+
                 modalReview.classList.add('hidden'); modalSuccess.classList.remove('hidden');
 
             } catch (err) {
@@ -1568,66 +1619,64 @@
             document.getElementById('searchNamaInList').classList.add('hidden');
         }
 
-        async function loadNamaGenerusKelompok() {
+        // TANPA LOADING & SUPABASE CALL SAAT TAMPILKAN ANGGOTA KELOMPOK
+        function loadNamaGenerusKelompok() {
             const desa = document.getElementById('listFilterDesa').value;
             const kelompok = document.getElementById('listFilterKelompok').value;
             const tbody = document.getElementById('tableGenerusBody'), labelTotal = document.getElementById('labelTotalGenerus'), searchInput = document.getElementById('searchNamaInList');
 
             if (!desa || !kelompok) return;
-            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-indigo-500 font-bold text-xs"><span class="animate-pulse">⏳ Mengambil data Generus...</span></td></tr>`;
 
-            try {
-                const { data, error } = await supabaseClient.from('data_generus').select('*').eq('desa', desa).eq('kelompok', kelompok).order('nama', { ascending: true });
-                if (error) throw error;
+            // Filter data langsung dari memori lokal (appState.allGenerus)
+            const data = appState.allGenerus
+                .filter(item => item.desa === desa && item.kelompok === kelompok)
+                .sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
 
-                labelTotal.textContent = `Total: ${data.length} Generus (${kelompok})`;
-                searchInput.classList.remove('hidden'); searchInput.value = "";
+            labelTotal.textContent = `Total: ${data.length} Generus (${kelompok})`;
+            searchInput.classList.remove('hidden'); searchInput.value = "";
 
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold text-xs">Belum ada Generus yang terdaftar di kelompok ini.</td></tr>`;
-                    return;
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold text-xs">Belum ada Generus yang terdaftar di kelompok ini.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = "";
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/80 transition-colors duration-150 row-Generus backdrop-blur-sm text-xs";
+                
+                const safeItem = JSON.stringify(item).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+                let umurText = '';
+                if (item.tanggal_lahir) {
+                    const parts = item.tanggal_lahir.split('-');
+                    if (parts.length === 3) {
+                        const u = hitungUmurOtomatis(parts[0], parts[1], parts[2]);
+                        if (u !== null) umurText = `<span class="text-[10px] text-slate-400 font-bold block mt-0.5">${u} thn</span>`;
+                    }
                 }
 
-                tbody.innerHTML = "";
-                data.forEach((item, index) => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-white/80 transition-colors duration-150 row-Generus backdrop-blur-sm text-xs";
-                    
-                    const safeItem = JSON.stringify(item).replace(/'/g, "&apos;").replace(/"/g, "&quot;");
-                    let umurText = '';
-                    if (item.tanggal_lahir) {
-                        const parts = item.tanggal_lahir.split('-');
-                        if (parts.length === 3) {
-                            const u = hitungUmurOtomatis(parts[0], parts[1], parts[2]);
-                            if (u !== null) umurText = `<span class="text-[10px] text-slate-400 font-bold block mt-0.5">${u} thn</span>`;
-                        }
-                    }
+                let waButtonHtml = '';
+                if ((item.kategori_usia === 'PJ Kelompok' || item.kategori_usia === 'Pengajar') && item.nomor_hp) {
+                    const escapedNama = item.nama.replace(/'/g, "\\'"), escapedKategori = item.kategori_usia.replace(/'/g, "\\'"), escapedDesa = item.desa.replace(/'/g, "\\'"), escapedKelompok = item.kelompok.replace(/'/g, "\\'"), escapedHp = item.nomor_hp.replace(/'/g, "\\'");
+                    waButtonHtml = `<button type="button" onclick="event.stopPropagation(); showContactModal('${escapedNama}', '${escapedKategori}', '${escapedDesa}', '${escapedKelompok}', '${escapedHp}')" title="Hubungi WA ${item.nama}" class="ml-2 inline-flex items-center justify-center p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-100 shadow-sm"><svg class="w-3.5 h-3.5 fill-current"><use href="#icon-wa"/></svg></button>`;
+                }
 
-                    let waButtonHtml = '';
-                    if ((item.kategori_usia === 'PJ Kelompok' || item.kategori_usia === 'Pengajar') && item.nomor_hp) {
-                        const escapedNama = item.nama.replace(/'/g, "\\'"), escapedKategori = item.kategori_usia.replace(/'/g, "\\'"), escapedDesa = item.desa.replace(/'/g, "\\'"), escapedKelompok = item.kelompok.replace(/'/g, "\\'"), escapedHp = item.nomor_hp.replace(/'/g, "\\'");
-                        waButtonHtml = `<button type="button" onclick="event.stopPropagation(); showContactModal('${escapedNama}', '${escapedKategori}', '${escapedDesa}', '${escapedKelompok}', '${escapedHp}')" title="Hubungi WA ${item.nama}" class="ml-2 inline-flex items-center justify-center p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-100 shadow-sm"><svg class="w-3.5 h-3.5 fill-current"><use href="#icon-wa"/></svg></button>`;
-                    }
-
-                    tr.innerHTML = `
-                        <td class="p-3 text-center font-bold text-slate-400">${index + 1}</td>
-                        <td class="p-3 font-extrabold text-blue-700 hover:text-blue-900 cursor-pointer cell-nama group" onclick="selectGenerusForUpdate(${safeItem})" title="Klik untuk perbarui data ${item.nama}">
-                            <div class="flex items-center">
-                                <span class="group-hover:underline">${item.nama}</span>
-                                <span class="opacity-0 group-hover:opacity-100 transition-opacity ml-1 text-[10px]">✏️</span>
-                                ${waButtonHtml}
-                            </div>
-                            ${umurText}
-                        </td>
-                        <td class="p-3 text-center font-extrabold ${item.jenis_kelamin === 'L' ? 'text-blue-600' : 'text-pink-600'}">${item.jenis_kelamin}</td>
-                        <td class="p-3 text-slate-700 font-semibold">${item.kategori_usia}</td>
-                        <td class="p-3 text-slate-600 font-medium">${formatKelasFormal(item.kelas_formal) || '-'}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500 font-bold text-xs">Gagal memuat data: ${err.message}</td></tr>`;
-            }
+                tr.innerHTML = `
+                    <td class="p-3 text-center font-bold text-slate-400">${index + 1}</td>
+                    <td class="p-3 font-extrabold text-blue-700 hover:text-blue-900 cursor-pointer cell-nama group" onclick="selectGenerusForUpdate(${safeItem})" title="Klik untuk perbarui data ${item.nama}">
+                        <div class="flex items-center">
+                            <span class="group-hover:underline">${item.nama}</span>
+                            <span class="opacity-0 group-hover:opacity-100 transition-opacity ml-1 text-[10px]">✏️</span>
+                            ${waButtonHtml}
+                        </div>
+                        ${umurText}
+                    </td>
+                    <td class="p-3 text-center font-extrabold ${item.jenis_kelamin === 'L' ? 'text-blue-600' : 'text-pink-600'}">${item.jenis_kelamin}</td>
+                    <td class="p-3 text-slate-700 font-semibold">${item.kategori_usia}</td>
+                    <td class="p-3 text-slate-600 font-medium">${formatKelasFormal(item.kelas_formal) || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         function selectGenerusForUpdate(item) { fillFormForUpdate(item); }
@@ -1640,137 +1689,118 @@
             });
         }
 
-        async function fetchAllSupabaseData(tableName, selectColumns = '*') {
-            let data = [], page = 0; const pageSize = 1000; let hasMore = true;
-            while (hasMore) {
-                const { data: pageData, error } = await supabaseClient.from(tableName).select(selectColumns).range(page * pageSize, (page + 1) * pageSize - 1);
-                if (error) throw error;
-                data = data.concat(pageData);
-                if (pageData.length < pageSize) hasMore = false; else page++;
-            }
-            return data;
-        }
-
-        /* =============================================================
-           LOGIKA MENU REKAP BERSIH DENGAN TEKS HITAM NETRAL DI KOLOM 1
-        ============================================================= */
-        async function fetchAndBuildRekap() {
-            rekapLoader.classList.remove('hidden'); rekapContent.classList.add('hidden');
+        /* LOGIKA REKAP DATA LANGSUNG MEMAKAI STATE LOKAL TANPA LOADING */
+        function fetchAndBuildRekap() {
+            rekapLoader.classList.add('hidden'); 
+            rekapContent.classList.remove('hidden');
+            
             tableUsiaBody.innerHTML = ""; tableUsiaFoot.innerHTML = ""; tableKelasBody.innerHTML = ""; tableKelasFoot.innerHTML = "";
-
             const tableKelompokBody = document.getElementById('tableKelompokBody');
             tableKelompokBody.innerHTML = "";
 
-            try {
-                const data = await fetchAllSupabaseData('data_generus', 'nama, jenis_kelamin, kategori_usia, kelas_formal, desa, kelompok');
-                globalRekapRawData = data;
+            const data = appState.allGenerus;
 
-                const rekapUsia = { "PAUD": { L: 0, P: 0 }, "TK": { L: 0, P: 0 }, "Caberawit": { L: 0, P: 0 }, "Pra Remaja": { L: 0, P: 0 }, "Remaja": { L: 0, P: 0 }, "Usia Mandiri": { L: 0, P: 0 }, "Pengajar": { L: 0, P: 0 }, "PJ Kelompok": { L: 0, P: 0 } };
-                const rekapKelas = {}, rekapKlp = {}; 
+            const rekapUsia = { "PAUD": { L: 0, P: 0 }, "TK": { L: 0, P: 0 }, "Caberawit": { L: 0, P: 0 }, "Pra Remaja": { L: 0, P: 0 }, "Remaja": { L: 0, P: 0 }, "Usia Mandiri": { L: 0, P: 0 }, "Pengajar": { L: 0, P: 0 }, "PJ Kelompok": { L: 0, P: 0 } };
+            const rekapKelas = {}, rekapKlp = {}; 
 
-                let countGenerusOnly = 0, countPengajarOnly = 0, countPJOnly = 0;
-                let totalUsiaL = 0, totalUsiaP = 0, totalUsiaSemua = 0;
-                let totalKelasL = 0, totalKelasP = 0, totalKelasSemua = 0;
+            let countGenerusOnly = 0, countPengajarOnly = 0, countPJOnly = 0;
+            let totalUsiaL = 0, totalUsiaP = 0, totalUsiaSemua = 0;
+            let totalKelasL = 0, totalKelasP = 0, totalKelasSemua = 0;
 
-                data.forEach(item => {
-                    const jk = item.jenis_kelamin, usia = item.kategori_usia;
-                    const kelas = item.kelas_formal ? formatKelasFormal(item.kelas_formal.trim()) : "Tidak Diisi/Pengajar";
-                    const dsa = item.desa || "Tanpa Desa", klp = item.kelompok || "Tanpa Kelompok", klpKey = `${dsa} - ${klp}`;
+            data.forEach(item => {
+                const jk = item.jenis_kelamin, usia = item.kategori_usia;
+                const kelas = item.kelas_formal ? formatKelasFormal(item.kelas_formal.trim()) : "Tidak Diisi/Pengajar";
+                const dsa = item.desa || "Tanpa Desa", klp = item.kelompok || "Tanpa Kelompok", klpKey = `${dsa} - ${klp}`;
 
-                    if(!rekapKlp[klpKey]) rekapKlp[klpKey] = { dsa, klp, jml_generus: 0, L: 0, P: 0, jml_pengajar: 0, jml_pj: 0 };
+                if(!rekapKlp[klpKey]) rekapKlp[klpKey] = { dsa, klp, jml_generus: 0, L: 0, P: 0, jml_pengajar: 0, jml_pj: 0 };
 
-                    if(rekapUsia[usia]) {
-                        if(jk === 'L' || jk === 'P') rekapUsia[usia][jk]++;
-                        if (["PAUD", "TK", "Caberawit", "Pra Remaja", "Remaja", "Usia Mandiri"].includes(usia)) {
-                            countGenerusOnly++; rekapKlp[klpKey].jml_generus++;
-                            if(jk === 'L') rekapKlp[klpKey].L++; if(jk === 'P') rekapKlp[klpKey].P++;
-                        } else if (usia === "Pengajar") { countPengajarOnly++; rekapKlp[klpKey].jml_pengajar++; }
-                        else if (usia === "PJ Kelompok") { countPJOnly++; rekapKlp[klpKey].jml_pj++; }
-                    }
+                if(rekapUsia[usia]) {
+                    if(jk === 'L' || jk === 'P') rekapUsia[usia][jk]++;
+                    if (["PAUD", "TK", "Caberawit", "Pra Remaja", "Remaja", "Usia Mandiri"].includes(usia)) {
+                        countGenerusOnly++; rekapKlp[klpKey].jml_generus++;
+                        if(jk === 'L') rekapKlp[klpKey].L++; if(jk === 'P') rekapKlp[klpKey].P++;
+                    } else if (usia === "Pengajar") { countPengajarOnly++; rekapKlp[klpKey].jml_pengajar++; }
+                    else if (usia === "PJ Kelompok") { countPJOnly++; rekapKlp[klpKey].jml_pj++; }
+                }
 
-                    if(!rekapKelas[kelas]) rekapKelas[kelas] = { L: 0, P: 0 };
-                    if(jk === 'L' || jk === 'P') rekapKelas[kelas][jk]++;
+                if(!rekapKelas[kelas]) rekapKelas[kelas] = { L: 0, P: 0 };
+                if(jk === 'L' || jk === 'P') rekapKelas[kelas][jk]++;
+            });
+
+            rekapTotalData.className = "px-3 py-1.5 text-[10px] sm:text-xs font-extrabold text-white bg-slate-800 rounded-lg shadow-md text-left sm:text-right";
+            rekapTotalData.innerHTML = `Generus: ${countGenerusOnly} | Pengajar: ${countPengajarOnly} | PJ: ${countPJOnly}`;
+
+            // TABLE 1: BERDASARKAN KATEGORI
+            for (const [key, val] of Object.entries(rekapUsia)) {
+                const totalRow = val.L + val.P;
+                totalUsiaL += val.L; totalUsiaP += val.P; totalUsiaSemua += totalRow;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-100/70 transition-colors cursor-pointer text-xs clickable-row group";
+                tr.onclick = () => showDetailRekapPerKategori(key);
+
+                tr.innerHTML = `
+                    <td class="p-3 sm:p-4 font-extrabold text-slate-900 group-hover:underline">${key}</td>
+                    <td class="p-3 sm:p-4 text-center font-bold text-slate-700">${val.L}</td>
+                    <td class="p-3 sm:p-4 text-center font-bold text-slate-700">${val.P}</td>
+                    <td class="p-3 sm:p-4 text-center font-extrabold bg-indigo-50/50 text-indigo-950 total-cell-highlight">${totalRow}</td>
+                `;
+                tableUsiaBody.appendChild(tr);
+            }
+            tableUsiaFoot.innerHTML = `<td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td><td class="p-3 sm:p-4 text-center text-indigo-700 font-extrabold text-xs">${totalUsiaL}</td><td class="p-3 sm:p-4 text-center text-indigo-700 font-extrabold text-xs">${totalUsiaP}</td><td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalUsiaSemua}</td>`;
+
+            // TABLE 2: BERDASARKAN KELAS FORMAL
+            const urutanKustom = ["PAUD", "TK A", "TK B", "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD", "1 SMP", "2 SMP", "3 SMP", "1 SMA", "2 SMA", "3 SMA", "1 SMK", "2 SMK", "3 SMK", "1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK", "1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK", "KULIAH", "KERJA", "BELUM KERJA"];
+
+            const sortedKelas = Object.keys(rekapKelas)
+                .filter(kelasKey => kelasKey !== "Tidak Diisi/Pengajar")
+                .sort((a, b) => {
+                    const indexA = urutanKustom.indexOf(a.toUpperCase()), indexB = urutanKustom.indexOf(b.toUpperCase());
+                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                    if (indexA !== -1) return -1;
+                    if (indexB !== -1) return 1;
+                    return a.localeCompare(b);
                 });
 
-                rekapTotalData.className = "px-3 py-1.5 text-[10px] sm:text-xs font-extrabold text-white bg-slate-800 rounded-lg shadow-md text-left sm:text-right";
-                rekapTotalData.innerHTML = `Generus: ${countGenerusOnly} | Pengajar: ${countPengajarOnly} | PJ: ${countPJOnly}`;
-
-                // TABLE 1: BERDASARKAN KATEGORI (KOLOM 1 TEKS HITAM NETRAL)
-                for (const [key, val] of Object.entries(rekapUsia)) {
-                    const totalRow = val.L + val.P;
-                    totalUsiaL += val.L; totalUsiaP += val.P; totalUsiaSemua += totalRow;
+            if(sortedKelas.length === 0) {
+                tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium text-xs">Belum ada data kelas formal.</td></tr>`;
+            } else {
+                sortedKelas.forEach((kelasKey) => {
+                    const val = rekapKelas[kelasKey], totalRow = val.L + val.P;
+                    totalKelasL += val.L; totalKelasP += val.P; totalKelasSemua += totalRow;
 
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-100/70 transition-colors cursor-pointer text-xs clickable-row group";
-                    tr.onclick = () => showDetailRekapPerKategori(key);
+                    tr.onclick = () => showDetailRekapPerKelas(kelasKey);
 
                     tr.innerHTML = `
-                        <td class="p-3 sm:p-4 font-extrabold text-slate-900 group-hover:underline">${key}</td>
+                        <td class="p-3 sm:p-4 font-extrabold text-slate-900 group-hover:underline">${kelasKey}</td>
                         <td class="p-3 sm:p-4 text-center font-bold text-slate-700">${val.L}</td>
                         <td class="p-3 sm:p-4 text-center font-bold text-slate-700">${val.P}</td>
-                        <td class="p-3 sm:p-4 text-center font-extrabold bg-indigo-50/50 text-indigo-950 total-cell-highlight">${totalRow}</td>
+                        <td class="p-3 sm:p-4 text-center font-extrabold bg-emerald-50/50 text-emerald-950 total-cell-highlight">${totalRow}</td>
                     `;
-                    tableUsiaBody.appendChild(tr);
-                }
-                tableUsiaFoot.innerHTML = `<td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td><td class="p-3 sm:p-4 text-center text-indigo-700 font-extrabold text-xs">${totalUsiaL}</td><td class="p-3 sm:p-4 text-center text-indigo-700 font-extrabold text-xs">${totalUsiaP}</td><td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalUsiaSemua}</td>`;
-
-                // TABLE 2: BERDASARKAN KELAS FORMAL (KOLOM 1 TEKS HITAM NETRAL)
-                const urutanKustom = ["PAUD", "TK A", "TK B", "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD", "1 SMP", "2 SMP", "3 SMP", "1 SMA", "2 SMA", "3 SMA", "1 SMK", "2 SMK", "3 SMK", "1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK", "1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK", "KULIAH", "KERJA", "BELUM KERJA"];
-
-                const sortedKelas = Object.keys(rekapKelas)
-                    .filter(kelasKey => kelasKey !== "Tidak Diisi/Pengajar")
-                    .sort((a, b) => {
-                        const indexA = urutanKustom.indexOf(a.toUpperCase()), indexB = urutanKustom.indexOf(b.toUpperCase());
-                        if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-                        if (indexA !== -1) return -1;
-                        if (indexB !== -1) return 1;
-                        return a.localeCompare(b);
-                    });
-
-                if(sortedKelas.length === 0) {
-                    tableKelasBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 font-medium text-xs">Belum ada data kelas formal.</td></tr>`;
-                } else {
-                    sortedKelas.forEach((kelasKey) => {
-                        const val = rekapKelas[kelasKey], totalRow = val.L + val.P;
-                        totalKelasL += val.L; totalKelasP += val.P; totalKelasSemua += totalRow;
-
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-slate-100/70 transition-colors cursor-pointer text-xs clickable-row group";
-                        tr.onclick = () => showDetailRekapPerKelas(kelasKey);
-
-                        tr.innerHTML = `
-                            <td class="p-3 sm:p-4 font-extrabold text-slate-900 group-hover:underline">${kelasKey}</td>
-                            <td class="p-3 sm:p-4 text-center font-bold text-slate-700">${val.L}</td>
-                            <td class="p-3 sm:p-4 text-center font-bold text-slate-700">${val.P}</td>
-                            <td class="p-3 sm:p-4 text-center font-extrabold bg-emerald-50/50 text-emerald-950 total-cell-highlight">${totalRow}</td>
-                        `;
-                        tableKelasBody.appendChild(tr);
-                    });
-                    tableKelasFoot.innerHTML = `<td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td><td class="p-3 sm:p-4 text-center text-emerald-700 font-extrabold text-xs">${totalKelasL}</td><td class="p-3 sm:p-4 text-center text-emerald-700 font-extrabold text-xs">${totalKelasP}</td><td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalKelasSemua}</td>`;
-                }
-
-                window.globalRekapKlp = rekapKlp;
-
-                // POPULASI FILTER DESA TABLE 3
-                const filterSelect = document.getElementById('filterDesaKelompok');
-                if (filterSelect) {
-                    filterSelect.innerHTML = '<option value="ALL">Semua Kelompok</option>';
-                    const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
-                    const optgroupDesa = document.createElement('optgroup');
-                    optgroupDesa.label = "PER DESA";
-                    uniqueDesa.forEach(desa => optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`);
-                    filterSelect.appendChild(optgroupDesa);
-                }
-
-                if (window.applyFilterKelompok) window.applyFilterKelompok("ALL");
-
-                rekapLoader.classList.add('hidden'); rekapContent.classList.remove('hidden');
-            } catch (err) {
-                rekapLoader.innerHTML = `<span class="text-rose-600 font-bold text-xs">⚠️ Gagal mengambil rekap data: ${err.message}</span>`;
+                    tableKelasBody.appendChild(tr);
+                });
+                tableKelasFoot.innerHTML = `<td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td><td class="p-3 sm:p-4 text-center text-emerald-700 font-extrabold text-xs">${totalKelasL}</td><td class="p-3 sm:p-4 text-center text-emerald-700 font-extrabold text-xs">${totalKelasP}</td><td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalKelasSemua}</td>`;
             }
+
+            window.globalRekapKlp = rekapKlp;
+
+            // POPULASI FILTER DESA TABLE 3
+            const filterSelect = document.getElementById('filterDesaKelompok');
+            if (filterSelect) {
+                filterSelect.innerHTML = '<option value="ALL">Semua Kelompok</option>';
+                const uniqueDesa = [...new Set(data.map(item => item.desa || "Tanpa Desa"))].sort();
+                const optgroupDesa = document.createElement('optgroup');
+                optgroupDesa.label = "PER DESA";
+                uniqueDesa.forEach(desa => optgroupDesa.innerHTML += `<option value="DESA:${desa}">${desa}</option>`);
+                filterSelect.appendChild(optgroupDesa);
+            }
+
+            if (window.applyFilterKelompok) window.applyFilterKelompok("ALL");
         }
 
-        // TABLE 3: PER KELOMPOK (KOLOM 1 TEKS HITAM NETRAL & NAMA DESA DISIMPANKAN/DIHILANGKAN DARI TAMPILAN)
+        // TABLE 3: PER KELOMPOK
         window.applyFilterKelompok = function(filterVal) {
             const tableKelompokBody = document.getElementById('tableKelompokBody');
             if(!tableKelompokBody) return;
@@ -1795,7 +1825,6 @@
                     tr.className = "hover:bg-slate-100/70 transition-colors cursor-pointer font-medium text-slate-800 text-xs clickable-row group";
                     tr.onclick = () => showDetailRekapNamaGenerus(row.dsa, row.klp);
 
-                    // MENAMPILKAN HANYA NAMA KELOMPOK (NAMA DESA DIHILANGKAN DARIPADA DITAMPILKAN DI KOLOM 1)
                     tr.innerHTML = `
                         <td class="p-3 sm:p-4 font-extrabold text-slate-900 group-hover:underline">${row.klp}</td>
                         <td class="p-3 sm:p-4 text-center bg-blue-50/50 font-extrabold text-blue-900 total-cell-highlight">${row.jml_generus}</td>
@@ -1809,14 +1838,12 @@
             }
         };
 
-        /* FUNCTION POPUP DRILLDOWN MODAL VIEW */
-
         // 1. POPUP JUMLAH KATEGORI PER DESA
         function showDetailRekapPerKategori(kategori) {
             document.getElementById('modalDetailRekapTitle').textContent = `Rekapan Kategori: ${kategori}`;
             document.getElementById('modalDetailRekapSubtitle').textContent = `Rincian jumlah generus ${kategori} berdasarkan desanya masing-masing`;
 
-            const filtered = globalRekapRawData.filter(item => item.kategori_usia === kategori);
+            const filtered = appState.allGenerus.filter(item => item.kategori_usia === kategori);
             const desaCount = {};
 
             Object.keys(dataWilayah).forEach(d => desaCount[d] = { L: 0, P: 0, total: 0 });
@@ -1876,7 +1903,7 @@
             document.getElementById('modalDetailRekapTitle').textContent = `Rekapan Kelas/Status: ${kelas}`;
             document.getElementById('modalDetailRekapSubtitle').textContent = `Rincian jumlah generus ${kelas} berdasarkan kelompoknya masing-masing`;
 
-            const filtered = globalRekapRawData.filter(item => item.kelas_formal && formatKelasFormal(item.kelas_formal.trim()) === kelas);
+            const filtered = appState.allGenerus.filter(item => item.kelas_formal && formatKelasFormal(item.kelas_formal.trim()) === kelas);
             const klpCount = {};
 
             filtered.forEach(item => {
@@ -1935,12 +1962,12 @@
             openModalDetailRekap();
         }
 
-        // 3. POPUP DAFTAR NAMA TERDAFTAR DI KELOMPOK (SORTED BY ABJAD A-Z & HEADER STICKY)
+        // 3. POPUP DAFTAR NAMA TERDAFTAR DI KELOMPOK
         function showDetailRekapNamaGenerus(desa, kelompok) {
             document.getElementById('modalDetailRekapTitle').textContent = `Daftar Nama: ${kelompok}`;
             document.getElementById('modalDetailRekapSubtitle').textContent = `Informasi siapa saja yang sudah terdaftar di ${desa} - ${kelompok} (View Only)`;
 
-            const members = globalRekapRawData.filter(item => item.desa === desa && item.kelompok === kelompok);
+            const members = appState.allGenerus.filter(item => item.desa === desa && item.kelompok === kelompok);
 
             // DIURUTKAN BERDASARKAN ABJAD (A-Z)
             members.sort((a, b) => (a.nama || '').localeCompare(b.nama || '', 'id', { sensitivity: 'base' }));
@@ -1990,8 +2017,8 @@
             openModalAnimation('customModal');
         }
 
-        async function cetakRekapitulasiData() {
-            if (rekapContent.classList.contains('hidden')) await fetchAndBuildRekap();
+        function cetakRekapitulasiData() {
+            if (rekapContent.classList.contains('hidden')) fetchAndBuildRekap();
             window.print();
         }
 
@@ -2021,37 +2048,30 @@
             document.querySelectorAll('input[name="csvCol"]').forEach(cb => cb.checked = selectState);
         }
 
-        async function fetchExportDataFromSupabase() {
+        // EKSPOR DATA MEMAKAI MEMORI LOKAL
+        function fetchExportDataFromSupabase() {
             const scope = document.getElementById('csvScopeType').value;
             const selectedDesa = document.getElementById('csvFilterDesa').value;
             const selectedKelompok = document.getElementById('csvFilterKelompok').value;
 
-            if (scope === 'DESA' && !selectedDesa) return alert("Silakan pilih Desa terlebih dahulu!");
-            if (scope === 'KELOMPOK' && (!selectedDesa || !selectedKelompok)) return alert("Silakan pilih Desa dan Kelompok terlebih dahulu!");
+            if (scope === 'DESA' && !selectedDesa) { alert("Silakan pilih Desa terlebih dahulu!"); return null; }
+            if (scope === 'KELOMPOK' && (!selectedDesa || !selectedKelompok)) { alert("Silakan pilih Desa dan Kelompok terlebih dahulu!"); return null; }
 
             const checkedBoxes = document.querySelectorAll('input[name="csvCol"]:checked');
-            if (checkedBoxes.length === 0) return alert("Pilih minimal satu kolom untuk diekspor!");
+            if (checkedBoxes.length === 0) { alert("Pilih minimal satu kolom untuk diekspor!"); return null; }
 
             const selectedColumns = Array.from(checkedBoxes).map(cb => cb.value);
-            let query = supabaseClient.from('data_generus').select('*');
+            let filteredData = [...appState.allGenerus];
 
-            if (scope === 'DESA') query = query.eq('desa', selectedDesa);
-            else if (scope === 'KELOMPOK') query = query.eq('desa', selectedDesa).eq('kelompok', selectedKelompok);
+            if (scope === 'DESA') filteredData = filteredData.filter(i => i.desa === selectedDesa);
+            else if (scope === 'KELOMPOK') filteredData = filteredData.filter(i => i.desa === selectedDesa && i.kelompok === selectedKelompok);
 
-            let data = [], page = 0; const pageSize = 1000; let hasMore = true;
-            while (hasMore) {
-                const { data: pageData, error } = await query.order('created_at', { ascending: true }).range(page * pageSize, (page + 1) * pageSize - 1);
-                if (error) throw error;
-                data = data.concat(pageData);
-                if (pageData.length < pageSize) hasMore = false; else page++;
-            }
-
-            if (!data || data.length === 0) return alert("Tidak ada data ditemukan untuk kriteria filter ini!");
+            if (!filteredData || filteredData.length === 0) { alert("Tidak ada data ditemukan untuk kriteria filter ini!"); return null; }
 
             let filenameScope = scope === 'ALL' ? 'semua' : (scope === 'DESA' ? selectedDesa : `${selectedDesa}_${selectedKelompok}`);
             let baseFilename = `data_generus_${filenameScope.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${new Date().toISOString().slice(0,10)}`;
 
-            return { data, selectedColumns, baseFilename };
+            return { data: filteredData, selectedColumns, baseFilename };
         }
 
         async function processCustomCsvDownload() {
@@ -2059,7 +2079,7 @@
             btnSubmit.disabled = true; btnSubmit.innerHTML = "⏳ Mengunduh...";
 
             try {
-                const res = await fetchExportDataFromSupabase();
+                const res = fetchExportDataFromSupabase();
                 if (!res) return;
                 const { data, selectedColumns, baseFilename } = res;
 
@@ -2094,7 +2114,7 @@
             btnSubmit.disabled = true; btnSubmit.innerHTML = "⏳ Mengunduh...";
 
             try {
-                const res = await fetchExportDataFromSupabase();
+                const res = fetchExportDataFromSupabase();
                 if (!res) return;
                 const { data, selectedColumns, baseFilename } = res;
 
