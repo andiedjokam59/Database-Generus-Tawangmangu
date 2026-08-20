@@ -144,13 +144,16 @@
         </symbol>
     </svg>
 
-    <!-- SPLASH SCREEN LOADING -->
+    <!-- SPLASH SCREEN LOADING DENGAN PROGRESS INDICATOR -->
     <div id="appLoadingScreen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white transition-opacity duration-500 ease-out">
         <div class="relative flex items-center justify-center mb-6">
             <div class="w-20 h-20 border-[3px] border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
             <img src="logo ppg.png" alt="Logo" class="w-10 h-10 absolute object-contain drop-shadow-md" onerror="this.style.display='none';">
         </div>
-        <p class="text-[10px] font-extrabold text-emerald-800 tracking-[0.2em] uppercase animate-pulse">Memuat Aplikasi...</p>
+        <p id="loadingStatusText" class="text-[11px] font-extrabold text-emerald-800 tracking-[0.15em] uppercase animate-pulse mb-3">Menghubungkan ke Server...</p>
+        <div class="w-48 bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200/80 shadow-inner">
+            <div id="loadingProgressBar" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-full w-0 transition-all duration-300 ease-out"></div>
+        </div>
     </div>
 
     <!-- MAIN CONTAINER RESPONSIVE -->
@@ -873,7 +876,7 @@
             setTimeout(() => btn.classList.remove('animate-bounce-click'), 420);
         });
 
-        // INISIALISASI APPLIKASI: FETCH SELURUH DATA HANYA 1 KALI SAAT SPLASH SCREEN
+        // INISIALISASI APPLIKASI: FETCH SELURUH DATA DENGAN PROGRESS VISUAL DYNAMIC
         window.addEventListener('load', async function() {
             const loader = document.getElementById('appLoadingScreen');
             try {
@@ -888,13 +891,18 @@
             }
         });
 
-        // FUNGSI UTAMA FETCH ALL DATA SUPABASE
+        // FUNGSI UTAMA FETCH ALL DATA SUPABASE DENGAN PROGRESS BAR REAL-TIME
         async function loadInitialData() {
             let data = [], page = 0; 
             const pageSize = 1000; 
             let hasMore = true;
 
+            const statusText = document.getElementById('loadingStatusText');
+            const progressBar = document.getElementById('loadingProgressBar');
+
             while (hasMore) {
+                if (statusText) statusText.textContent = `Memuat data batch ${page + 1}...`;
+                
                 const { data: pageData, error } = await supabaseClient
                     .from('data_generus')
                     .select('*')
@@ -902,8 +910,18 @@
                 
                 if (error) throw error;
                 data = data.concat(pageData || []);
+                
+                // Update progres visual animasi
+                if (progressBar) {
+                    let estimatedProgress = Math.min(95, (page + 1) * 35);
+                    progressBar.style.width = `${estimatedProgress}%`;
+                }
+
                 if (pageData.length < pageSize) hasMore = false; else page++;
             }
+
+            if (progressBar) progressBar.style.width = '100%';
+            if (statusText) statusText.textContent = 'Menyiapkan Aplikasi...';
 
             appState.allGenerus = data;
             appState.isLoaded = true;
