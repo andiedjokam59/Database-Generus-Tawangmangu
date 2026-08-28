@@ -34,14 +34,16 @@
             content: ''; position: fixed; inset: 0;
             background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(240,245,250,0.65) 100%);
             backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: -1;
+            transform: translateZ(0);
         }
 
         .glass-container {
             background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(28px) saturate(190%); -webkit-backdrop-filter: blur(28px) saturate(190%);
+            backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
             border: 1px solid rgba(255, 255, 255, 0.85);
             box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
             will-change: transform, opacity;
+            transform: translateZ(0);
         }
 
         .capitalize-input { text-transform: capitalize; }
@@ -66,6 +68,13 @@
 		.fade-visible { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: auto !important; display: block !important; }
 		#mainDashboard.fade-visible { display: grid !important; }
 
+        /* OPTIMASI SCROLL SMOOTH DENGAN HARDWARE ACCELERATION */
+        .overflow-y-auto, .overflow-x-auto {
+            -webkit-overflow-scrolling: touch;
+            will-change: scroll-position;
+            transform: translateZ(0);
+        }
+
         /* BOUNCE MANTUL EMPUK 1 KALI SMOOTH */
         @keyframes bounceSmoothEmpuk {
             0% { transform: scale(1); }
@@ -88,7 +97,7 @@
         #formGenerus.fade-visible > div, .animate-field-in { animation: fieldFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both !important; will-change: transform, opacity; }
 
         .menu-btn-smooth {
-            background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.85);
             transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease, box-shadow 0.2s ease;
             touch-action: manipulation; will-change: transform;
@@ -106,18 +115,19 @@
         .smooth-select { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
         
         #customModal, #modalExportCsv, #centerPickerModal {
-            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); will-change: opacity;
+            transition: opacity 0.2s ease-out;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); will-change: opacity;
+            transform: translateZ(0);
         }
-        #customModal > div, #modalExportCsv > div { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform, opacity; }
+        #customModal > div, #modalExportCsv > div { transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease-out; will-change: transform, opacity; }
 
-        #centerPickerModal { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        #centerPickerModal { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         #centerPickerModal > div {
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(28px) saturate(200%); -webkit-backdrop-filter: blur(28px) saturate(200%);
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease-out;
+            background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); will-change: transform, opacity;
         }
-        .picker-option-item { transition: background-color 0.15s ease, color 0.15s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1); touch-action: manipulation; }
+        .picker-option-item { transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease; touch-action: manipulation; }
         .picker-option-item:hover, .picker-option-item:active { background: rgba(16, 185, 129, 0.12); color: #047857; transform: scale(1.01); }
         .picker-option-item.active-selected { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: #ffffff; font-weight: 800; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 
@@ -275,7 +285,7 @@
                 </h4>
                 <div class="max-h-96 overflow-y-auto">
                     <table class="min-w-full divide-y divide-slate-200/50 text-xs">
-                        <thead class="bg-slate-100/70 font-extrabold text-slate-600 sticky top-0 z-10">
+                        <thead class="bg-slate-100/90 font-extrabold text-slate-600 sticky top-0 z-10">
                             <tr>
                                 <th class="p-3 text-center w-8">No</th>
                                 <th class="p-3 text-left">Nama Pemonitoring</th>
@@ -443,7 +453,7 @@
                     </div>
                     <div class="max-h-64 overflow-y-auto overflow-x-auto relative scrollbar-hide">
                         <table class="min-w-full divide-y divide-slate-200/50 text-xs">
-                            <thead class="bg-slate-100/70 font-extrabold text-slate-600 sticky top-0 z-10 backdrop-blur-md">
+                            <thead class="bg-slate-100/90 font-extrabold text-slate-600 sticky top-0 z-10">
                                 <tr>
                                     <th class="p-3 text-center w-8">No</th>
                                     <th class="p-3 text-left min-w-[140px]">Nama Lengkap</th>
@@ -862,6 +872,9 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentMode = "DAFTAR", targetIdGenerus = null, payloadData = null;
+
+        // URUTAN KATEGORI STANDAR
+        const URUTAN_KATEGORI_STANDAR = ["PAUD", "TK", "Caberawit", "Pra Remaja", "Remaja", "Usia Mandiri", "Pengajar", "PJ Kelompok"];
 
         // EFEK BOUNCE MANTUL EMPUK 1 KALI SMOOTH
         document.addEventListener('click', function (e) {
@@ -1306,7 +1319,7 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
                 if (callback) callback();
-            }, 250);
+            }, 200);
 
             if (backHistory && window.history.state && window.history.state.modal === modalId) {
                 window.history.back();
@@ -1962,7 +1975,7 @@
             openModalDetailRekap();
         }
 
-        // 3. POPUP DAFTAR NAMA TERDAFTAR DI KELOMPOK (DENGAN RINGKASAN KATEGORI AKUMULASI)
+        // 3. POPUP DAFTAR NAMA TERDAFTAR DI KELOMPOK (SUDAH DIURUTKAN DARI KATEGORI TERKECIL HINGGA TERBESAR)
         function showDetailRekapNamaGenerus(desa, kelompok) {
             document.getElementById('modalDetailRekapTitle').textContent = `Daftar Nama: ${kelompok}`;
             document.getElementById('modalDetailRekapSubtitle').textContent = `Informasi siapa saja yang sudah terdaftar di ${desa} - ${kelompok} (View Only)`;
@@ -1989,6 +2002,15 @@
                 }
             });
 
+            // URUTKAN KATEGORI DARI TERKECIL SAMPAI TERBESAR SESUAI STANDAR REKAP POINT 1
+            const sortedKategoriKeys = Object.keys(katSummary).sort((a, b) => {
+                let indexA = URUTAN_KATEGORI_STANDAR.indexOf(a);
+                let indexB = URUTAN_KATEGORI_STANDAR.indexOf(b);
+                if (indexA === -1) indexA = 99;
+                if (indexB === -1) indexB = 99;
+                return indexA - indexB;
+            });
+
             // WIDGET RINGKASAN AKUMULASI DIBUAT DENGAN STYLE CARD STREAMLINED
             let summaryCardsHtml = `
                 <div class="mb-4 bg-slate-50/90 border border-slate-200/80 rounded-xl p-3 space-y-2">
@@ -2003,13 +2025,13 @@
                     <div class="flex flex-wrap gap-1.5 text-[10px] font-semibold text-slate-600 pt-0.5">
             `;
 
-            for (const [kat, count] of Object.entries(katSummary)) {
+            sortedKategoriKeys.forEach(kat => {
                 summaryCardsHtml += `
                     <span class="bg-white border border-slate-200 px-2 py-0.5 rounded-lg shadow-2xs">
-                        <strong class="text-slate-800 font-bold">${kat}:</strong> ${count}
+                        <strong class="text-slate-800 font-bold">${kat}:</strong> ${katSummary[kat]}
                     </span>
                 `;
-            }
+            });
 
             summaryCardsHtml += `
                     </div>
@@ -2092,7 +2114,7 @@
             document.querySelectorAll('input[name="csvCol"]').forEach(cb => cb.checked = selectState);
         }
 
-        // EKSPOR DATA MEMAKI MEMORI LOKAL
+        // EKSPOR DATA MEMAKAI MEMORI LOKAL
         function fetchExportDataFromSupabase() {
             const scope = document.getElementById('csvScopeType').value;
             const selectedDesa = document.getElementById('csvFilterDesa').value;
@@ -2301,7 +2323,7 @@
             modal.classList.add('opacity-0');
             modalContent.classList.remove('scale-100', 'opacity-100'); modalContent.classList.add('scale-90', 'opacity-0');
 
-            setTimeout(() => { modal.classList.add('hidden'); activeSelectTarget = null; }, 250);
+            setTimeout(() => { modal.classList.add('hidden'); activeSelectTarget = null; }, 200);
 
             if (backHistory && window.history.state && window.history.state.modal === 'centerPickerModal') {
                 window.history.back();
