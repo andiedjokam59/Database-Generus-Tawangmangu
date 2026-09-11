@@ -68,14 +68,12 @@
 		.fade-visible { opacity: 1 !important; transform: translateY(0) scale(1) !important; pointer-events: auto !important; display: block !important; }
 		#mainDashboard.fade-visible { display: grid !important; }
 
-        /* OPTIMASI SCROLL SMOOTH DENGAN HARDWARE ACCELERATION */
         .overflow-y-auto, .overflow-x-auto {
             -webkit-overflow-scrolling: touch;
             will-change: scroll-position;
             transform: translateZ(0);
         }
 
-        /* BOUNCE MANTUL EMPUK 1 KALI SMOOTH */
         @keyframes bounceSmoothEmpuk {
             0% { transform: scale(1); }
             35% { transform: scale(0.92); }
@@ -114,12 +112,12 @@
 
         .smooth-select { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
         
-        #customModal, #modalExportCsv, #centerPickerModal {
+        #customModal, #modalExportCsv, #centerPickerModal, #disabilitasDetailModal {
             transition: opacity 0.2s ease-out;
             background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); will-change: opacity;
             transform: translateZ(0);
         }
-        #customModal > div, #modalExportCsv > div { transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease-out; will-change: transform, opacity; }
+        #customModal > div, #modalExportCsv > div, #disabilitasDetailModal > div { transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease-out; will-change: transform, opacity; }
 
         #centerPickerModal { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         #centerPickerModal > div {
@@ -134,7 +132,7 @@
         @media print {
             @page { size: A4 portrait; margin: 15mm; }
             body { background: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important; }
-            body::before, #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #centerPickerModal, #modalExportCsv, #rekapLoader, .print\:hidden, button { display: none !important; }
+            body::before, #appLoadingScreen, #mainDashboard, #backToHomeBtn, #formGenerus, #searchSection, #customModal, #centerPickerModal, #modalExportCsv, #disabilitasDetailModal, #rekapLoader, .print\:hidden, button { display: none !important; }
             .glass-container { background: transparent !important; box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; }
             #rekapSection, #rekapContent { display: block !important; opacity: 1 !important; transform: none !important; max-height: none !important; overflow: visible !important; }
             table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 20px !important; font-size: 10pt !important; }
@@ -178,7 +176,6 @@
                 </button>
             </div>
 
-            <!-- LOGO DAN JUDUL UTAMA -->
             <div class="text-center">
                 <div class="flex justify-center mb-4 sm:mb-5">
                     <div class="p-3.5 sm:p-4 bg-white/60 rounded-3xl shadow-[0_8px_16px_rgba(0,0,0,0.06)] border border-white/80 backdrop-blur-md inline-block">
@@ -344,8 +341,16 @@
                 ⏳ Sedang menghitung dan menyusun data...
             </div>
 
-            <div id="rekapContent" class="hidden space-y-8">
+            <div id="rekapContent" class="hidden space-y-6">
                 
+                <!-- PAPAN TOTAL DISABILITAS GENERUS -->
+                <button type="button" onclick="showDisabilitasDetailModalGenerus()" class="w-full text-left p-2.5 sm:p-3 bg-gradient-to-r from-teal-800 to-emerald-900 hover:from-teal-700 hover:to-emerald-800 text-white rounded-xl flex justify-between items-center shadow-md border border-teal-700/80 transition-all cursor-pointer group active:scale-[0.99] print:hidden">
+                    <span class="text-xs font-extrabold uppercase tracking-wider flex items-center gap-2">
+                        ♿ Total Penyandang Disabilitas
+                    </span>
+                    <span id="rekapDisabilitasCount" class="text-sm sm:text-base font-black bg-clip-text text-transparent bg-gradient-to-l from-teal-200 to-emerald-200">0 Orang</span>
+                </button>
+
                 <!-- NOMOR 1: BERDASARKAN KATEGORI -->
                 <div class="space-y-3">
                     <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -392,7 +397,7 @@
                     </div>
                 </div>
 
-                <!-- NOMOR 3: RINCIAN PER KELOMPOK (DENGAN NAMA KELOMPOK LEGA & KOLOM ANGKA DENGAN SIZE PERSEMPIT PAS) -->
+                <!-- NOMOR 3: RINCIAN PER KELOMPOK -->
                 <div id="sectionRekapKelompok" class="space-y-3 pt-2">
                     <h4 class="text-xs font-extrabold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-purple-600"></span> 3. Rincian Data Per Kelompok
@@ -595,6 +600,85 @@
                     <input type="text" id="kelas_formal" required placeholder="Contoh: 3 SD, 1 SMA/SMK, Kuliah Sem 4, Kerja" class="glass-input capitalize-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 font-medium">
                 </div>
             </div>
+
+            <!-- KOMPONEN FORMULIR CHECKBOX DISABILITAS LENGKAP DENGAN SUB-TEXT / ISTILAH DESA -->
+            <div id="formDisabilitasSection" class="space-y-3 bg-teal-50/50 border border-teal-100 p-4 rounded-2xl backdrop-blur-sm">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                    <input type="checkbox" id="is_disabilitas" onchange="toggleDisabilitasOptionsForm()" class="rounded text-teal-600 focus:ring-teal-500 w-5 h-5 accent-teal-600 cursor-pointer">
+                    <span class="text-xs sm:text-sm font-extrabold text-teal-900">♿ Penyandang Disabilitas (Optional)</span>
+                </label>
+
+                <div id="wrapperKategoriDisabilitas" class="hidden space-y-2 pt-2 border-t border-teal-200/60">
+                    <label class="block text-[10px] font-extrabold uppercase tracking-wide text-teal-800 mb-1">Ragam Disabilitas (Bisa pilih >1)</label>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-slate-700">
+                        
+                        <!-- 1. SENSORIK MATA -->
+                        <label class="flex items-start space-x-2.5 bg-white/80 p-2.5 rounded-xl border border-teal-100 hover:bg-white shadow-xs cursor-pointer">
+                            <input type="checkbox" name="kategori_disabilitas" value="Sensorik Mata (Penglihatan)" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 mt-0.5 accent-teal-600">
+                            <div>
+                                <span class="block text-slate-800 font-extrabold">Penglihatan (Mata)</span>
+                                <span class="block text-[10px] text-slate-400 font-normal leading-tight">Buta total, Tunanetra, Penglihatan sangat kabur</span>
+                            </div>
+                        </label>
+
+                        <!-- 2. SENSORIK TELINGA -->
+                        <label class="flex items-start space-x-2.5 bg-white/80 p-2.5 rounded-xl border border-teal-100 hover:bg-white shadow-xs cursor-pointer">
+                            <input type="checkbox" name="kategori_disabilitas" value="Sensorik Telinga (Pendengaran)" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 mt-0.5 accent-teal-600">
+                            <div>
+                                <span class="block text-slate-800 font-extrabold">Pendengaran (Telinga)</span>
+                                <span class="block text-[10px] text-slate-400 font-normal leading-tight">Tuli total, Tunarungu, Kurang pendengaran</span>
+                            </div>
+                        </label>
+
+                        <!-- 3. SENSORIK BICARA -->
+                        <label class="flex items-start space-x-2.5 bg-white/80 p-2.5 rounded-xl border border-teal-100 hover:bg-white shadow-xs cursor-pointer">
+                            <input type="checkbox" name="kategori_disabilitas" value="Sensorik Bicara (Komunikasi)" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 mt-0.5 accent-teal-600">
+                            <div>
+                                <span class="block text-slate-800 font-extrabold">Bicara (Komunikasi)</span>
+                                <span class="block text-[10px] text-slate-400 font-normal leading-tight">Bisu, Tunawicara, Sulit bicara/pelo</span>
+                            </div>
+                        </label>
+
+                        <!-- 4. FISIK / ANGGOTA TUBUH -->
+                        <label class="flex items-start space-x-2.5 bg-white/80 p-2.5 rounded-xl border border-teal-100 hover:bg-white shadow-xs cursor-pointer">
+                            <input type="checkbox" name="kategori_disabilitas" value="Fisik (Anggota Tubuh)" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 mt-0.5 accent-teal-600">
+                            <div>
+                                <span class="block text-slate-800 font-extrabold">Fisik (Anggota Badan)</span>
+                                <span class="block text-[10px] text-slate-400 font-normal leading-tight">Amputasi, Lumpuh, Layu, Polio, Kusta, Cerebral Palsy</span>
+                            </div>
+                        </label>
+
+                        <!-- 5. INTELEKTUAL / DAYA TANGKAP -->
+                        <label class="flex items-start space-x-2.5 bg-white/80 p-2.5 rounded-xl border border-teal-100 hover:bg-white shadow-xs cursor-pointer">
+                            <input type="checkbox" name="kategori_disabilitas" value="Intelektual (Daya Tangkap)" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 mt-0.5 accent-teal-600">
+                            <div>
+                                <span class="block text-slate-800 font-extrabold">Intelektual (Daya Pikir)</span>
+                                <span class="block text-[10px] text-slate-400 font-normal leading-tight">Down Syndrome, Lambat belajar (Slow Learner)</span>
+                            </div>
+                        </label>
+
+                        <!-- 6. MENTAL / PERILAKU -->
+                        <label class="flex items-start space-x-2.5 bg-white/80 p-2.5 rounded-xl border border-teal-100 hover:bg-white shadow-xs cursor-pointer">
+                            <input type="checkbox" name="kategori_disabilitas" value="Mental & Perilaku" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 mt-0.5 accent-teal-600">
+                            <div>
+                                <span class="block text-slate-800 font-extrabold">Mental & Perilaku</span>
+                                <span class="block text-[10px] text-slate-400 font-normal leading-tight">Autis, Hiperaktif (ADHD), Gangguan Jiwa (ODGJ)</span>
+                            </div>
+                        </label>
+
+                        <!-- 7. DISABILITAS GANDA / KOMBO -->
+                        <label class="flex items-start space-x-2.5 bg-white/80 p-2.5 rounded-xl border border-teal-100 hover:bg-white shadow-xs cursor-pointer sm:col-span-2">
+                            <input type="checkbox" name="kategori_disabilitas" value="Disabilitas Ganda" class="rounded text-teal-600 focus:ring-teal-500 w-4 h-4 mt-0.5 accent-teal-600">
+                            <div>
+                                <span class="block text-slate-800 font-extrabold">Disabilitas Ganda (Kombinasi)</span>
+                                <span class="block text-[10px] text-slate-400 font-normal leading-tight">Memiliki 2 atau lebih kondisi di atas sekaligus (Contoh: Bisu sekaligus Tuli)</span>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+            </div>
             
             <div class="pt-4">
                 <button type="submit" id="submitBtn" class="w-full relative inline-flex items-center justify-center p-3.5 sm:p-4 text-sm sm:text-base font-extrabold tracking-widest text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 rounded-2xl shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.4)] transition-all duration-200 ease-out cursor-pointer border border-emerald-400/50">
@@ -627,7 +711,9 @@
                         <div class="flex justify-between border-b border-slate-100 pb-2"><span class="text-slate-400 font-bold uppercase text-[10px]">Nomor HP:</span> <span id="revNoHP" class="font-bold text-slate-800"></span></div>
                         <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase text-[10px]">Mengajar Usia:</span> <span id="revMengajar" class="font-bold text-slate-800 text-right max-w-[60%]"></span></div>
                     </div>
-                    <div id="revKelasContainer" class="flex justify-between pt-1"><span class="text-slate-400 font-bold uppercase text-[10px]">Kelas/Status:</span> <span id="revKelas" class="font-bold text-slate-800"></span></div>
+                    <div id="revKelasContainer" class="flex justify-between border-b border-slate-100 pb-2 pt-1"><span class="text-slate-400 font-bold uppercase text-[10px]">Kelas/Status:</span> <span id="revKelas" class="font-bold text-slate-800"></span></div>
+                    
+                    <div class="flex justify-between pt-1"><span class="text-slate-400 font-bold uppercase text-[10px]">Disabilitas:</span> <span id="revDisabilitas" class="font-bold text-teal-700"></span></div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 mt-6">
@@ -763,6 +849,33 @@
         </div>
     </div>
 
+    <!-- MODAL CUSTOM RINCIAN DISABILITAS GENERUS (DENGAN INFORMASI USIA) -->
+    <div id="disabilitasDetailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="bg-white/95 backdrop-blur-xl rounded-[2rem] p-5 sm:p-6 max-w-md w-full text-center space-y-3 border border-teal-200 shadow-2xl transform scale-95 opacity-0">
+            <div class="w-12 h-12 bg-gradient-to-br from-teal-100 to-emerald-100 text-teal-600 rounded-2xl flex items-center justify-center mx-auto text-2xl font-bold shadow-inner">
+                ♿
+            </div>
+            <div>
+                <h4 class="text-base sm:text-lg font-extrabold text-slate-800">Penyandang Disabilitas (Generus)</h4>
+                <p class="text-[11px] text-slate-500 font-medium">Rincian generus terdaftar penyandang disabilitas</p>
+            </div>
+
+            <!-- RINGKASAN REKAP KATEGORI DISABILITAS -->
+            <div id="disabilitasCategorySummaryGenerus" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-2 bg-teal-50/60 rounded-2xl border border-teal-100/80 text-left">
+            </div>
+
+            <div class="relative text-left pt-1">
+                <input type="text" id="disabilitasDetailSearchGenerus" oninput="filterDisabilitasGenerusList()" placeholder="🔍 Cari nama, kelompok, atau kategori..." class="w-full text-xs p-2.5 pl-3.5 rounded-xl border-2 border-teal-200 bg-white text-teal-900 font-bold focus:outline-none focus:border-teal-500 transition-all shadow-inner">
+            </div>
+
+            <div id="disabilitasDetailListGenerus" class="max-h-56 overflow-y-auto space-y-2 text-left pr-1 scrollbar-hide py-1"></div>
+
+            <button type="button" onclick="closeDisabilitasModalGenerus()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-extrabold transition-all border border-slate-200">
+                Tutup
+            </button>
+        </div>
+    </div>
+
     <!-- MODAL CUSTOM PICKER CENTER -->
     <div id="centerPickerModal" class="fixed inset-0 z-[150] flex items-center justify-center p-4 hidden opacity-0" onclick="closeCenterPicker()">
         <div class="rounded-[2rem] p-5 sm:p-6 max-w-sm w-full transform scale-90 opacity-0 max-h-[75vh] flex flex-col" onclick="event.stopPropagation()">
@@ -838,6 +951,8 @@
                         <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="kelas_formal" checked class="accent-emerald-600 rounded"><span>Kelas Formal</span></label>
                         <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="nomor_hp" checked class="accent-emerald-600 rounded"><span>Nomor HP</span></label>
                         <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="mengajar_usia" checked class="accent-emerald-600 rounded"><span>Mengajar Usia</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="is_disabilitas" checked class="accent-teal-600 rounded"><span>Disabilitas?</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" name="csvCol" value="kategori_disabilitas" checked class="accent-teal-600 rounded"><span>Ragam Disabilitas</span></label>
                     </div>
                 </div>
             </div>
@@ -860,11 +975,11 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // GLOBAL STATE & CACHE DATA
         const appState = {
             isLoaded: false,
-            allGenerus: [],       // Cache seluruh data generus
-            pjPengajarData: [],   // Cache khusus PJ/Pengajar
+            allGenerus: [],
+            pjPengajarData: [],
+            disabilitasGenerusList: []
         };
 
         const SUPABASE_URL = "https://xijlyydfogbkcctlycsb.supabase.co";
@@ -873,10 +988,8 @@
 
         let currentMode = "DAFTAR", targetIdGenerus = null, payloadData = null;
 
-        // URUTAN KATEGORI STANDAR
         const URUTAN_KATEGORI_STANDAR = ["PAUD", "TK", "Caberawit", "Pra Remaja", "Remaja", "Usia Mandiri", "Pengajar", "PJ Kelompok"];
 
-        // EFEK BOUNCE MANTUL EMPUK 1 KALI SMOOTH
         document.addEventListener('click', function (e) {
             const btn = e.target.closest('button, a.cursor-pointer, .picker-option-item, tr.clickable-row');
             if (!btn) return;
@@ -886,7 +999,6 @@
             setTimeout(() => btn.classList.remove('animate-bounce-click'), 420);
         });
 
-        // INISIALISASI APPLIKASI: FETCH SELURUH DATA HANYA 1 KALI SAAT SPLASH SCREEN
         window.addEventListener('load', async function() {
             const loader = document.getElementById('appLoadingScreen');
             try {
@@ -901,7 +1013,6 @@
             }
         });
 
-        // FUNGSI UTAMA FETCH ALL DATA SUPABASE
         async function loadInitialData() {
             let data = [], page = 0; 
             const pageSize = 1000; 
@@ -921,6 +1032,7 @@
             appState.allGenerus = data;
             appState.isLoaded = true;
             updatePjPengajarCache();
+            updateDisabilitasGenerusCache();
         }
 
         function updatePjPengajarCache() {
@@ -932,6 +1044,12 @@
                     }
                     return (a.nama || '').localeCompare(b.nama || '');
                 });
+        }
+
+        function updateDisabilitasGenerusCache() {
+            appState.disabilitasGenerusList = appState.allGenerus.filter(item => item.is_disabilitas === true);
+            const countEl = document.getElementById('rekapDisabilitasCount');
+            if(countEl) countEl.textContent = `${appState.disabilitasGenerusList.length} Orang`;
         }
 
         const dobTanggal = document.getElementById('dob_tanggal');
@@ -1043,6 +1161,9 @@
 
             const csvModal = document.getElementById('modalExportCsv');
             if (csvModal && !csvModal.classList.contains('hidden')) return closeCsvModal(false);
+
+            const disModal = document.getElementById('disabilitasDetailModal');
+            if (disModal && !disModal.classList.contains('hidden')) return closeDisabilitasModalGenerus(false);
 
             if (customModal && !customModal.classList.contains('hidden')) return closeModalOnly(false);
 
@@ -1170,6 +1291,27 @@
             }
         });
 
+        /* DISABILITAS HELPER LOGIC (CHECKBOX PAKAI SUB-TEXT) */
+        function toggleDisabilitasOptionsForm() {
+            const isDis = document.getElementById('is_disabilitas').checked;
+            const wrap = document.getElementById('wrapperKategoriDisabilitas');
+            if (isDis) {
+                wrap.classList.remove('hidden');
+                wrap.classList.add('animate-field-in');
+            } else {
+                wrap.classList.add('hidden');
+                resetDisabilitasCheckboxes();
+            }
+        }
+
+        function resetDisabilitasCheckboxes() {
+            document.querySelectorAll('input[name="kategori_disabilitas"]').forEach(cb => cb.checked = false);
+        }
+
+        function getSelectedKategoriDisabilitasForm() {
+            return Array.from(document.querySelectorAll('input[name="kategori_disabilitas"]:checked')).map(cb => cb.value);
+        }
+
         function resetMengajarCheckboxes() {
             document.querySelectorAll('input[name="mengajar_usia"]').forEach(cb => cb.checked = false);
         }
@@ -1225,7 +1367,6 @@
             openModalAnimation('customModal');
         }
 
-        // AMBIL DARI MEMORI LOKAL TANPA FETCH
         async function openPjPengajarModal() {
             document.getElementById('searchPjPengajarInput').value = "";
 
@@ -1354,6 +1495,8 @@
             containerKelasFormal.innerHTML = `<input type="text" id="kelas_formal" value="" class="glass-input block w-full rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm text-slate-900 font-medium">`;
             
             nomorHpInput.required = false; updateKelompokDropdown("", "", kelompokSelect); targetIdGenerus = null;
+            document.getElementById('is_disabilitas').checked = false;
+            toggleDisabilitasOptionsForm();
 
             if (currentMode === "UPDATE") {
                 mainTitle.textContent = "UPDATE DATA GENERUS"; mainSubtitle.textContent = "Pilih kelompok dan klik nama generus yang ingin diperbarui";
@@ -1483,6 +1626,17 @@
                 }
             }
 
+            document.getElementById('is_disabilitas').checked = match.is_disabilitas ? true : false;
+            toggleDisabilitasOptionsForm();
+            resetDisabilitasCheckboxes();
+            if(match.is_disabilitas && match.kategori_disabilitas) {
+                let katList = Array.isArray(match.kategori_disabilitas) ? match.kategori_disabilitas : match.kategori_disabilitas.split(',');
+                katList.forEach(k => {
+                    const cb = document.querySelector(`input[name="kategori_disabilitas"][value="${k.trim()}"]`);
+                    if(cb) cb.checked = true;
+                });
+            }
+
             showElementSmooth(formGenerus);
             setTimeout(() => formGenerus.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250);
         }
@@ -1500,12 +1654,17 @@
             const kategori = document.getElementById('kategori_usia').value;
             const kelas = formatKelasFormal(document.getElementById('kelas_formal').value.trim());
 
+            const isDis = document.getElementById('is_disabilitas').checked;
+            const katDis = isDis ? getSelectedKategoriDisabilitasForm() : [];
+
             payloadData = { 
                 nama, jenis_kelamin: jk, tempat_lahir: tempat, tanggal_lahir: `${thn}-${bln}-${tgl}`, 
                 desa, kelompok, kategori_usia: kategori, 
                 kelas_formal: (["Pengajar", "PJ Kelompok", "Menikah/Boarding/Sambung Luar Daerah"].includes(kategori)) ? null : kelas,
                 nomor_hp: (kategori === "Pengajar" || kategori === "PJ Kelompok") ? nomorHpInput.value.trim() : null,
-                mengajar_usia: (kategori === "Pengajar" || kategori === "PJ Kelompok") ? getSelectedMengajarUsia() : null
+                mengajar_usia: (kategori === "Pengajar" || kategori === "PJ Kelompok") ? getSelectedMengajarUsia() : null,
+                is_disabilitas: isDis,
+                kategori_disabilitas: katDis
             };
 
             const revTitle = document.getElementById('reviewTitle'), revSubtitle = document.getElementById('reviewSubtitle'), confirmBtn = document.getElementById('confirmSaveBtn');
@@ -1545,11 +1704,12 @@
                 document.getElementById('revKelas').textContent = kelas || "-";
             }
 
+            document.getElementById('revDisabilitas').textContent = isDis ? `Ya (${katDis.length > 0 ? katDis.join(' | ') : 'Tanpa Kategori'})` : 'Tidak';
+
             modalReview.classList.remove('hidden'); modalSuccess.classList.add('hidden'); modalError.classList.add('hidden'); modalContact.classList.add('hidden'); modalPjPengajarList.classList.add('hidden'); document.getElementById('modalDetailRekap').classList.add('hidden');
             openModalAnimation('customModal');
         });
 
-        // SIMPAN / UPDATE DENGAN PEMBARUAN MEMORI LOKAL INSTAN
         async function executeSaveToSupabase() {
             if(!payloadData) return;
             const btn = document.getElementById('confirmSaveBtn');
@@ -1565,7 +1725,6 @@
                     const { error } = await supabaseClient.from('data_generus').delete().eq('id', targetIdGenerus);
                     resultError = error;
                     if (!resultError) {
-                        // Hapus dari state lokal
                         appState.allGenerus = appState.allGenerus.filter(i => i.id !== targetIdGenerus);
                         document.getElementById('successTitle').textContent = "Berhasil Dihapus";
                         document.getElementById('successMessage').textContent = `Data generus atas nama ${payloadData.nama} telah resmi dihapus dari database aktif.`;
@@ -1577,7 +1736,6 @@
                         const { data, error } = await supabaseClient.from('data_generus').update(payloadData).eq('id', targetIdGenerus).select();
                         resultError = error;
                         if (!resultError && data && data.length > 0) {
-                            // Update item di state lokal
                             const idx = appState.allGenerus.findIndex(i => i.id === targetIdGenerus);
                             if (idx !== -1) appState.allGenerus[idx] = data[0];
                         }
@@ -1585,7 +1743,6 @@
                         const { data, error } = await supabaseClient.from('data_generus').insert([payloadData]).select();
                         resultError = error;
                         if (!resultError && data && data.length > 0) {
-                            // Tambah item ke state lokal
                             appState.allGenerus.push(data[0]);
                         }
                     }
@@ -1598,8 +1755,8 @@
 
                 if (resultError) throw resultError;
                 
-                // Update cache PJ/Pengajar
                 updatePjPengajarCache();
+                updateDisabilitasGenerusCache();
 
                 modalReview.classList.add('hidden'); modalSuccess.classList.remove('hidden');
 
@@ -1632,7 +1789,6 @@
             document.getElementById('searchNamaInList').classList.add('hidden');
         }
 
-        // TANPA LOADING & SUPABASE CALL SAAT TAMPILKAN ANGGOTA KELOMPOK
         function loadNamaGenerusKelompok() {
             const desa = document.getElementById('listFilterDesa').value;
             const kelompok = document.getElementById('listFilterKelompok').value;
@@ -1640,7 +1796,6 @@
 
             if (!desa || !kelompok) return;
 
-            // Filter data langsung dari memori lokal (appState.allGenerus)
             const data = appState.allGenerus
                 .filter(item => item.desa === desa && item.kelompok === kelompok)
                 .sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
@@ -1674,11 +1829,14 @@
                     waButtonHtml = `<button type="button" onclick="event.stopPropagation(); showContactModal('${escapedNama}', '${escapedKategori}', '${escapedDesa}', '${escapedKelompok}', '${escapedHp}')" title="Hubungi WA ${item.nama}" class="ml-2 inline-flex items-center justify-center p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-100 shadow-sm"><svg class="w-3.5 h-3.5 fill-current"><use href="#icon-wa"/></svg></button>`;
                 }
 
+                let disBadge = item.is_disabilitas ? `<span class="ml-1 text-[9px] bg-teal-100 text-teal-800 px-1 py-0.2 rounded border border-teal-200 font-extrabold" title="Disabilitas">♿</span>` : '';
+
                 tr.innerHTML = `
                     <td class="p-3 text-center font-bold text-slate-400">${index + 1}</td>
                     <td class="p-3 font-extrabold text-blue-700 hover:text-blue-900 cursor-pointer cell-nama group" onclick="selectGenerusForUpdate(${safeItem})" title="Klik untuk perbarui data ${item.nama}">
-                        <div class="flex items-center">
+                        <div class="flex items-center flex-wrap">
                             <span class="group-hover:underline">${item.nama}</span>
+                            ${disBadge}
                             <span class="opacity-0 group-hover:opacity-100 transition-opacity ml-1 text-[10px]">✏️</span>
                             ${waButtonHtml}
                         </div>
@@ -1702,7 +1860,6 @@
             });
         }
 
-        /* LOGIKA REKAP DATA LANGSUNG MEMAKAI STATE LOKAL TANPA LOADING */
         function fetchAndBuildRekap() {
             rekapLoader.classList.add('hidden'); 
             rekapContent.classList.remove('hidden');
@@ -1743,7 +1900,6 @@
             rekapTotalData.className = "px-3 py-1.5 text-[10px] sm:text-xs font-extrabold text-white bg-slate-800 rounded-lg shadow-md text-left sm:text-right";
             rekapTotalData.innerHTML = `Generus: ${countGenerusOnly} | Pengajar: ${countPengajarOnly} | PJ: ${countPJOnly}`;
 
-            // TABLE 1: BERDASARKAN KATEGORI
             for (const [key, val] of Object.entries(rekapUsia)) {
                 const totalRow = val.L + val.P;
                 totalUsiaL += val.L; totalUsiaP += val.P; totalUsiaSemua += totalRow;
@@ -1762,7 +1918,6 @@
             }
             tableUsiaFoot.innerHTML = `<td class="p-3 sm:p-4 font-extrabold text-slate-900 text-left text-xs">TOTAL AKUMULASI</td><td class="p-3 sm:p-4 text-center text-indigo-700 font-extrabold text-xs">${totalUsiaL}</td><td class="p-3 sm:p-4 text-center text-indigo-700 font-extrabold text-xs">${totalUsiaP}</td><td class="p-3 sm:p-4 text-center text-white bg-slate-800 font-extrabold shadow-inner total-cell-highlight text-xs">${totalUsiaSemua}</td>`;
 
-            // TABLE 2: BERDASARKAN KELAS FORMAL
             const urutanKustom = ["PAUD", "TK A", "TK B", "1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD", "1 SMP", "2 SMP", "3 SMP", "1 SMA", "2 SMA", "3 SMA", "1 SMK", "2 SMK", "3 SMK", "1 SMA/SMK", "2 SMA/SMK", "3 SMA/SMK", "1 SMA/SMK/SMK", "2 SMA/SMK/SMK", "3 SMA/SMK/SMK", "KULIAH", "KERJA", "BELUM KERJA"];
 
             const sortedKelas = Object.keys(rekapKelas)
@@ -1799,7 +1954,6 @@
 
             window.globalRekapKlp = rekapKlp;
 
-            // POPULASI FILTER DESA TABLE 3
             const filterSelect = document.getElementById('filterDesaKelompok');
             if (filterSelect) {
                 filterSelect.innerHTML = '<option value="ALL">Semua Kelompok</option>';
@@ -1811,9 +1965,9 @@
             }
 
             if (window.applyFilterKelompok) window.applyFilterKelompok("ALL");
+            updateDisabilitasGenerusCache();
         }
 
-        // TABLE 3: PER KELOMPOK (DENGAN NAMA KELOMPOK LEGA & KOLOM ANGKA DENGAN SIZE PERSEMPIT PAS)
         window.applyFilterKelompok = function(filterVal) {
             const tableKelompokBody = document.getElementById('tableKelompokBody');
             if(!tableKelompokBody) return;
@@ -1851,7 +2005,6 @@
             }
         };
 
-        // 1. POPUP JUMLAH KATEGORI PER DESA
         function showDetailRekapPerKategori(kategori) {
             document.getElementById('modalDetailRekapTitle').textContent = `Rekapan Kategori: ${kategori}`;
             document.getElementById('modalDetailRekapSubtitle').textContent = `Rincian jumlah generus ${kategori} berdasarkan desanya masing-masing`;
@@ -1911,7 +2064,6 @@
             openModalDetailRekap();
         }
 
-        // 2. POPUP JUMLAH KELAS FORMAL PER KELOMPOK
         function showDetailRekapPerKelas(kelas) {
             document.getElementById('modalDetailRekapTitle').textContent = `Rekapan Kelas/Status: ${kelas}`;
             document.getElementById('modalDetailRekapSubtitle').textContent = `Rincian jumlah generus ${kelas} berdasarkan kelompoknya masing-masing`;
@@ -1975,17 +2127,14 @@
             openModalDetailRekap();
         }
 
-        // 3. POPUP DAFTAR NAMA TERDAFTAR DI KELOMPOK (SUDAH DIURUTKAN DARI KATEGORI TERKECIL HINGGA TERBESAR)
         function showDetailRekapNamaGenerus(desa, kelompok) {
             document.getElementById('modalDetailRekapTitle').textContent = `Daftar Nama: ${kelompok}`;
             document.getElementById('modalDetailRekapSubtitle').textContent = `Informasi siapa saja yang sudah terdaftar di ${desa} - ${kelompok} (View Only)`;
 
             const members = appState.allGenerus.filter(item => item.desa === desa && item.kelompok === kelompok);
 
-            // DIURUTKAN BERDASARKAN ABJAD (A-Z)
             members.sort((a, b) => (a.nama || '').localeCompare(b.nama || '', 'id', { sensitivity: 'base' }));
 
-            // HITUNG AKUMULASI RINGKAS PER KATEGORI
             const katSummary = {};
             let countGenerus = 0, countPengajar = 0, countPJ = 0;
 
@@ -2002,7 +2151,6 @@
                 }
             });
 
-            // URUTKAN KATEGORI DARI TERKECIL SAMPAI TERBESAR SESUAI STANDAR REKAP POINT 1
             const sortedKategoriKeys = Object.keys(katSummary).sort((a, b) => {
                 let indexA = URUTAN_KATEGORI_STANDAR.indexOf(a);
                 let indexB = URUTAN_KATEGORI_STANDAR.indexOf(b);
@@ -2011,7 +2159,6 @@
                 return indexA - indexB;
             });
 
-            // WIDGET RINGKASAN AKUMULASI DIBUAT DENGAN STYLE CARD STREAMLINED
             let summaryCardsHtml = `
                 <div class="mb-4 bg-slate-50/90 border border-slate-200/80 rounded-xl p-3 space-y-2">
                     <div class="flex flex-wrap items-center justify-between gap-1 pb-2 border-b border-slate-200/60 text-[11px] font-extrabold">
@@ -2056,10 +2203,11 @@
                 html += `<tr><td colspan="5" class="p-6 text-center text-slate-400 italic">Belum ada generus terdaftar di kelompok ini.</td></tr>`;
             } else {
                 members.forEach((item, index) => {
+                    let disBadge = item.is_disabilitas ? `<span class="ml-1 text-[9px] bg-teal-100 text-teal-800 px-1 py-0.2 rounded border border-teal-200 font-extrabold" title="Disabilitas">♿</span>` : '';
                     html += `
                         <tr class="hover:bg-slate-50">
                             <td class="p-2.5 text-center font-bold text-slate-400">${index + 1}</td>
-                            <td class="p-2.5 font-extrabold text-slate-800">${item.nama}</td>
+                            <td class="p-2.5 font-extrabold text-slate-800 flex items-center">${item.nama}${disBadge}</td>
                             <td class="p-2.5 text-center font-extrabold ${item.jenis_kelamin === 'L' ? 'text-blue-600' : 'text-pink-600'}">${item.jenis_kelamin || '-'}</td>
                             <td class="p-2.5 text-slate-600">${item.kategori_usia || '-'}</td>
                             <td class="p-2.5 text-slate-500">${formatKelasFormal(item.kelas_formal) || '-'}</td>
@@ -2075,6 +2223,119 @@
 
             document.getElementById('modalDetailRekapContent').innerHTML = html;
             openModalDetailRekap();
+        }
+
+        /* POPUP DISABILITAS GENERUS (MENAMPILKAN USIA & DETAIL RAGAM) */
+        function showDisabilitasDetailModalGenerus() {
+            const dataset = appState.disabilitasGenerusList.sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
+
+            const katCounts = {};
+            dataset.forEach(item => {
+                let kats = [];
+                if (Array.isArray(item.kategori_disabilitas) && item.kategori_disabilitas.length > 0) {
+                    kats = item.kategori_disabilitas;
+                } else if (typeof item.kategori_disabilitas === 'string' && item.kategori_disabilitas.trim() !== '') {
+                    kats = item.kategori_disabilitas.split(',').map(s => s.trim());
+                } else {
+                    kats = ['Lainnya'];
+                }
+
+                kats.forEach(k => {
+                    const cleanKat = k || 'Lainnya';
+                    katCounts[cleanKat] = (katCounts[cleanKat] || 0) + 1;
+                });
+            });
+
+            const summaryEl = document.getElementById('disabilitasCategorySummaryGenerus');
+            if (summaryEl) {
+                summaryEl.innerHTML = '';
+                const keys = Object.keys(katCounts);
+                if (keys.length === 0) {
+                    summaryEl.innerHTML = `<p class="col-span-full text-[10px] text-slate-400 font-semibold text-center py-1">Belum ada kategori terdata.</p>`;
+                } else {
+                    keys.forEach(kat => {
+                        const badge = document.createElement('div');
+                        badge.className = "p-1.5 bg-white/80 rounded-xl border border-teal-100 flex justify-between items-center";
+                        badge.innerHTML = `
+                            <span class="text-[10px] font-extrabold text-slate-600 truncate mr-1" title="${kat}">${kat}</span>
+                            <span class="text-[10px] font-black text-teal-700 bg-teal-100 px-1.5 py-0.5 rounded-md">${katCounts[kat]}</span>
+                        `;
+                        summaryEl.appendChild(badge);
+                    });
+                }
+            }
+
+            const searchInput = document.getElementById('disabilitasDetailSearchGenerus');
+            if (searchInput) searchInput.value = '';
+
+            renderDisabilitasGenerusList(dataset);
+            openModalAnimation('disabilitasDetailModal');
+        }
+
+        function renderDisabilitasGenerusList(listData) {
+            const listEl = document.getElementById('disabilitasDetailListGenerus');
+            listEl.innerHTML = '';
+
+            if (!listData || listData.length === 0) {
+                listEl.innerHTML = `<p class="text-xs text-slate-400 font-semibold text-center py-5">Tidak ada generus penyandang disabilitas terdaftar.</p>`;
+                return;
+            }
+
+            listData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "p-2.5 sm:p-3 bg-gradient-to-r from-teal-50/80 to-emerald-50/80 border border-teal-100 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 hover:shadow-md transition-shadow";
+                
+                let katText = 'Lainnya';
+                if (Array.isArray(item.kategori_disabilitas) && item.kategori_disabilitas.length > 0) {
+                    katText = item.kategori_disabilitas.join(' | ');
+                } else if (typeof item.kategori_disabilitas === 'string' && item.kategori_disabilitas.trim() !== '') {
+                    katText = item.kategori_disabilitas;
+                }
+
+                let umurText = '';
+                if (item.tanggal_lahir) {
+                    const parts = item.tanggal_lahir.split('-');
+                    if (parts.length === 3) {
+                        const u = hitungUmurOtomatis(parts[0], parts[1], parts[2]);
+                        if (u !== null) umurText = `• ${u} thn`;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="font-extrabold text-xs sm:text-sm text-slate-800">${item.nama} (${item.kategori_usia} ${umurText})</div>
+                        <div class="text-[10px] font-bold text-slate-500 mt-0.5">
+                            Klp. <span class="text-teal-800 font-black">${item.kelompok}</span> (${item.desa})
+                        </div>
+                    </div>
+                    <div class="shrink-0 text-left sm:text-right">
+                        <span class="text-[9px] font-extrabold text-teal-800 bg-teal-100 border border-teal-200 px-2 py-0.5 rounded-lg inline-block">
+                            ${katText}
+                        </span>
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function filterDisabilitasGenerusList() {
+            const query = (document.getElementById('disabilitasDetailSearchGenerus').value || '').toLowerCase().trim();
+            if (!query) {
+                renderDisabilitasGenerusList(appState.disabilitasGenerusList);
+                return;
+            }
+            const filtered = appState.disabilitasGenerusList.filter(item => {
+                let katStr = Array.isArray(item.kategori_disabilitas) ? item.kategori_disabilitas.join(' ') : (item.kategori_disabilitas || '');
+                return (item.nama || '').toLowerCase().includes(query) || 
+                       (item.kelompok || '').toLowerCase().includes(query) ||
+                       (item.kategori_usia || '').toLowerCase().includes(query) ||
+                       katStr.toLowerCase().includes(query);
+            });
+            renderDisabilitasGenerusList(filtered);
+        }
+
+        function closeDisabilitasModalGenerus(backHistory = true) {
+            closeModalAnimation('disabilitasDetailModal', backHistory);
         }
 
         function openModalDetailRekap() {
@@ -2114,7 +2375,6 @@
             document.querySelectorAll('input[name="csvCol"]').forEach(cb => cb.checked = selectState);
         }
 
-        // EKSPOR DATA MEMAKAI MEMORI LOKAL
         function fetchExportDataFromSupabase() {
             const scope = document.getElementById('csvScopeType').value;
             const selectedDesa = document.getElementById('csvFilterDesa').value;
@@ -2154,6 +2414,7 @@
                     const row = selectedColumns.map(header => {
                         let val = item[header];
                         if (header === 'kelas_formal' && val) val = formatKelasFormal(val);
+                        if (header === 'is_disabilitas') val = val ? 'Ya' : 'Tidak';
                         if (val === null || val === undefined) return '""';
                         if (Array.isArray(val)) val = val.join('; ');
                         else if (typeof val === 'object') val = JSON.stringify(val);
@@ -2184,13 +2445,14 @@
                 if (!res) return;
                 const { data, selectedColumns, baseFilename } = res;
 
-                const columnLabels = { id: "ID", nama: "Nama Lengkap", jenis_kelamin: "Jenis Kelamin", tempat_lahir: "Tempat Lahir", tanggal_lahir: "Tanggal Lahir", desa: "Desa", kelompok: "Kelompok", kategori_usia: "Kategori Usia", kelas_formal: "Kelas Formal", nomor_hp: "Nomor HP", mengajar_usia: "Mengajar Usia", created_at: "Waktu Dibuat" };
+                const columnLabels = { id: "ID", nama: "Nama Lengkap", jenis_kelamin: "Jenis Kelamin", tempat_lahir: "Tempat Lahir", tanggal_lahir: "Tanggal Lahir", desa: "Desa", kelompok: "Kelompok", kategori_usia: "Kategori Usia", kelas_formal: "Kelas Formal", nomor_hp: "Nomor HP", mengajar_usia: "Mengajar Usia", is_disabilitas: "Disabilitas?", kategori_disabilitas: "Ragam Disabilitas", created_at: "Waktu Dibuat" };
 
                 const excelData = data.map(item => {
                     let formattedItem = {};
                     selectedColumns.forEach(header => {
                         let label = columnLabels[header] || header, val = item[header];
                         if (header === 'kelas_formal' && val) val = formatKelasFormal(val);
+                        if (header === 'is_disabilitas') val = val ? 'Ya' : 'Tidak';
                         if (val === null || val === undefined) val = "";
                         else if (Array.isArray(val)) val = val.join(', ');
                         else if (typeof val === 'object') val = JSON.stringify(val);
@@ -2230,7 +2492,6 @@
             });
         }
 
-        /* INTERCEPTOR POPUP PICKER CENTER */
         let activeSelectTarget = null, touchStartY = 0, touchStartX = 0, isSwiping = false;
 
         document.addEventListener('mousedown', interceptSelect, { capture: true });
