@@ -1,10 +1,21 @@
 {
   "short_name": "Data PPG",
   "name": "Pendataan & Absensi Jamaah",
-  "icons": [],
+  "icons": [
+    {
+      "src": "logo ppg.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo ppg.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
   "start_url": "./index.html",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "transparent",
+  "theme_color": "transparent",
   "display": "fullscreen",
   "orientation": "portrait"
 }
