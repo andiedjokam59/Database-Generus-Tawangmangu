@@ -1,4 +1,4 @@
-const CACHE_NAME = 'generus-form-v2'; // Naikkan versi jika Anda mengedit file HTML/SW[cite: 2]
+const CACHE_NAME = 'generus-form-v3'; // Naikkan versi jika Anda mengedit file HTML/SW[cite: 2]
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
