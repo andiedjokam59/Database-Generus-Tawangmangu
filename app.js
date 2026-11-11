@@ -537,7 +537,15 @@
                 mainTitle.textContent = "PENDATAAN GENERUS"; mainSubtitle.textContent = "Silakan lengkapi data generus anda dengan benar";
                 hideElementSmooth(searchSection); hideElementSmooth(rekapSection); hideElementSmooth(monitoringSection); showElementSmooth(formGenerus);
                 formTitleHeader.classList.add('hidden'); submitBtn.textContent = "Kirim Data"; optMenikah.classList.add('hidden');
-            }
+				
+				const lastDesa = localStorage.getItem('last_selected_desa');
+				const lastKelompok = localStorage.getItem('last_selected_kelompok');
+				
+				if (lastDesa) {
+					document.getElementById('desa').value = lastDesa;
+					updateKelompokDropdown(lastDesa, lastKelompok, kelompokSelect);
+				}
+			}
         }
 
         const TAHUN_PATOKAN = 2026;
@@ -772,6 +780,9 @@
                         }
                     }
                     if (!resultError) {
+						localStorage.setItem('last_selected_desa', payloadData.desa);
+						localStorage.setItem('last_selected_kelompok', payloadData.kelompok);
+	
                         document.getElementById('successTitle').textContent = "Terima Kasih";
                         document.getElementById('successMessage').textContent = "Data sudah disimpan";
                         document.getElementById('successIcon').className = "mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 text-emerald-500 mb-5 shadow-inner";
@@ -1504,12 +1515,14 @@
         function closeModalOnly(backHistory = true) { closeModalAnimation('customModal', backHistory); }
 
         function finalResetAndClose() {
-            closeModalAnimation('customModal', true, () => {
-                if (currentMode === "UPDATE") {
-                    loadNamaGenerusKelompok(); hideElementSmooth(document.getElementById('formGenerus'));
-                } else switchMode("DAFTAR");
-            });
-        }
+			closeModalAnimation('customModal', true, () => {
+				if (currentMode === "UPDATE") {
+					loadNamaGenerusKelompok(); hideElementSmooth(document.getElementById('formGenerus'));
+				} else {
+					switchMode("DAFTAR"); // Ini akan otomatis membaca localStorage desa & kelompok terakhir
+				}
+			});
+		}
         
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
